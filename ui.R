@@ -1,5 +1,3 @@
-library(shiny)
-library(ggplot2)
 shinyUI(
   fluidPage(
     titlePanel("shinyorthologs"),
@@ -12,6 +10,11 @@ shinyUI(
 
     fluidRow(
       DT::dataTableOutput("table")
+    ),
+
+    fluidRow(
+      h2("Gene information"),
+      column(4, uiOutput("row"))
     )
   )
 )

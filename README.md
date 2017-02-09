@@ -7,6 +7,9 @@ Shiny interface to an ortholog database
 R packages:
 
 - shiny
+- Rsamtools
+- data.table
+- sqldf
 
 
 ## Start server
