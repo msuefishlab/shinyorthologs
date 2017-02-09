@@ -50,8 +50,10 @@ function(input, output) {
       file = species[species$shortName==ss,]$file
       fa = open(FaFile(file))
       idx = scanFaIndex(fa)
-      seq = getSeq(fa, idx[seqnames(idx) == ret$transcript_id])
-      cbind(ret, as.character(seq))
+      seq = sapply(ret$transcript_id, function(n) {
+        as.character(getSeq(fa, idx[seqnames(idx) == n]))
+      })
+      cbind(ret, seq)
     }
   })
 }
