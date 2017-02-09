@@ -13,9 +13,3 @@ R packages:
 
 Open this directory in R and execute `runApp()` or on the command line `Rscript -e 'shiny::runApp()'`
 
-
-## Usage
-
-## Screenshot
-
-![](img/1.png)
