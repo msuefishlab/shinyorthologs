@@ -1,25 +1,33 @@
 library(ggplot2)
+library(sqldf)
 library(data.table)
+library(DT)
 
-mydata = read.csv('genes.csv')
 
 function(input, output) {
+  dataInput = reactive({
+    read.csv('genes.csv')
+  })
 
-  # Filter data based on selections
-  output$table <- DT::renderDataTable(DT::datatable({
-    data <- mydata
+  output$table = renderDataTable(datatable({
+    data = dataInput()
+    if(is.null(input$species)) {
+       return(NULL)
+    }
     if (input$species != "All") {
-      data <- data[data$species == input$species,]
+      data = data[data$species == input$species,]
     }
     if (input$gene != "") {
-      data <- data[data$gene == input$gene,]
+	  query = sprintf("select * from data where id LIKE '%%%s%%'", input$gene)
+      data = sqldf(query)
     }
     data
-  }), pageLength = 30)
+  }), options = list(pageLength = 30))
 
 
-  output$species <- renderUI({
-    selectInput("species", "Species:", c("All", unique(mydata$species)))
+  output$species = renderUI({
+    data = dataInput()
+    selectInput("species", "Species:", c("All", unique(data$species)))
   })
 }
 
