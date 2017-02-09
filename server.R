@@ -6,7 +6,7 @@ library(DT)
 
 function(input, output) {
   dataInput = reactive({
-    read.csv('genes.csv')
+    read.csv('data/genes.csv')
   })
 
   output$table = renderDataTable(datatable({
