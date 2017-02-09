@@ -9,7 +9,7 @@ function(input, output) {
     read.csv('data/genes.csv')
   })
 
-  output$table = renderDataTable(datatable({
+  output$table = renderDataTable({
     data = dataInput()
     if(is.null(input$species)) {
        return(NULL)
@@ -22,7 +22,7 @@ function(input, output) {
       data = sqldf(query)
     }
     data
-  }), options = list(pageLength = 30))
+  }, selection = 'single')
 
 
   output$species = renderUI({
