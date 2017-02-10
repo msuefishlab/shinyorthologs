@@ -1,0 +1,6 @@
+name,file,shortName
+Sternopygus macrurus,data/fasta/sterno_trinity_0.1.fa,sterno
+Electrophorus electricus,data/fasta/Ee_soap_1.4.CDS.fa,eel
+Brienomyrus brachyistius,data/fasta/mormyrid_eo_sm_pe_assembly.fasta,bb
+Malapterurus electricus,data/fasta/malapterus_trinity.fasta,mal
+Danio rerio,,danio

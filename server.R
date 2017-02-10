@@ -5,13 +5,17 @@ library(Rsamtools)
 
 function(input, output, session) {
   geneData = reactive({
-    read.csv('data/genes.csv',stringsAsFactors=F)
+    fread('data/genes.csv',stringsAsFactors=F)
   })
   transcriptData = reactive({
     fread('data/transcripts.csv')
   })
   speciesData = reactive({
-    read.csv('data/species.csv',stringsAsFactors=F)
+    fread('data/species.csv',stringsAsFactors=F)
+  })
+
+  orthogroupData = reactive({
+    fread('data/orthologs.csv',stringsAsFactors=F)
   })
 
   observe({
@@ -46,7 +50,22 @@ function(input, output, session) {
     }
     data
   })
-
+  orthologTable = reactive({
+    data = orthologData()
+    species = speciesData()
+    if(is.null(input$species)) {
+       return(NULL)
+    }
+    if (input$species != "All") {
+      ss = species[species$name==input$species,]$shortName
+      data = data[data$species == ss,]
+    }
+    if (input$gene != "") {
+	  query = sprintf("select * from data where id LIKE '%%%s%%'", input$gene)
+      data = sqldf(query)
+    }
+    data
+  })
   output$table = DT::renderDataTable(geneTable(), selection = 'single')
 
 
