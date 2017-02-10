@@ -8,8 +8,6 @@ shinyApp(
         titlePanel("shinyorthologs"),
         tabsetPanel(
             tabPanel("Genes",
-
-                # Create a new Row in the UI for selectInputs
                 fluidRow(
                     column(4, uiOutput("species")),
                     column(4, textInput("gene", "Gene: "))
@@ -25,9 +23,13 @@ shinyApp(
                 )
             ),
             tabPanel("Orthologs",
+
+                fluidRow(
+                    DT::dataTableOutput("orthoTable")
+                ),
                 fluidRow(
                     h2("Ortholog information"),
-                    column(4, uiOutput("row"))
+                    column(4, uiOutput("ortho"))
                 )
             )
         )
@@ -44,8 +46,9 @@ shinyApp(
             fread('data/species.csv')
         })
 
-        orthogroupData = reactive({
-            fread('data/orthologs.csv')
+        orthologData = reactive({
+            x = fread('data/orthologs.csv')
+            y = acast(x, orthos~variable)
         })
 
         observe({
@@ -82,18 +85,6 @@ shinyApp(
         })
         orthologTable = reactive({
             data = orthologData()
-            species = speciesData()
-            if (is.null(input$species)) {
-                return(NULL)
-            }
-            if (input$species != "All") {
-                ss = species[species$name == input$species, ]$shortName
-                data = data[data$species == ss, ]
-            }
-            if (input$gene != "") {
-                query = sprintf("select * from data where id LIKE '%%%s%%'", input$gene)
-                data = sqldf(query)
-            }
             data
         })
         output$table = DT::renderDataTable(geneTable(), selection = 'single')
