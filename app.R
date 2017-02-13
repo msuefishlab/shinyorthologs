@@ -6,7 +6,7 @@ library(Rsamtools)
 shinyApp(
     ui = fluidPage(
         titlePanel("shinyorthologs"),
-        tabsetPanel(
+        tabsetPanel(id = "inTabset",
             tabPanel("Genes",
                 fluidRow(
                     column(4, uiOutput("species")),
@@ -46,27 +46,24 @@ shinyApp(
             fread('data/species.csv')
         })
 
+        myFile <- reactive({
+            species = speciesData()
+            data = geneTable()
+            row = data[input$table_rows_selected, ]
+            ss = row$species
+            species[species$shortName == ss, ]$file
+        })
+
+        myIdx <- reactive({
+            scanFaIndex(open(FaFile(myFile())))
+        })
+        
+
         orthologData = reactive({
             x = fread('data/orthologs.csv')
             y = acast(x, orthos~variable)
         })
 
-        observe({
-            query <- parseQueryString(session$clientData$url_search)
-            for (i in 1:(length(reactiveValuesToList(input)))) {
-                nameval = names(reactiveValuesToList(input)[i])
-                valuetoupdate = query[[nameval]]
-
-                if (!is.null(query[[nameval]])) {
-                    if (is.na(as.numeric(valuetoupdate))) {
-                        updateTextInput(session, nameval, value = valuetoupdate)
-                    }
-                    else {
-                        updateTextInput(session, nameval, value = as.numeric(valuetoupdate))
-                    }
-                }
-            }
-        })
         geneTable = reactive({
             data = geneData()
             species = speciesData()
@@ -107,7 +104,7 @@ shinyApp(
                 ss = row$species
                 file = species[species$shortName == ss, ]$file
                 fa = open(FaFile(file))
-                idx = scanFaIndex(fa)
+                idx = myIdx()
                 seq = sapply(ret$transcript_id, function(n) {
                     as.character(getSeq(fa, idx[seqnames(idx) == n]))
                 })
@@ -116,5 +113,22 @@ shinyApp(
         })
 
         output$orthoTable = DT::renderDataTable(orthologTable(), selection = 'single')
+
+        output$ortho = renderTable({
+            if (!is.null(input$orthoTable_rows_selected)) {
+                data = orthologTable()
+                row = data[input$orthoTable_rows_selected, ]
+                print(row)
+                t(row)
+            }
+        })
+
+        observe({
+            query <- parseQueryString(session$clientData$url_search)
+            print(query)
+            if (!is.null(query[['tab']])) {
+                updateTabsetPanel(session, "inTabset", selected = query[['tab']])
+            }
+        })
     }
 )
