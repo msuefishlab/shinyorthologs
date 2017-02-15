@@ -25,8 +25,9 @@ orthologUI <- function(id) {
 
 orthologServer <- function(input, output, session) {
     output$vals <- renderUI({
-        selectInput(session$ns('test'), 'Species', c('All'))
+        selectInput(session$ns('test'), 'Species', c('All', speciesData()$name))
     })
+    source('common.R', local=TRUE)
 }
 
 

@@ -12,6 +12,7 @@ geneUI <- function(id) {
         ),
 
         fluidRow(
+            h2("Data table"),
             DT::dataTableOutput(ns("table"))
         ),
 
@@ -25,8 +26,30 @@ geneUI <- function(id) {
 
 geneServer <- function(input, output, session) {
     output$vals <- renderUI({
-        selectInput(session$ns('test'), 'Species', c('All'))
+        selectInput(session$ns('species'), 'Species', c('All', speciesData()$name))
     })
+
+    output$table = DT::renderDataTable(geneTable(), selection = 'single')
+
+    geneTable = reactive({
+        data = geneData()
+        species = speciesData()
+        if (is.null(input$species)) {
+            return(NULL)
+        }
+        if (input$species != "All") {
+            ss = species[species$name == input$species, ]$shortName
+            data = data[data$species == ss, ]
+        }
+        if (input$gene != "") {
+            query = sprintf("select * from data where id LIKE '%%%s%%'", input$gene)
+            data = sqldf(query)
+        }
+        data
+    })
+
+
+    source('common.R', local=TRUE)
 }
 
 
