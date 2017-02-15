@@ -2,15 +2,16 @@ library(reshape2)
 library(data.table)
 
 speciesData = reactive({
-    fread('data/species.csv')
+    print(getwd())
+    fread('species.csv')
 })
 geneData = reactive({
-    fread('data/genes.csv')
+    fread('genes.csv')
 })
 transcriptData = reactive({
-    fread('data/transcripts.csv')
+    fread('transcripts.csv')
 })
 orthologData = reactive({
-    x = fread('data/orthologs.csv')
+    x = fread('orthologs.csv')
     y = acast(x, orthos~variable)
 })

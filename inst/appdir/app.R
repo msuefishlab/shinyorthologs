@@ -18,9 +18,16 @@ ui <- fluidPage(
     div('Gallant lab - Michigan State University 2017', style="text-align: center; position: absolute; bottom: 0; width: 100%; height: 50px; background-color: black; color: white; z-index: 10000; padding: 10px;")
 )
 
-server <- function(input, output) {
+server <- function(input, output, session) {
     callModule(geneServer, 'gene')
     callModule(orthologServer, 'orthologs')
+
+    observe({
+        query <- parseQueryString(session$clientData$url_search)
+        if (!is.null(query[['tab']])) {
+            updateTabsetPanel(session, "inTabset", selected = query[['tab']])
+        }
+    })
 }
 
 

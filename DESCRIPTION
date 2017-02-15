@@ -1,0 +1,23 @@
+Package: shinyorthologs
+Type: Package
+Title: Compare orthologs across species as a RShiny app
+Version: 0.1.0
+Authors@R: c(
+    person("Colin", "Diesh", email = "dieshcol@msu.edu", role = c("cre", "aut")))
+Maintainer: Colin Diesh <dieshcol@msu.edu>
+Description: shinyorthologs is a RStudio shiny application to compare orthologs \
+    from different species
+Depends:
+    R (>= 3.3.2),
+    tools (>= 3.3.2),
+    data.table (>= 1.10.0), 
+    shinyjs (>= 0.8),
+    ggplot2 (>= 2.2.0),
+    reshape2 (>= 1.4.2),
+    RColorBrewer (>= 1.1.2),
+    scales (>= 0.4.1),
+    DT (>= 0.2),
+    shiny (>= 0.14.2)
+License: MIT
+Encoding: UTF-8
+RoxygenNote: 6.0.1.9000

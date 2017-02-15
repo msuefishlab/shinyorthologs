@@ -2,4 +2,4 @@ sudo: false
 language: R
 cache: packages
 script:
-  Rscript -e 'lintr::lint("app.R")'
+  Rscript -e 'lintr::lint_package()'
