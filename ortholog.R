@@ -3,12 +3,12 @@ library(data.table)
 library(Rsamtools)
 
 
-geneUI <- function(id) {
+orthologUI <- function(id) {
     ns <- NS(id)
     tagList(
         fluidRow(
             column(4, uiOutput(ns("vals"))),
-            column(4, textInput(ns("gene"), "Gene: "))
+            column(4, textInput(ns("ortholog"), "Ortholog: "))
         ),
 
         fluidRow(
@@ -16,14 +16,14 @@ geneUI <- function(id) {
         ),
 
         fluidRow(
-            h2("Gene information"),
+            h2("Ortholog information"),
             column(4, uiOutput(ns("row")))
         )
     )
 
 }
 
-geneServer <- function(input, output, session) {
+orthologServer <- function(input, output, session) {
     output$vals <- renderUI({
         selectInput(session$ns('test'), 'Species', c('All'))
     })

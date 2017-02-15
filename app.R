@@ -3,31 +3,30 @@ library(data.table)
 library(Rsamtools)
 
 source('gene.R')
+source('ortholog.R')
 
-shinyApp(
-    ui = fluidPage(
-        titlePanel("shinyorthologs"),
-        tabsetPanel(id = "inTabset",
-            tabPanel("Genes",
-                geneUI("genes")
-            ),
-            tabPanel("Orthologs",
 
-                fluidRow(
-                    DT::dataTableOutput("orthoTable")
-                ),
-                fluidRow(
-                    h2("Ortholog information"),
-                    column(4, uiOutput("ortho"))
-                )
-            )
+
+
+ui <- fluidPage(
+    titlePanel('shinyOrthologs'),
+
+    tabsetPanel(id = 'inTabset',
+        tabPanel('Genes',
+            geneUI('gene')
+        ),
+        tabPanel('Orthologs',
+            orthologUI('orthologs')
         )
     ),
 
-    server = function(input, output, session) {
-
-        callModule(geneServer, "myModule1", reactive(input$checkbox1))
-
-        
-    }
+    div('Gallant lab - Michigan State University 2017', style="text-align: center; position: absolute; bottom: 0; width: 100%; height: 50px; background-color: black; color: white; z-index: 10000; padding: 10px;")
 )
+
+server <- function(input, output) {
+    callModule(geneServer, 'gene')
+    callModule(orthologServer, 'orthologs')
+}
+
+
+shinyApp(ui, server)
