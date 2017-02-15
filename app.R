@@ -1,15 +1,10 @@
-library(sqldf)
-library(data.table)
-library(Rsamtools)
+library(shiny)
 
 source('gene.R')
 source('ortholog.R')
 
-
-
-
 ui <- fluidPage(
-    titlePanel('shinyOrthologs'),
+    titlePanel('webcompare'),
 
     tabsetPanel(id = 'inTabset',
         tabPanel('Genes',

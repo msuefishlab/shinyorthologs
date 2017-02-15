@@ -1,5 +1,4 @@
 library(sqldf)
-library(data.table)
 library(Rsamtools)
 
 
@@ -25,12 +24,18 @@ geneUI <- function(id) {
 }
 
 geneServer <- function(input, output, session) {
-    output$vals <- renderUI({
-        selectInput(session$ns('species'), 'Species', c('All', speciesData()$name))
+
+    # reactives
+    myIdx <- reactive({
+        scanFaIndex(open(FaFile(myFile())))
     })
-
-    output$table = DT::renderDataTable(geneTable(), selection = 'single')
-
+    myFile <- reactive({
+        species = speciesData()
+        data = geneTable()
+        row = data[input$table_rows_selected, ]
+        ss = row$species
+        species[species$shortName == ss, ]$file
+    })
     geneTable = reactive({
         data = geneData()
         species = speciesData()
@@ -48,8 +53,34 @@ geneServer <- function(input, output, session) {
         data
     })
 
+    # output
+    output$vals <- renderUI({
+        selectInput(session$ns('species'), 'Species', c('All', speciesData()$name))
+    })
 
-    source('common.R', local=TRUE)
+    output$table = DT::renderDataTable(geneTable(), selection = 'single')
+
+    output$row = renderTable({
+        if (is.null(input$table_rows_selected)) {
+            return()
+        }
+        data = geneTable()
+        species = speciesData()
+        transcripts = transcriptData()
+
+        row = data[input$table_rows_selected, ]
+        ret = transcripts[transcripts$gene_id == row$id, ]
+        ss = row$species
+        file = species[species$shortName == ss, ]$file
+        fa = open(FaFile(file))
+        idx = myIdx()
+        seq = sapply(ret$transcript_id, function(n) {
+            as.character(getSeq(fa, idx[seqnames(idx) == n]))
+        })
+        cbind(ret, seq)
+    })
+
+    source('common.R', local = TRUE)
 }
 
 

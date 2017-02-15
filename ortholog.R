@@ -1,5 +1,4 @@
 library(sqldf)
-library(data.table)
 library(Rsamtools)
 
 
@@ -12,7 +11,7 @@ orthologUI <- function(id) {
         ),
 
         fluidRow(
-            DT::dataTableOutput(ns("table"))
+            DT::dataTableOutput(ns("orthoTable"))
         ),
 
         fluidRow(
@@ -27,6 +26,14 @@ orthologServer <- function(input, output, session) {
     output$vals <- renderUI({
         selectInput(session$ns('test'), 'Species', c('All', speciesData()$name))
     })
+
+    orthologTable = reactive({
+        data = orthologData()
+        data
+    })
+
+    output$orthoTable = DT::renderDataTable(orthologTable(), selection = 'single')
+
     source('common.R', local=TRUE)
 }
 
