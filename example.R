@@ -1,6 +1,6 @@
 library(shinyorthologs)
 
-baseDir <- paste0(getwd(), '/extdata')
+baseDir <- '~/testdata'
 genesCsv <- 'genes.csv'
 orthologsCsv <- 'orthologs.csv'
 speciesCsv <- 'species.csv'
