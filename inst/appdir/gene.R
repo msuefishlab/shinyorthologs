@@ -26,15 +26,15 @@ geneUI <- function(id) {
 geneServer <- function(input, output, session) {
 
     # reactives
-    myIdx <- reactive({
-        scanFaIndex(open(FaFile(myFile())))
+    fastaIndexFile <- reactive({
+        scanFaIndex(open(FaFile(fastaFile())))
     })
-    myFile <- reactive({
+    fastaFile <- reactive({
         species = speciesData()
         data = geneTable()
         row = data[input$table_rows_selected, ]
         ss = row$species
-        species[species$shortName == ss, ]$file
+        paste0(baseDir, '/', species[species$shortName == ss, ]$file)
     })
     geneTable = reactive({
         data = geneData()
@@ -68,12 +68,11 @@ geneServer <- function(input, output, session) {
         species = speciesData()
         transcripts = transcriptData()
 
-        row = data[input$table_rows_selected, ]
-        ret = transcripts[transcripts$gene_id == row$id, ]
-        ss = row$species
-        file = species[species$shortName == ss, ]$file
+        file = fastaFile()
         fa = open(FaFile(file))
-        idx = myIdx()
+        idx = fastaIndexFile()
+        row = data[input$table_rows_selected, ]
+        ret = transcripts[transcripts$gene_id == row$id]
         seq = sapply(ret$transcript_id, function(n) {
             as.character(getSeq(fa, idx[seqnames(idx) == n]))
         })

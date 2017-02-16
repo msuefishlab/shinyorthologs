@@ -9,24 +9,24 @@ speciesData = reactive({
     if (!exists("speciesCsv")) {
         mstop()
     }
-    fread(speciesCsv)
+    fread(paste0(baseDir, '/', speciesCsv))
 })
 geneData = reactive({
     if (!exists("genesCsv")) {
         mstop()
     }
-    fread(genesCsv)
+    fread(paste0(baseDir, '/', genesCsv))
 })
 transcriptData = reactive({
     if (!exists("transcriptsCsv")) {
         mstop()
     }
-    fread(transcriptsCsv)
+    fread(paste0(baseDir, '/', transcriptsCsv))
 })
 orthologData = reactive({
     if (!exists("orthologsCsv")) {
         mstop()
     }
-    x = fread(orthologsCsv)
+    x = fread(paste0(baseDir, '/', orthologsCsv))
     y = acast(x, orthos~variable)
 })

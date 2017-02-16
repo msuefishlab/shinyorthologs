@@ -4,15 +4,21 @@ Shiny interface to an ortholog database
 
 ## Prerequisites
 
-R packages:
-
-- shiny
-- Rsamtools
-- data.table
-- sqldf
+    source("https://bioconductor.org/biocLite.R")
+    biocLite("msuefishlab/shinyorthologs")
 
 
-## Start server
+## Configure
 
-Open this directory in R and execute `runApp()` or on the command line `Rscript -e 'shiny::runApp()'`
+After the library is installed, it is intended to be configured and run in an R script, see [example.R](https://github.com/msuefishlab/shinyorthologs/tree/master/example.R)
 
+
+## Run
+
+Copy the example file and configure it as needed
+
+    source('example.R')
+
+## Notes
+
+See extdata folder for data files needed to configure your example config
