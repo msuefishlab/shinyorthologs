@@ -1,7 +1,6 @@
 library(sqldf)
 library(Rsamtools)
 
-
 geneUI <- function(id) {
     ns <- NS(id)
     tagList(
@@ -81,6 +80,3 @@ geneServer <- function(input, output, session) {
 
     source('common.R', local = TRUE)
 }
-
-
-

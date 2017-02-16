@@ -34,8 +34,5 @@ orthologServer <- function(input, output, session) {
 
     output$orthoTable = DT::renderDataTable(orthologTable(), selection = 'single')
 
-    source('common.R', local=TRUE)
+    source('common.R', local = TRUE)
 }
-
-
-

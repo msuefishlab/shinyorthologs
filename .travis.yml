@@ -3,5 +3,5 @@ language: r
 cache: packages
 bioc_required: true
 cache: packages
-script:
+after_script:
   Rscript -e 'lintr::lint_package()'
