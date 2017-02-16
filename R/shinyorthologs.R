@@ -9,7 +9,6 @@
 #' }
 
 #' @export
-
 shinyorthologs <- function(){
     runShinyOrthologs()
     return(invisible())
@@ -18,5 +17,5 @@ shinyorthologs <- function(){
 
 runShinyOrthologs <- function(){
     filename <-  base::system.file("appdir", package = "shinyorthologs")
-    runApp(filename, launch.browser = TRUE)
+    shiny::runApp(filename, launch.browser = TRUE)
 }
