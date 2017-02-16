@@ -17,6 +17,8 @@ Imports:
     shiny (>= 0.14.2),
     sqldf (>= 0.4),
     Rsamtools (>= 1.26.1)
+Suggests:
+    testthat
 License: MIT
 Encoding: UTF-8
 RoxygenNote: 6.0.1.9000

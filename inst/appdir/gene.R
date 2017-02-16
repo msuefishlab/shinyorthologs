@@ -16,7 +16,7 @@ geneUI <- function(id) {
 
         fluidRow(
             h2("Gene information"),
-            column(4, uiOutput(ns("row")))
+            DT::dataTableOutput(ns("row"))
         )
     )
 
@@ -57,9 +57,11 @@ geneServer <- function(input, output, session) {
         selectInput(session$ns('species'), 'Species', c('All', speciesData()$name))
     })
 
-    output$table = DT::renderDataTable(geneTable(), selection = 'single')
+    output$table = DT::renderDataTable(geneTable(), selection = 'single',
+         
+     )
 
-    output$row = renderTable({
+    output$row = DT::renderDataTable({
         if (is.null(input$table_rows_selected)) {
             return()
         }
@@ -76,7 +78,18 @@ geneServer <- function(input, output, session) {
             as.character(getSeq(fa, idx[seqnames(idx) == n]))
         })
         cbind(ret, seq)
-    })
+    },
+      options = list(columnDefs = list(list(
+                                            targets=3,
+    render = JS(
+      "function(data, type, row, meta) {",
+      "console.log('here!',arguments);return type === 'display' && data.length > 100 ?",
+      "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
+      "}"
+    )
+  )))
+  
+  )
 
     source('common.R', local = TRUE)
 }
