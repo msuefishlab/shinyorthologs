@@ -10,12 +10,12 @@ Description: shinyorthologs is a RStudio shiny application to compare orthologs 
 Depends:
     R (>= 3.3.2),
     tools (>= 3.3.2),
-    data.table (>= 1.10.0), 
+    data.table (>= 1.10.0),
     reshape2 (>= 1.4.2),
     DT (>= 0.2),
-    shiny (>= 0.14.2)
-    sqldf (>= 0.4)
-    Rsamtools (>= 3.4)
+    shiny (>= 0.14.2),
+    sqldf (>= 0.4),
+    Rsamtools (>= 1.26.1)
 License: MIT
 Encoding: UTF-8
 RoxygenNote: 6.0.1.9000
