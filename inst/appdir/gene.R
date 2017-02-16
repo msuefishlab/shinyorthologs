@@ -57,9 +57,7 @@ geneServer <- function(input, output, session) {
         selectInput(session$ns('species'), 'Species', c('All', speciesData()$name))
     })
 
-    output$table = DT::renderDataTable(geneTable(), selection = 'single',
-
-     )
+    output$table = DT::renderDataTable(geneTable(), selection = 'single')
 
     output$row = DT::renderDataTable({
         if (is.null(input$table_rows_selected)) {
@@ -86,9 +84,7 @@ geneServer <- function(input, output, session) {
             "return type === 'display' && data.length > 100 ?",
             "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
             "}"
-        )
-    )))
-
+        ))))
     )
 
     source('common.R', local = TRUE)

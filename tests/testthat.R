@@ -1,3 +1,3 @@
 library(testthat)
 
-test_check("tdmsreader")
+test_check("shinyorthologs")
