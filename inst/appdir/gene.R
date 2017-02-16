@@ -23,6 +23,11 @@ geneUI <- function(id) {
 }
 
 geneServer <- function(input, output, session) {
+    #library(RPostgreSQL)
+
+    drv <- dbDriver("PostgreSQL")
+    con <- dbConnect(drv, host=db_host, port=db_port, dbname=db_name, user=db_user, pass=db_pass)
+
 
     # reactives
     fastaIndexFile <- reactive({
@@ -32,8 +37,8 @@ geneServer <- function(input, output, session) {
         species = speciesData()
         data = geneTable()
         row = data[input$table_rows_selected, ]
-        ss = row$species
-        paste0(baseDir, '/', species[species$shortName == ss, ]$file)
+        ss = row$species_id
+        paste0(baseDir, '/', species[species$species_id == ss, ]$transcriptome_fasta)
     })
     geneTable = reactive({
         data = geneData()
@@ -42,11 +47,11 @@ geneServer <- function(input, output, session) {
             return(NULL)
         }
         if (input$species != "All") {
-            ss = species[species$name == input$species, ]$shortName
-            data = data[data$species == ss, ]
+            ss = species[species$species_name == input$species, ]$species_id
+            data = data[data$species_id == ss, ]
         }
         if (input$gene != "") {
-            query = sprintf("select * from data where id LIKE '%%%s%%'", input$gene)
+            query = sprintf("select * from data where id LIKE '%%%s%%'", input$gene_id)
             data = sqldf(query)
         }
         data
@@ -54,7 +59,7 @@ geneServer <- function(input, output, session) {
 
     # output
     output$vals <- renderUI({
-        selectInput(session$ns('species'), 'Species', c('All', speciesData()$name))
+        selectInput(session$ns('species'), 'Species', c('All', speciesData()$species_id))
     })
 
     output$table = DT::renderDataTable(geneTable(), selection = 'single')
@@ -71,7 +76,7 @@ geneServer <- function(input, output, session) {
         fa = open(FaFile(file))
         idx = fastaIndexFile()
         row = data[input$table_rows_selected, ]
-        ret = transcripts[transcripts$gene_id == row$id]
+        ret = transcripts[transcripts$gene_id == row$gene_id]
         seq = sapply(ret$transcript_id, function(n) {
             as.character(getSeq(fa, idx[seqnames(idx) == n]))
         })
@@ -79,7 +84,7 @@ geneServer <- function(input, output, session) {
     },
     options = list(columnDefs = list(list(
         targets = 3,
-        render = JS(
+        render = DT::JS(
             "function(data, type, row, meta) {",
             "return type === 'display' && data.length > 100 ?",
             "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
@@ -87,5 +92,9 @@ geneServer <- function(input, output, session) {
         ))))
     )
 
+
+    # reactives/config
     source('common.R', local = TRUE)
+
+
 }

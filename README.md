@@ -24,3 +24,5 @@ Copy the example file and configure it as needed
 ## Notes
 
 See extdata folder for data files needed to configure your example config
+
+In development, you can run `devtools::install('.'); source('example.R')`
