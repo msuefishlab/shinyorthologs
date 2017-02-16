@@ -1,5 +1,7 @@
 # shinyorthologs
 
+[![Build Status](https://travis-ci.org/msuefishlab/shinyorthologs.svg?branch=master)](https://travis-ci.org/msuefishlab/shinyorthologs)<Paste>
+
 Shiny interface to an ortholog database
 
 ## Prerequisites
