@@ -1,10 +1,8 @@
 library(shinyorthologs)
 
-db_name <- 'shinyorthologs'
-db_host <- NULL #'localhost'
-db_port <- '5432'
-db_user <- 'postgres'
-db_pass <- NULL #pass
+#db_name <- 'shinyorthologs'
+#db_port <- '5432'
+#db_user <- 'postgres'
 
 baseDir <- '~/testdata'
 genesCsv <- 'genes.csv'

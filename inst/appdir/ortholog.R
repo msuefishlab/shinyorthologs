@@ -46,7 +46,7 @@ orthologServer <- function(input, output, session) {
         row = orthologs[input$table_rows_selected, ]
 
         for(i in 2:ncol(row)) {
-            print(row[,i])
+            print(row[, i])
         }
     })
 
