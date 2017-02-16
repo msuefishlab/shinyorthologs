@@ -58,7 +58,7 @@ geneServer <- function(input, output, session) {
     })
 
     output$table = DT::renderDataTable(geneTable(), selection = 'single',
-         
+
      )
 
     output$row = DT::renderDataTable({
@@ -79,17 +79,17 @@ geneServer <- function(input, output, session) {
         })
         cbind(ret, seq)
     },
-      options = list(columnDefs = list(list(
-                                            targets=3,
-    render = JS(
-      "function(data, type, row, meta) {",
-      "console.log('here!',arguments);return type === 'display' && data.length > 100 ?",
-      "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
-      "}"
+    options = list(columnDefs = list(list(
+        targets = 3,
+        render = JS(
+            "function(data, type, row, meta) {",
+            "return type === 'display' && data.length > 100 ?",
+            "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
+            "}"
+        )
+    )))
+
     )
-  )))
-  
-  )
 
     source('common.R', local = TRUE)
 }
