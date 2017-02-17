@@ -1,4 +1,3 @@
-library(reshape2)
 library(data.table)
 library(RPostgreSQL)
 
@@ -47,7 +46,6 @@ transcriptData = reactive({
 
     query <- sprintf("SELECT * from transcripts")
     dbGetQuery(con, query)
-    fread(paste0(baseDir, '/', transcriptsCsv))
 })
 orthologData = reactive({
     con = do.call(dbConnect, args)

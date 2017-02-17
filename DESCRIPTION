@@ -12,12 +12,12 @@ Depends:
 Imports:
     tools (>= 3.3.2),
     data.table (>= 1.10.0),
-    reshape2 (>= 1.4.2),
     DT (>= 0.2),
     shiny (>= 0.14.2),
     Rsamtools (>= 1.26.1),
     RPostgreSQL (>= 0.4),
-    msa (>=	1.6.0)
+    msa (>=	1.6.0),
+    pheatmap (>= 1.0.8)
 Suggests:
     testthat
 License: MIT
