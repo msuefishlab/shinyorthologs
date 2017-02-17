@@ -1,7 +1,6 @@
 library(reshape2)
 library(data.table)
 library(RPostgreSQL)
-library(sqldf)
 
 mstop = function() {
     stop(paste("'config' variables are missing. This Shiny App is intended to be run",

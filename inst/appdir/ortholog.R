@@ -1,5 +1,5 @@
-library(sqldf)
 library(Rsamtools)
+library(msa)
 
 
 orthologUI <- function(id) {
@@ -17,6 +17,11 @@ orthologUI <- function(id) {
         fluidRow(
             h2("Ortholog information"),
             DT::dataTableOutput(ns("row"))
+        ),
+
+        fluidRow(
+            h2("MSA"),
+            verbatimTextOutput(ns("msa"))
         )
     )
 
@@ -69,6 +74,37 @@ orthologServer <- function(input, output, session) {
             "}"
         ))))
     )
+
+
+    output$msa = renderPrint({
+        if (is.null(input$orthoTable_rows_selected)) {
+            return()
+        }
+        con = do.call(dbConnect, args)
+        on.exit(dbDisconnect(con))
+
+
+        orthologs = orthologData()
+        ids = orthologs[input$orthoTable_rows_selected, 2:ncol(orthologs)]
+        ids = ids[!is.na(ids)]
+        formatted_ids = sapply(ids, function(e) { paste0("'", e, "'") })
+        formatted_list = do.call(paste, c(as.list(formatted_ids), sep=","))
+
+        query = sprintf("SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s", paste0('(', formatted_list, ')'))
+        ret = dbGetQuery(con, query)
+        sequences = apply(ret, 1, function(row) {
+            file = paste0(baseDir, '/', row[4])
+            fa = open(FaFile(file))
+            idx = scanFaIndex(fa)
+            as.character(getSeq(fa, idx[seqnames(idx) == row[3]]))
+        })
+        sequences = DNAStringSet(sequences)
+        names(sequences) = paste(ret[,3], ret[,2])
+        alignment = msa(sequences, type = "dna")
+        options(width = 160)
+        print(alignment, show = "complete")
+
+    })
 
     source('common.R', local = TRUE)
 }

@@ -15,9 +15,9 @@ Imports:
     reshape2 (>= 1.4.2),
     DT (>= 0.2),
     shiny (>= 0.14.2),
-    sqldf (>= 0.4),
     Rsamtools (>= 1.26.1),
-    RPostgreSQL (>= 0.4)
+    RPostgreSQL (>= 0.4),
+    msa (>=	1.6.0)
 Suggests:
     testthat
 License: MIT

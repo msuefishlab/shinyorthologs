@@ -1,4 +1,3 @@
-library(sqldf)
 library(Rsamtools)
 
 geneUI = function(id) {
