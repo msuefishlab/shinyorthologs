@@ -1,3 +1,4 @@
+CREATE EXTENSION tablefunc;
 CREATE TABLE genes (GENE_ID varchar(255), SPECIES_ID varchar(255));
 CREATE TABLE orthologs (ORTHOLOG_ID varchar(255), SPECIES_ID varchar(255), GENE_ID varchar(255));
 CREATE TABLE transcripts (GENE_ID varchar(255), TRANSCRIPT_ID varchar(255));

@@ -6,7 +6,7 @@ Shiny interface to an ortholog database
 
 ## Prerequisites
 
-- PostgreSQL 9.6
+- PostgreSQL
 - R
 
 
@@ -22,18 +22,6 @@ Then configure data locations in [create.sql](https://github.com/msuefishlab/shi
 
 Load the data into the database with `psql -d shinyorthologs < create.sql` or similar
 
-
-## Configure
-
-After the data is loaded, configure database parameters with R script, see [example.R](https://github.com/msuefishlab/shinyorthologs/tree/master/example.R)
-
-Usable parameters include the following.
-
-    db_user
-    db_pass
-    db_port
-    db_name
-    db_host
 
 ## Usage
 

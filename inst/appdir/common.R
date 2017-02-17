@@ -1,6 +1,7 @@
 library(reshape2)
 library(data.table)
 library(RPostgreSQL)
+library(sqldf)
 
 mstop = function() {
     stop(paste("'config' variables are missing. This Shiny App is intended to be run",
@@ -52,9 +53,15 @@ transcriptData = reactive({
 orthologData = reactive({
     con = do.call(dbConnect, args)
     on.exit(dbDisconnect(con))
-
-    query <- sprintf("select gene_id, species_id, ortholog_id from orthologs group by gene_id, ortholog_id, species_id order by ortholog_id \\crosstabview ortholog_id species_id gene_id")
-    x = dbGetQuery(con, query)
+    df = dbGetQuery(con, "select species_id from species")
+    query = sprintf("SELECT * FROM crosstab('select ortholog_id, species_id, gene_id from orthologs order by 1,2', 'select species_id from species')")
+    
+    subquery = ''
+    for(species in df$species_id) {
+        subquery = paste(subquery, ",", species, "varchar(255)")
+    }
+    query = sprintf("%s AS ct(ortholog_id varchar(255) %s)", query, subquery)
+    dbGetQuery(con, query)
 })
 
 # returns string w/o leading whitespace
@@ -65,3 +72,7 @@ trim.trailing <- function (x) sub("\\s+$", "", x)
 
 # returns string w/o leading or trailing whitespace
 trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+
+
+# view pivot table
+# "select gene_id, species_id, ortholog_id from orthologs group by gene_id, ortholog_id, species_id order by ortholog_id \\crosstabview ortholog_id species_id gene_id")

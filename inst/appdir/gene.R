@@ -52,7 +52,6 @@ geneServer = function(input, output, session) {
         }
         dbGetQuery(con, query)
     })
-    
     # output
     output$vals = renderUI({
         selectInput(session$ns('species'), 'Species', c('All', speciesData()$species_name))
