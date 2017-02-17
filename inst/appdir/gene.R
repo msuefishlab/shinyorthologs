@@ -43,39 +43,38 @@ geneServer <- function(input, output, session) {
 		list(password = db_pass)[use_pass],
 		list(port = db_port)[use_port]
 	)
-    do.call(dbConnect, args)
 
     # reactives
     fastaIndexFile <- reactive({
         scanFaIndex(open(FaFile(fastaFile())))
     })
     fastaFile <- reactive({
-        species = speciesData()
+        con = do.call(dbConnect, args)
+        on.exit(dbDisconnect(con))
         data = geneTable()
         row = data[input$table_rows_selected, ]
-        ss = row$species_id
-        paste0(baseDir, '/', species[species$species_id == ss, ]$transcriptome_fasta)
+        query <- sprintf("SELECT transcriptome_fasta from species where species_id = '%s'", row$species_id)
+        df <- dbGetQuery(con, query)
+        paste0(baseDir, '/', df)
     })
     geneTable = reactive({
-        data = geneData()
-        species = speciesData()
         if (is.null(input$species)) {
             return(NULL)
         }
+        con = do.call(dbConnect, args)
+        on.exit(dbDisconnect(con))
+        
         if (input$species != "All") {
-            ss = species[species$species_name == input$species, ]$species_id
-            data = data[data$species_id == ss, ]
+            query <- sprintf("SELECT * from genes join species s on species_id == s.species_id where s.species_name = '%s'", input$species)
+        } else {
+            query <- sprintf("SELECT * from genes")
         }
-        if (input$gene != "") {
-            query = sprintf("select * from data where id LIKE '%%%s%%'", input$gene_id)
-            data = sqldf(query)
-        }
-        data
+        dbGetQuery(con, query)
     })
-
+    
     # output
     output$vals <- renderUI({
-        selectInput(session$ns('species'), 'Species', c('All', speciesData()$species_id))
+        selectInput(session$ns('species'), 'Species', c('All', speciesData()$species_name))
     })
 
     output$table = DT::renderDataTable(geneTable(), selection = 'single')
