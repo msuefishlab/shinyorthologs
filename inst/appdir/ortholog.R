@@ -24,11 +24,13 @@ orthologUI <- function(id) {
 
 orthologServer <- function(input, output, session) {
     output$vals <- renderUI({
+        print(speciesData())
         selectInput(session$ns('test'), 'Species', c('All', speciesData()$species_name))
     })
 
     orthologTable = reactive({
         data = orthologData()
+        print(head(data))
         data
     })
 

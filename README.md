@@ -6,22 +6,28 @@ Shiny interface to an ortholog database
 
 ## Prerequisites
 
+- PostgreSQL 9.6
+- R
+
+
+## Install
+
     source("https://bioconductor.org/biocLite.R")
     biocLite("msuefishlab/shinyorthologs")
 
 
-## Configure
-
-After the library is installed, it is intended to be configured and run in an R script, see [example.R](https://github.com/msuefishlab/shinyorthologs/tree/master/example.R)
-
-
 ## Load data
 
-Run the create.sql
+Then configure data locations in [create.sql](https://github.com/msuefishlab/shinyorthologs/tree/master/create.sql)
 
-Configure database parameters in example.R
+Load the data into the database with `psql -d shinyorthologs < create.sql` or similar
 
-Usable parameters include the following. Parameters that are not defined in example.R use defaults, such as localhost, username default to postgres, password default to no password, etc.
+
+## Configure
+
+After the data is loaded, configure database parameters with R script, see [example.R](https://github.com/msuefishlab/shinyorthologs/tree/master/example.R)
+
+Usable parameters include the following.
 
     db_user
     db_pass
@@ -29,14 +35,15 @@ Usable parameters include the following. Parameters that are not defined in exam
     db_name
     db_host
 
-## Run
+## Usage
 
-Copy the example file and configure it as needed
+The library is intended to be installed via bioconductor or a similar package manager, so starting the server involves including the library and calling the `shinyorthologs()` function
 
-    source('example.R')
+    library(shinyorthologs)
+    shinyorthologs()
+
+The example.R script includes examples of configuring the environment to run this, with database parameters like `db_user, db_pass, db_port, db_name, db_host`
 
 ## Notes
-
-See extdata folder for data files needed to configure your example config
 
 In development, you can run `devtools::install('.'); source('example.R')`
