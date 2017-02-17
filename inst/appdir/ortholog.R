@@ -24,7 +24,7 @@ orthologUI <- function(id) {
 
 orthologServer <- function(input, output, session) {
     output$vals <- renderUI({
-        selectInput(session$ns('test'), 'Species', c('All', speciesData()$name))
+        selectInput(session$ns('test'), 'Species', c('All', speciesData()$species_name))
     })
 
     orthologTable = reactive({
@@ -44,8 +44,9 @@ orthologServer <- function(input, output, session) {
         transcripts = transcriptData()
 
         row = orthologs[input$table_rows_selected, ]
+        print(row)
 
-        for(i in 2:ncol(row)) {
+        for (i in 2:ncol(row)) {
             print(row[, i])
         }
     })

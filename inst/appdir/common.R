@@ -28,5 +28,5 @@ orthologData = reactive({
         mstop()
     }
     x = fread(paste0(baseDir, '/', orthologsCsv))
-    y = acast(x, orthos~variable)
+    y = acast(x, ortholog_id~species_id)
 })
