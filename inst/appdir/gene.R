@@ -34,7 +34,7 @@ geneServer = function(input, output, session) {
         on.exit(dbDisconnect(con))
         data = geneTable()
         row = data[input$table_rows_selected, ]
-        query = sprintf("SELECT transcriptome_fasta from species where species_id = '%s'", row$species_id)
+        query = sprintf("SELECT transcriptome_fasta from species where species_name = '%s'", row$species_name)
         df = dbGetQuery(con, query)
         paste0(baseDir, '/', df)
     })

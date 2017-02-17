@@ -24,13 +24,11 @@ orthologUI <- function(id) {
 
 orthologServer <- function(input, output, session) {
     output$vals <- renderUI({
-        print(speciesData())
         selectInput(session$ns('test'), 'Species', c('All', speciesData()$species_name))
     })
 
     orthologTable = reactive({
         data = orthologData()
-        print(head(data))
         data
     })
 
@@ -38,6 +36,7 @@ orthologServer <- function(input, output, session) {
 
 
     output$row = DT::renderDataTable({
+        print(input$table_rows_selected)
         if (is.null(input$table_rows_selected)) {
             return()
         }
@@ -47,10 +46,6 @@ orthologServer <- function(input, output, session) {
 
         row = orthologs[input$table_rows_selected, ]
         print(row)
-
-        for (i in 2:ncol(row)) {
-            print(row[, i])
-        }
     })
 
     source('common.R', local = TRUE)
