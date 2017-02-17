@@ -7,11 +7,12 @@ ui <- fluidPage(
     titlePanel('webcompare'),
 
     tabsetPanel(id = 'inTabset',
-        tabPanel('Genes',
-            geneUI('gene')
-        ),
+        
         tabPanel('Orthologs',
             orthologUI('orthologs')
+        ),
+        tabPanel('Genes',
+            geneUI('gene')
         )
     )
 )
