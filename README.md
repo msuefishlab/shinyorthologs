@@ -12,8 +12,9 @@ Shiny interface to an ortholog database
 
 ## Install
 
-    source("https://bioconductor.org/biocLite.R")
-    biocLite("msuefishlab/shinyorthologs")
+    install.packages('devtools')
+    source('https://bioconductor.org/biocLite.R')
+    biocLite('msuefishlab/shinyorthologs')
 
 
 ## Load data
@@ -34,4 +35,7 @@ The example.R script includes examples of configuring the environment to run thi
 
 ## Notes
 
-In development, you can run `devtools::install('.'); source('example.R')`
+In development, you can run
+
+    devtools::install()
+    shinyorthologs()
