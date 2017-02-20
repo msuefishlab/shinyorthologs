@@ -44,6 +44,7 @@ searchServer = function(input, output, session) {
         }
     )
     shiny::observeEvent(input$getHeatmap, {
+        print('wtf')
         shiny::updateTabsetPanel(session, "inTabset", selected = "Comparisons")
     })
 
