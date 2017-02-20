@@ -43,7 +43,7 @@ geneServer = function(input, output, session) {
         }
         con = do.call(dbConnect, args)
         on.exit(dbDisconnect(con))
-        
+
         if (input$species != "All") {
             query = sprintf("SELECT gene_id, s.species_name from genes g join species s on g.species_id = s.species_id where s.species_name = '%s'", input$species)
         } else {
@@ -71,7 +71,7 @@ geneServer = function(input, output, session) {
 
         con = do.call(dbConnect, args)
         on.exit(dbDisconnect(con))
-        
+
         row = data[input$table_rows_selected, ]
         query = sprintf("SELECT * from transcripts where gene_id = '%s'", row$gene_id)
         ret = dbGetQuery(con, query)
@@ -90,9 +90,5 @@ geneServer = function(input, output, session) {
         ))))
     )
 
-
-    # reactives/config
     source('common.R', local = TRUE)
-
-
 }

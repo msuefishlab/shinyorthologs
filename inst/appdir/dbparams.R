@@ -5,11 +5,11 @@ use_port = exists('db_port')
 use_user = exists('db_user')
 use_pass = exists('db_pass')
 use_host = exists('db_host')
-if(!exists('db_port')) db_port=NULL
-if(!exists('db_host')) db_host=NULL
-if(!exists('db_name')) db_name=NULL
-if(!exists('db_pass')) db_pass=NULL
-if(!exists('db_user')) db_user=NULL
+if (!exists('db_port')) db_port = NULL
+if (!exists('db_host')) db_host = NULL
+if (!exists('db_name')) db_name = NULL
+if (!exists('db_pass')) db_pass = NULL
+if (!exists('db_user')) db_user = NULL
 args = c(
     PostgreSQL(),
     list(dbname = db_name)[use_name],

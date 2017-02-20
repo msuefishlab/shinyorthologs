@@ -33,6 +33,5 @@ orthologData = reactive({
     on.exit(dbDisconnect(con))
     query = sprintf("SELECT $$SELECT * FROM crosstab('SELECT ortholog_id, species_id, gene_id FROM orthologs ORDER  BY 1, 2') AS ct (ortholog_id varchar(255), $$ || string_agg(quote_ident(species_id), ' varchar(255), ' ORDER BY species_id) || ' varchar(255))' FROM species")
     ret = dbGetQuery(con, query)
-    dbGetQuery(con, ret[1,])
+    dbGetQuery(con, ret[1, ])
 })
-

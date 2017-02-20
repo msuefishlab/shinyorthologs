@@ -47,8 +47,10 @@ orthologServer <- function(input, output, session) {
         orthologs = orthologData()
         ids = orthologs[input$orthoTable_rows_selected, 2:ncol(orthologs)]
         ids = ids[!is.na(ids)]
-        formatted_ids = sapply(ids, function(e) { paste0("'", e, "'") })
-        formatted_list = do.call(paste, c(as.list(formatted_ids), sep=","))
+        formatted_ids = sapply(ids, function(e) {
+            paste0("'", e, "'")
+        })
+        formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
 
         query = sprintf('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s', paste0('(', formatted_list, ')'))
         ret = dbGetQuery(con, query)
@@ -83,8 +85,10 @@ orthologServer <- function(input, output, session) {
         orthologs = orthologData()
         ids = orthologs[input$orthoTable_rows_selected, 2:ncol(orthologs)]
         ids = ids[!is.na(ids)]
-        formatted_ids = sapply(ids, function(e) { paste0("'", e, "'") })
-        formatted_list = do.call(paste, c(as.list(formatted_ids), sep=","))
+        formatted_ids = sapply(ids, function(e) {
+            paste0("'", e, "'")
+        })
+        formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
 
         query = sprintf('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s', paste0('(', formatted_list, ')'))
         ret = dbGetQuery(con, query)
@@ -95,12 +99,12 @@ orthologServer <- function(input, output, session) {
             as.character(getSeq(fa, idx[seqnames(idx) == row[3]]))
         })
         sequences = DNAStringSet(sequences)
-        names(sequences) = paste(ret[,3], ret[,2])
+        names(sequences) = paste(ret[, 3], ret[, 2])
         alignment = msa(sequences, type = 'dna')
         options(width = 160)
         print(alignment)
     })
-    
+
 
     output$heatmap = renderPlot({
         if (is.null(input$orthoTable_rows_selected)) {
@@ -112,8 +116,10 @@ orthologServer <- function(input, output, session) {
         orthologs = orthologData()
         ids = orthologs[input$orthoTable_rows_selected, 2:ncol(orthologs)]
         ids = ids[!is.na(ids)]
-        formatted_ids = sapply(ids, function(e) { paste0("'", e, "'") })
-        formatted_list = do.call(paste, c(as.list(formatted_ids), sep=","))
+        formatted_ids = sapply(ids, function(e) {
+            paste0("'", e, "'")
+        })
+        formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
 
         query = sprintf("SELECT g.gene_id, g.species_id, s.expression_file, s.species_name from genes g join species s on g.species_id = s.species_id where g.gene_id in %s", paste0('(', formatted_list, ')'))
         ret = dbGetQuery(con, query)
@@ -121,13 +127,13 @@ orthologServer <- function(input, output, session) {
         species = c()
         geneAndTissue = c()
 
-        for(i in 1:nrow(ret)) {
+        for (i in 1:nrow(ret)) {
             row = ret[i, ]
-            if(!is.na(row[3])) {
+            if (!is.na(row[3])) {
                 expressionFile = paste0(baseDir, '/', row[3])
                 species = c(species, row[4])
                 expressionData = expressionFiles[[expressionFile]]
-                geneExpressionData = expressionData[expressionData[,1] == as.character(row[1]), -1]
+                geneExpressionData = expressionData[expressionData[, 1] == as.character(row[1]), -1]
                 geneAndTissue = c(geneAndTissue, paste(row[1], names(geneExpressionData)))
                 heatmapData[[as.character(row[1])]] = geneExpressionData
             }
@@ -136,8 +142,8 @@ orthologServer <- function(input, output, session) {
         nrow = length(heatmapData)
         h = matrix(ncol = ncol, nrow = nrow)
         counter = 1
-        index = 1 
-        for(i in names(heatmapData)) {
+        index = 1
+        for (i in names(heatmapData)) {
             curr = heatmapData[[i]]
             end = counter + length(curr) - 1
             h[index, counter:end] = as.numeric(heatmapData[[i]])

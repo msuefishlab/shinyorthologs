@@ -36,21 +36,21 @@ initExpressionFiles <- function() {
 initExpressionFiles()
 
 ui <- function(request) {
-	fluidPage(
-		titlePanel('webcompare'),
+    fluidPage(
+        titlePanel('webcompare'),
 
-		tabsetPanel(id = 'inTabset',
-			tabPanel('Comparisons',
-				comparisonsUI('comparisons')
-			),
-			tabPanel('Orthologs',
-				orthologUI('orthologs')
-			),
-			tabPanel('Genes',
-				geneUI('gene')
-			)
-		)
-	)
+        tabsetPanel(id = 'inTabset',
+            tabPanel('Comparisons',
+                comparisonsUI('comparisons')
+            ),
+            tabPanel('Orthologs',
+                orthologUI('orthologs')
+            ),
+            tabPanel('Genes',
+                geneUI('gene')
+            )
+        )
+    )
 }
 
 server <- function(input, output, session) {
@@ -64,7 +64,7 @@ server <- function(input, output, session) {
             updateTabsetPanel(session, "inTabset", selected = query[['tab']])
         }
     })
-	enableBookmarking("url")
+    enableBookmarking("url")
 }
 
 
