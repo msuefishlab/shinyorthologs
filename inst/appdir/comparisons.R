@@ -1,22 +1,20 @@
 library(pheatmap)
+library(reshape2)
 
 comparisonsUI <- function(id) {
     ns <- NS(id)
     tagList(
         fluidRow(
-            textAreaInput(ns("genes"), "Enter a list of orthoIDs")
+            textAreaInput(ns("genes"), "Enter a list of orthoIDs", rows=10, cols=200)
         ),
-
-        fluidRow(
-            h2('Heatmaps'),
-            plotOutput(ns('heatmap'))
-        )
+        h2('Heatmaps'),
+        p('Note: the species where it does not have an ortholog identified are given a value of 0, which may bias the heatmap. Therefore, use complete ortholog groups'),
+        plotOutput(ns('heatmap'))
     )
 }
 
 comparisonsServer <- function(input, output, session) {
     output$heatmap = renderPlot({
-        print(input$genes)
         if(is.null(input$genes)) {
             return()
         }
@@ -36,44 +34,37 @@ comparisonsServer <- function(input, output, session) {
         query = sprintf("SELECT $$SELECT * FROM crosstab('SELECT ortholog_id, species_id, gene_id FROM orthologs WHERE ortholog_id IN %s ORDER  BY 1, 2') AS ct (ortholog_id varchar(255), $$ || string_agg(quote_ident(species_id), ' varchar(255), ' ORDER BY species_id) || ' varchar(255))' FROM species", mylist)
         ret = dbGetQuery(con, query)
         ret2 = dbGetQuery(con, ret[1,])
-        print("RET2")
-        print(ret2)
         ids = ret2[,1]
-        print("IDS")
-        print(ids)
 
         ids = ids[!is.na(ids)]
         formatted_ids = sapply(ids, function(e) { paste0("'", e, "'") })
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep=","))
-        print("FORMAMMTT")
-        print(formatted_list)
 
-        query = sprintf("SELECT g.gene_id, g.species_id, s.expression_file, s.species_name from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id where o.ortholog_id in %s", paste0('(', formatted_list, ')'))
+        query = sprintf("SELECT g.gene_id, g.species_id, s.expression_file, s.species_name, o.ortholog_id from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id where o.ortholog_id in %s", paste0('(', formatted_list, ')'))
         ret = dbGetQuery(con, query)
         heatmapData = list()
         species = c()
         geneAndTissue = c()
-        print("RET333333")
-        print(ret)
+
+        dat = data.frame(ID=character(0), variable=character(0), value=numeric(0))
 
         for(i in 1:nrow(ret)) {
             row = ret[i, ]
-            print("ROW")
-            print(row)
             if(!is.na(row[3])) {
                 species = c(species, row[4])
                 expressionData = expressionFiles[[as.character(row[3])]]
-                print('IDS')
-                print(ids)
-                geneExpressionData = expressionData[expressionData[,1] == as.character(ids, -1),]
-                print('geneExpressionData')
-                print(geneExpressionData)
+                geneExpressionData = expressionData[expressionData[,1] == as.character(row[1]),]
+                m = melt(geneExpressionData)
+                m[,1] = as.character(row[5])
+                m[,2] = paste(as.character(row[4]), m[,2])
+                names(m) <- c('ID','variable','value')
+                dat = rbind(dat, m)
             }
         }
-        
 
-
-        plot(1:10)
+        h=acast(dat, ID~variable)
+        h[is.na(h)] <- 0
+        pheatmap(log(h+1), width = 1000, height = 600)
 
 #        orthologs = orthologData()
 #        ids = orthologs[input$orthoTable_rows_selected, 2:ncol(orthologs)]

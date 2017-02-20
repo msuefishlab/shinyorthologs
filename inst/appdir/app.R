@@ -5,7 +5,7 @@ source('ortholog.R')
 source('comparisons.R')
 source('pheatmap.R')
 
-fastaIndexes = list()
+fastaIndexes <<- list()
 initFastaIndexes <- function() {
     source('dbparams.R', local = TRUE)
     con = do.call(dbConnect, args)
@@ -20,13 +20,12 @@ initFastaIndexes <- function() {
 }
 initFastaIndexes()
 
-expressionFiles = list()
+expressionFiles <<- list()
 initExpressionFiles <- function() {
     source('dbparams.R', local = TRUE)
     con = do.call(dbConnect, args)
     query = sprintf('SELECT expression_file from species')
     ret = dbGetQuery(con, query)
-    print(ret$expression_file)
     files = ret$expression_file[!is.na(ret$expression_file)]
     expressionFiles <<- lapply(files, function(expr) {
         read.csv(paste0(baseDir, '/', expr))
