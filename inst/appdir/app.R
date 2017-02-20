@@ -3,6 +3,7 @@ library(shiny)
 source('gene.R')
 source('ortholog.R')
 source('comparisons.R')
+source('edit.R')
 source('pheatmap.R')
 
 fastaIndexes <<- list()
@@ -48,6 +49,9 @@ ui <- function(request) {
             ),
             tabPanel('Genes',
                 geneUI('gene')
+            ),
+            tabPanel('Edit',
+                editUI('edit')
             )
         )
     )
@@ -57,6 +61,7 @@ server <- function(input, output, session) {
     callModule(geneServer, 'gene')
     callModule(orthologServer, 'orthologs')
     callModule(comparisonsServer, 'comparisons')
+    callModule(editServer, 'edit')
 
     observe({
         query <- parseQueryString(session$clientData$url_search)
