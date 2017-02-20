@@ -39,8 +39,7 @@ orthologUI <- function(id) {
 
         fluidRow(
             h2('MSA'),
-            downloadButton(ns('pdflink')),
-            plotOutput(ns('myplot'))
+            uiOutput(ns('myplot'))
         )
     )
 }
@@ -117,17 +116,10 @@ orthologServer <- function(input, output, session) {
         names(sequences) = paste(ret[,3], ret[,2])
         alignment = msa(sequences, type = 'dna')
         options(width = 160)
-        msaPrettyPrint(alignment)
+        msaPrettyPrint(alignment, output="pdf",file="out.pdf")
+        tags$iframe(style="height:600px; width:100%", src="out.pdf")
     })
     
-
-    output$pdflink <- downloadHandler(
-        filename <- 'myplot.pdf',
-        content <- function(file) {
-            file.copy('plot.pdf', file)
-        }
-    )
-
 
     output$heatmap = renderPlot({
         if (is.null(input$orthoTable_rows_selected)) {
