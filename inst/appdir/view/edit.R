@@ -17,8 +17,7 @@ editUI = function(id) {
 
 editServer = function(input, output, session) {
 
-    dataTable <- shiny::reactive({
-        print(isolate(values$x))
+    dataTable = shiny::reactive({
         con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
@@ -27,29 +26,27 @@ editServer = function(input, output, session) {
         RPostgreSQL::dbGetQuery(con, query)
     })
 
-    output$searchTable <- DT::renderDataTable({
-
-        data <- dataTable()
-        data
+    output$searchTable = DT::renderDataTable({
+        dataTable()
     })
 
 
     observeEvent(input$searchTable_rows_selected, {
-        data <- dataTable()
-        ret <- data[input$searchTable_rows_selected, ]
+        data = dataTable()
+        ret = data[input$searchTable_rows_selected, ]
         updateTextInput(session, "name", value = as.character(ret[1]))
         updateTextInput(session, "symbol", value = as.character(ret[2]))
         updateTextInput(session, "ortholog", value = as.character(ret[3]))
         updateTextInput(session, "evidence", value = as.character(ret[4]))
     })
 
-    values <- reactiveValues(x="someValue")
+    values = reactiveValues(x="someValue")
 
     shiny::observeEvent(input$submit, {
         con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
-        data <- dataTable()
-        ret <- data[input$searchTable_rows_selected, ]
+        data = dataTable()
+        ret = data[input$searchTable_rows_selected, ]
         name = as.character(ret[1])
 
         query = sprintf("UPDATE genes SET symbol='%s' WHERE gene_id='%s'", input$symbol, name)

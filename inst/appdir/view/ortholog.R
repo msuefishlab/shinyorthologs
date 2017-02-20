@@ -1,5 +1,5 @@
-orthologUI <- function(id) {
-    ns <- shiny::NS(id)
+orthologUI = function(id) {
+    ns = shiny::NS(id)
     shiny::tagList(
         shiny::fluidRow(
             DT::dataTableOutput(ns('orthoTable'))
@@ -22,7 +22,7 @@ orthologUI <- function(id) {
     )
 }
 
-orthologServer <- function(input, output, session) {
+orthologServer = function(input, output, session) {
 
     orthologTable = shiny::reactive({
         data = orthologData()
@@ -54,7 +54,7 @@ orthologServer <- function(input, output, session) {
             file = paste0(baseDir, '/', row[4])
             fa = open(Rsamtools::FaFile(file))
             idx = fastaIndexes[[row[4]]]
-            fasta = as.character(Rsamtools::getSeq(fa, idx[Rsamtools::seqnames(idx) == row[3]]))
+            fasta = as.character(Rsamtools::getSeq(fa, idx[GenomicRanges::seqnames(idx) == row[3]]))
             data.frame(gene_id = row[1], species_id = row[2], transcript_id = row[3], sequence = fasta)
         })
         do.call(rbind, rows)
@@ -148,8 +148,8 @@ orthologServer <- function(input, output, session) {
         }
 
 
-        rownames(h) <- species
-        colnames(h) <- geneAndTissue
+        rownames(h) = species
+        colnames(h) = geneAndTissue
         pheatmap::pheatmap(log(h + 1), cluster_rows = F, cluster_cols = F)
     })
 
