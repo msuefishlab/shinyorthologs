@@ -2,8 +2,9 @@ comparisonsUI <- function(id) {
     ns <- shiny::NS(id)
     shiny::tagList(
         shiny::fluidRow(
-            shiny::textAreaInput(ns("genes"), "Enter a list of orthoIDs", rows = 10, cols = 200)
+            shiny::textAreaInput(ns("genes"), "Enter a list of orthoIDs", rows = 10, width = "600px")
         ),
+        shiny::actionButton(ns('example'), 'Example'),
         shiny::h2('Heatmaps'),
         shiny::p('Note: the species where it does not have an ortholog identified are given a value of 0, which may bias the heatmap. Therefore, use complete ortholog groups'),
         shiny::plotOutput(ns('heatmap'), height = "900px")
@@ -61,6 +62,10 @@ comparisonsServer <- function(input, output, session) {
         h = reshape2::acast(dat, ID~variable)
         h[is.na(h)] = 0
         pheatmap::pheatmap(log(h + 1))
+    })
+
+    shiny::observeEvent(input$example, {
+        shiny::updateTextAreaInput(session, 'genes', value = 'ORTHO:00000006\nORTHO:00000008\nORTHO:00000010\nORTHO:00000014\nORTHO:00000015\nORTHO:00000016\nORTHO:00000018\nORTHO:00000019\nORTHO:00000011\nORTHO:00000012\nORTHO:00000013')
     })
 
     source('common.R', local = TRUE)

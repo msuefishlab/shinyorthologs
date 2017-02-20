@@ -37,16 +37,8 @@ searchServer = function(input, output, session) {
     })
 
     output$table = DT::renderDataTable(searchTable(), options = list(bFilter = 0))
-
-    shiny::observeEvent(input$submit, {
-        if (!is.null(input$table_rows_selected)) {
-            print(input$table_rows_selected)
-            print(searchTable()[input$table_rows_selected, ])
-        }
-    })
-
     output$downloadData <- shiny::downloadHandler(
-        filename = function() { 'search.csv' },
+        filename = 'search.csv',
         content = function(file) {
             write.csv(searchTable(), file)
         }
@@ -58,4 +50,3 @@ searchServer = function(input, output, session) {
     source('common.R', local = TRUE)
     source('dbparams.R', local = TRUE)
 }
-  
