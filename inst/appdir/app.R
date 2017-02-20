@@ -1,7 +1,8 @@
-source('gene.R')
-source('ortholog.R')
-source('comparisons.R')
-source('edit.R')
+source('view/search.R')
+source('view/ortholog.R')
+source('view/comparisons.R')
+source('view/edit.R')
+source('view/help.R')
 source('pheatmap.R')
 
 fastaIndexes <<- list()
@@ -39,24 +40,17 @@ ui <- function(request) {
         shiny::titlePanel('webcompare'),
 
         shiny::tabsetPanel(id = 'inTabset',
-            shiny::tabPanel('Comparisons',
-                comparisonsUI('comparisons')
-            ),
-            shiny::tabPanel('Orthologs',
-                orthologUI('orthologs')
-            ),
-            shiny::tabPanel('Genes',
-                geneUI('gene')
-            ),
-            shiny::tabPanel('Edit',
-                editUI('edit')
-            )
+            shiny::tabPanel('Comparisons', comparisonsUI('comparisons')),
+            shiny::tabPanel('Orthologs', orthologUI('orthologs')),
+            shiny::tabPanel('Search', searchUI('search')),
+            shiny::tabPanel('Edit', editUI('edit')),
+            shiny::tabPanel('Help', helpUI('help'))
         )
     )
 }
 
 server <- function(input, output, session) {
-    shiny::callModule(geneServer, 'gene')
+    shiny::callModule(searchServer, 'search')
     shiny::callModule(orthologServer, 'orthologs')
     shiny::callModule(comparisonsServer, 'comparisons')
     shiny::callModule(editServer, 'edit')

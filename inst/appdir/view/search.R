@@ -1,4 +1,4 @@
-geneUI = function(id) {
+searchUI = function(id) {
     ns = shiny::NS(id)
     shiny::tagList(
         shiny::h1("Gene/Ortholog listing"),
@@ -18,10 +18,10 @@ geneUI = function(id) {
     )
 }
 
-geneServer = function(input, output, session) {
+searchServer = function(input, output, session) {
 
 
-    geneTable = shiny::reactive({
+    searchTable = shiny::reactive({
         con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
@@ -36,19 +36,19 @@ geneServer = function(input, output, session) {
         RPostgreSQL::dbGetQuery(con, query)
     })
 
-    output$table = DT::renderDataTable(geneTable(), options = list(bFilter = 0))
+    output$table = DT::renderDataTable(searchTable(), options = list(bFilter = 0))
 
     shiny::observeEvent(input$submit, {
         if (!is.null(input$table_rows_selected)) {
             print(input$table_rows_selected)
-            print(geneTable()[input$table_rows_selected, ])
+            print(searchTable()[input$table_rows_selected, ])
         }
     })
 
     output$downloadData <- shiny::downloadHandler(
-        filename = function() { 'genes.csv' },
+        filename = function() { 'search.csv' },
         content = function(file) {
-            write.csv(geneTable(), file)
+            write.csv(searchTable(), file)
         }
     )
     shiny::observeEvent(input$getHeatmap, {
