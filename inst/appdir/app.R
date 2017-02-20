@@ -1,6 +1,4 @@
 library(shiny)
-library(data.table)
-
 
 source('gene.R')
 source('ortholog.R')
@@ -22,7 +20,7 @@ initFastaIndexes <- function() {
 }
 initFastaIndexes()
 
-fastaIndexes = list()
+expressionFiles = list()
 initExpressionFiles <- function() {
     source('dbparams.R', local = TRUE)
     con = do.call(dbConnect, args)
@@ -31,7 +29,7 @@ initExpressionFiles <- function() {
     print(ret$expression_file)
     files = ret$expression_file[!is.na(ret$expression_file)]
     expressionFiles <<- lapply(files, function(expr) {
-        fread(paste0(baseDir, '/', expr))
+        read.csv(paste0(baseDir, '/', expr))
     })
     names(expressionFiles) <<- files
     dbDisconnect(con)

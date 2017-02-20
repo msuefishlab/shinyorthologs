@@ -58,14 +58,16 @@ comparisonsServer <- function(input, output, session) {
 
         for(i in 1:nrow(ret)) {
             row = ret[i, ]
+            print("ROW")
             print(row)
             if(!is.na(row[3])) {
-                expressionFile = paste0(baseDir, '/', row[3])
                 species = c(species, row[4])
-                expressionData = expressionFiles[[expressionFile]]
-                geneExpressionData = expressionData[expressionData[,1] == as.character(ids, -1)]
+                expressionData = expressionFiles[[as.character(row[3])]]
+                print('IDS')
+                print(ids)
+                geneExpressionData = expressionData[expressionData[,1] == as.character(ids, -1),]
+                print('geneExpressionData')
                 print(geneExpressionData)
-                print(ret)
             }
         }
         
