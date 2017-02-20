@@ -17,8 +17,6 @@ speciesUI = function(id) {
 }
 
 speciesServer = function(input, output, session) {
-
-
     speciesTable = shiny::reactive({
         con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
