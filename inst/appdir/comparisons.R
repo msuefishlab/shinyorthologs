@@ -43,16 +43,11 @@ comparisonsServer <- function(input, output, session) {
 
         query = sprintf("SELECT g.gene_id, g.species_id, s.expression_file, s.species_name, o.ortholog_id from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id where o.ortholog_id in %s", paste0('(', formatted_list, ')'))
         ret = RPostgreSQL::dbGetQuery(con, query)
-        heatmapData = list()
-        species = c()
-        geneAndTissue = c()
-
         dat = data.frame(ID = character(0), variable = character(0), value = numeric(0))
 
         for (i in 1:nrow(ret)) {
             row = ret[i, ]
             if (!is.na(row[3])) {
-                species = c(species, row[4])
                 expressionData = expressionFiles[[as.character(row[3])]]
                 geneExpressionData = expressionData[expressionData[, 1] == as.character(row[1]), ]
                 m = reshape2::melt(geneExpressionData)

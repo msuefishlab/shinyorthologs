@@ -25,7 +25,7 @@ geneServer = function(input, output, session) {
         s1 = ''
 
         # match ortholog or gene
-        if(trim(input$gene) != "") {
+        if (trim(input$gene) != "") {
             s1 = sprintf("where g.symbol LIKE '%s%%' or o.ortholog_id LIKE '%s%%'", input$gene, input$gene)
         }
         query = sprintf("SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id %s", s1)
@@ -40,7 +40,7 @@ geneServer = function(input, output, session) {
             print(input$table_rows_selected)
             print(geneTable()[input$table_rows_selected, ])
         }
-    }, priority = 1)
+    })
 
     source('common.R', local = TRUE)
     source('dbparams.R', local = TRUE)

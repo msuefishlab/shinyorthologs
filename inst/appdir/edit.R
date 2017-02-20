@@ -16,7 +16,7 @@ editServer = function(input, output, session) {
 
     shiny::observeEvent(input$submit, {
         print('edit')
-    }, priority = 1)
+    })
 
     source('common.R', local = TRUE)
     source('dbparams.R', local = TRUE)

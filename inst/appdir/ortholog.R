@@ -54,7 +54,7 @@ orthologServer <- function(input, output, session) {
             file = paste0(baseDir, '/', row[4])
             fa = open(Rsamtools::FaFile(file))
             idx = fastaIndexes[[row[4]]]
-            fasta = as.character(getSeq(fa, idx[Rsamtools::seqnames(idx) == row[3]]))
+            fasta = as.character(Rsamtools::getSeq(fa, idx[Rsamtools::seqnames(idx) == row[3]]))
             data.frame(gene_id = row[1], species_id = row[2], transcript_id = row[3], sequence = fasta)
         })
         do.call(rbind, rows)
@@ -94,7 +94,7 @@ orthologServer <- function(input, output, session) {
             idx = fastaIndexes[[row[4]]]
             as.character(Rsamtools::getSeq(fa, idx[Rsamtools::seqnames(idx) == row[3]]))
         })
-        sequences = DNAStringSet(sequences)
+        sequences = Biostrings::DNAStringSet(sequences)
         names(sequences) = paste(ret[, 3], ret[, 2])
         alignment = msa::msa(sequences, type = 'dna')
         options(width = 160)
