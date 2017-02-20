@@ -8,22 +8,26 @@ orthologUI <- function(id) {
     ns <- NS(id)
     tagList(
         fluidRow(
-            DT::dataTableOutput(ns("orthoTable"))
+            DT::dataTableOutput(ns('orthoTable'))
         ),
 
         fluidRow(
-            h2("Ortholog information"),
-            DT::dataTableOutput(ns("row"))
+            h2('Ortholog information'),
+            DT::dataTableOutput(ns('row'))
         ),
 
         fluidRow(
-            h2("Heatmaps"),
-            plotOutput(ns("heatmap"))
+            h2('Heatmaps'),
+            plotOutput(ns('heatmap'))
         ),
 
         fluidRow(
-            h2("MSA"),
-            verbatimTextOutput(ns("msa"))
+            h2('MSA'),
+            downloadButton(ns('pdflink'))
+        ),
+        fluidRow(
+            plotOutput(ns('myplot')),
+            downloadLink(ns('pdflike'))
         )
     )
 }
@@ -52,7 +56,7 @@ orthologServer <- function(input, output, session) {
         formatted_ids = sapply(ids, function(e) { paste0("'", e, "'") })
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep=","))
 
-        query = sprintf("SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s", paste0('(', formatted_list, ')'))
+        query = sprintf('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s', paste0('(', formatted_list, ')'))
         ret = dbGetQuery(con, query)
         rows = apply(ret, 1, function(row) {
             file = paste0(baseDir, '/', row[4])
@@ -66,7 +70,7 @@ orthologServer <- function(input, output, session) {
     options = list(columnDefs = list(list(
         targets = 4,
         render = DT::JS(
-            "function(data, type, row, meta) {",
+            'function(data, type, row, meta) {',
             "return type === 'display' && data.length > 100 ?",
             "'<span title=\"' + data + '\">' + data.substr(0, 60) + '...</span>' : data;",
             "}"
@@ -74,7 +78,7 @@ orthologServer <- function(input, output, session) {
     )
 
 
-    output$msa = renderPrint({
+    output$myplot = renderPlot({
         if (is.null(input$orthoTable_rows_selected)) {
             return()
         }
@@ -88,7 +92,7 @@ orthologServer <- function(input, output, session) {
         formatted_ids = sapply(ids, function(e) { paste0("'", e, "'") })
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep=","))
 
-        query = sprintf("SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s", paste0('(', formatted_list, ')'))
+        query = sprintf('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s', paste0('(', formatted_list, ')'))
         ret = dbGetQuery(con, query)
         sequences = apply(ret, 1, function(row) {
             file = paste0(baseDir, '/', row[4])
@@ -98,11 +102,18 @@ orthologServer <- function(input, output, session) {
         })
         sequences = DNAStringSet(sequences)
         names(sequences) = paste(ret[,3], ret[,2])
-        alignment = msa(sequences, type = "dna")
+        alignment = msa(sequences, type = 'dna')
         options(width = 160)
-        print(alignment, show = "complete")
-
+        msaPrettyPrint(alignment)
     })
+    
+
+    output$pdflink <- downloadHandler(
+        filename <- 'myplot.pdf',
+        content <- function(file) {
+            file.copy('plot.pdf', file)
+        }
+    )
 
 
     output$heatmap = renderPlot({
@@ -139,7 +150,7 @@ orthologServer <- function(input, output, session) {
         nrow = length(heatmapData)
         h = matrix(ncol = ncol, nrow = nrow)
         counter = 1
-        index =1 
+        index = 1 
         for(i in names(heatmapData)) {
             curr = heatmapData[[i]]
             end = counter + length(curr) - 1
@@ -151,7 +162,7 @@ orthologServer <- function(input, output, session) {
 
         rownames(h) <- species
         colnames(h) <- geneAndTissue
-        pheatmap(log(h + 1),cluster_rows=F,cluster_cols=F)
+        pheatmap(log(h + 1), cluster_rows = F, cluster_cols = F)
     })
 
     source('common.R', local = TRUE)
