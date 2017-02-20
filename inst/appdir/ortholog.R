@@ -4,6 +4,22 @@ library(msa)
 
 source('pheatmap.R')
 
+fastaIndexes = list()
+init <- function() {
+    source('dbparams.R', local = TRUE)
+    con = do.call(dbConnect, args)
+    query = sprintf('SELECT species, transcriptome_fasta from species')
+    ret = dbGetQuery(con, query)
+    fastaIndexes <<- lapply(ret$transcriptome_fasta, function(fasta) {
+        fa = open(FaFile(paste0(baseDir, '/', fasta)))
+        scanFaIndex(fa)
+    })
+    names(fastaIndexes) <<- ret$transcriptome_fasta
+    dbDisconnect(con)
+}
+init()
+print(names(fastaIndexes))
+
 orthologUI <- function(id) {
     ns <- NS(id)
     tagList(
@@ -23,11 +39,8 @@ orthologUI <- function(id) {
 
         fluidRow(
             h2('MSA'),
-            downloadButton(ns('pdflink'))
-        ),
-        fluidRow(
-            plotOutput(ns('myplot')),
-            downloadLink(ns('pdflike'))
+            downloadButton(ns('pdflink')),
+            plotOutput(ns('myplot'))
         )
     )
 }
@@ -61,7 +74,7 @@ orthologServer <- function(input, output, session) {
         rows = apply(ret, 1, function(row) {
             file = paste0(baseDir, '/', row[4])
             fa = open(FaFile(file))
-            idx = scanFaIndex(fa)
+            idx = fastaIndexes[[row[4]]]
             fasta = as.character(getSeq(fa, idx[seqnames(idx) == row[3]]))
             data.frame(gene_id = row[1], species_id = row[2], transcript_id = row[3], sequence = fasta)
         })
@@ -97,7 +110,7 @@ orthologServer <- function(input, output, session) {
         sequences = apply(ret, 1, function(row) {
             file = paste0(baseDir, '/', row[4])
             fa = open(FaFile(file))
-            idx = scanFaIndex(fa)
+            idx = fastaIndexes[[row[4]]]
             as.character(getSeq(fa, idx[seqnames(idx) == row[3]]))
         })
         sequences = DNAStringSet(sequences)
@@ -166,4 +179,5 @@ orthologServer <- function(input, output, session) {
     })
 
     source('common.R', local = TRUE)
+    source('dbparams.R', local = TRUE)
 }

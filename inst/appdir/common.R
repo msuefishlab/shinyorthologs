@@ -8,26 +8,6 @@ mstop = function() {
 }
 
 
-
-use_name = exists('db_name')
-use_port = exists('db_port')
-use_user = exists('db_user')
-use_pass = exists('db_pass')
-use_host = exists('db_host')
-if(!exists('db_port')) db_port=NULL
-if(!exists('db_host')) db_host=NULL
-if(!exists('db_name')) db_name=NULL
-if(!exists('db_pass')) db_pass=NULL
-if(!exists('db_user')) db_user=NULL
-
-args = c(
-    PostgreSQL(),
-    list(dbname = db_name)[use_name],
-    list(host = db_host)[use_host],
-    list(user = db_user)[use_user],
-    list(password = db_pass)[use_pass],
-    list(port = db_port)[use_port]
-)
 speciesData = reactive({
     con = do.call(dbConnect, args)
     on.exit(dbDisconnect(con))
@@ -52,17 +32,10 @@ transcriptData = reactive({
 orthologData = reactive({
     con = do.call(dbConnect, args)
     on.exit(dbDisconnect(con))
-    df = dbGetQuery(con, "select species_id from species")
     query = sprintf("SELECT $$SELECT * FROM crosstab('SELECT ortholog_id, species_id, gene_id FROM orthologs ORDER  BY 1, 2') AS ct (ortholog_id varchar(255), $$ || string_agg(quote_ident(species_id), ' varchar(255), ' ORDER BY species_id) || ' varchar(255))' FROM species")
     print(query)
     ret = dbGetQuery(con, query)
     print(ret)
-    ret2 = dbGetQuery(con, ret[1,])
-    ret2
+    dbGetQuery(con, ret[1,])
 })
-
-
-trim.leading <- function (x)  sub("^\\s+", "", x)
-trim.trailing <- function (x) sub("\\s+$", "", x)
-trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 

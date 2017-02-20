@@ -1,4 +1,3 @@
-.libPaths( c( .libPaths(), getwd()) )
 library(shinyorthologs)
 
 db_name <- 'shinyorthologs'
