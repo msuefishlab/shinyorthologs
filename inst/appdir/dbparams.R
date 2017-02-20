@@ -1,5 +1,3 @@
-library(RPostgreSQL)
-
 use_name = exists('db_name')
 use_port = exists('db_port')
 use_user = exists('db_user')
@@ -11,7 +9,7 @@ if (!exists('db_name')) db_name = NULL
 if (!exists('db_pass')) db_pass = NULL
 if (!exists('db_user')) db_user = NULL
 args = c(
-    PostgreSQL(),
+    RPostgreSQL::PostgreSQL(),
     list(dbname = db_name)[use_name],
     list(host = db_host)[use_host],
     list(user = db_user)[use_user],

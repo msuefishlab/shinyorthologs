@@ -1,20 +1,17 @@
-library(pheatmap)
-library(reshape2)
-
 comparisonsUI <- function(id) {
-    ns <- NS(id)
-    tagList(
-        fluidRow(
-            textAreaInput(ns("genes"), "Enter a list of orthoIDs", rows = 10, cols = 200)
+    ns <- shiny::NS(id)
+    shiny::tagList(
+        shiny::fluidRow(
+            shiny::textAreaInput(ns("genes"), "Enter a list of orthoIDs", rows = 10, cols = 200)
         ),
-        h2('Heatmaps'),
-        p('Note: the species where it does not have an ortholog identified are given a value of 0, which may bias the heatmap. Therefore, use complete ortholog groups'),
-        plotOutput(ns('heatmap'), height="900px")
+        shiny::h2('Heatmaps'),
+        shiny::p('Note: the species where it does not have an ortholog identified are given a value of 0, which may bias the heatmap. Therefore, use complete ortholog groups'),
+        shiny::plotOutput(ns('heatmap'), height = "900px")
     )
 }
 
 comparisonsServer <- function(input, output, session) {
-    output$heatmap = renderPlot({
+    output$heatmap = shiny::renderPlot({
         if (is.null(input$genes)) {
             return()
         }
@@ -31,11 +28,11 @@ comparisonsServer <- function(input, output, session) {
         mylist = paste0('(', formatted_list, ')')
 
 
-        con = do.call(dbConnect, args)
-        on.exit(dbDisconnect(con))
+        con = do.call(RPostgreSQL::dbConnect, args)
+        on.exit(RPostgreSQL::dbDisconnect(con))
         query = sprintf("SELECT $$SELECT * FROM crosstab('SELECT ortholog_id, species_id, gene_id FROM orthologs WHERE ortholog_id IN %s ORDER  BY 1, 2') AS ct (ortholog_id varchar(255), $$ || string_agg(quote_ident(species_id), ' varchar(255), ' ORDER BY species_id) || ' varchar(255))' FROM species", mylist)
-        ret = dbGetQuery(con, query)
-        ret2 = dbGetQuery(con, ret[1, ])
+        ret = RPostgreSQL::dbGetQuery(con, query)
+        ret2 = RPostgreSQL::dbGetQuery(con, ret[1, ])
         ids = ret2[, 1]
 
         ids = ids[!is.na(ids)]
@@ -45,7 +42,7 @@ comparisonsServer <- function(input, output, session) {
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
 
         query = sprintf("SELECT g.gene_id, g.species_id, s.expression_file, s.species_name, o.ortholog_id from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id where o.ortholog_id in %s", paste0('(', formatted_list, ')'))
-        ret = dbGetQuery(con, query)
+        ret = RPostgreSQL::dbGetQuery(con, query)
         heatmapData = list()
         species = c()
         geneAndTissue = c()
@@ -58,7 +55,7 @@ comparisonsServer <- function(input, output, session) {
                 species = c(species, row[4])
                 expressionData = expressionFiles[[as.character(row[3])]]
                 geneExpressionData = expressionData[expressionData[, 1] == as.character(row[1]), ]
-                m = melt(geneExpressionData)
+                m = reshape2::melt(geneExpressionData)
                 m[, 1] = as.character(row[5])
                 m[, 2] = paste(as.character(row[4]), m[, 2])
                 names(m) <- c('ID', 'variable', 'value')
@@ -66,9 +63,9 @@ comparisonsServer <- function(input, output, session) {
             }
         }
 
-        h = acast(dat, ID~variable)
+        h = reshape2::acast(dat, ID~variable)
         h[is.na(h)] = 0
-        pheatmap(log(h + 1))
+        pheatmap::pheatmap(log(h + 1))
     })
 
     source('common.R', local = TRUE)

@@ -1,34 +1,30 @@
-library(Rsamtools)
-library(pheatmap)
-library(msa)
-
 orthologUI <- function(id) {
-    ns <- NS(id)
-    tagList(
-        fluidRow(
+    ns <- shiny::NS(id)
+    shiny::tagList(
+        shiny::fluidRow(
             DT::dataTableOutput(ns('orthoTable'))
         ),
 
-        fluidRow(
-            h2('Ortholog information'),
+        shiny::fluidRow(
+            shiny::h2('Ortholog information'),
             DT::dataTableOutput(ns('row'))
         ),
 
-        fluidRow(
-            h2('Heatmaps'),
-            plotOutput(ns('heatmap'))
+        shiny::fluidRow(
+            shiny::h2('Heatmaps'),
+            shiny::plotOutput(ns('heatmap'))
         ),
 
-        fluidRow(
-            h2('MSA'),
-            verbatimTextOutput(ns('msaoutput'))
+        shiny::fluidRow(
+            shiny::h2('MSA'),
+            shiny::verbatimTextOutput(ns('msaoutput'))
         )
     )
 }
 
 orthologServer <- function(input, output, session) {
 
-    orthologTable = reactive({
+    orthologTable = shiny::reactive({
         data = orthologData()
         data
     })
@@ -40,8 +36,8 @@ orthologServer <- function(input, output, session) {
         if (is.null(input$orthoTable_rows_selected)) {
             return()
         }
-        con = do.call(dbConnect, args)
-        on.exit(dbDisconnect(con))
+        con = do.call(RPostgreSQL::dbConnect, args)
+        on.exit(RPostgreSQL::dbDisconnect(con))
 
 
         orthologs = orthologData()
@@ -53,12 +49,12 @@ orthologServer <- function(input, output, session) {
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
 
         query = sprintf('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s', paste0('(', formatted_list, ')'))
-        ret = dbGetQuery(con, query)
+        ret = RPostgreSQL::dbGetQuery(con, query)
         rows = apply(ret, 1, function(row) {
             file = paste0(baseDir, '/', row[4])
-            fa = open(FaFile(file))
+            fa = open(Rsamtools::FaFile(file))
             idx = fastaIndexes[[row[4]]]
-            fasta = as.character(getSeq(fa, idx[seqnames(idx) == row[3]]))
+            fasta = as.character(getSeq(fa, idx[Rsamtools::seqnames(idx) == row[3]]))
             data.frame(gene_id = row[1], species_id = row[2], transcript_id = row[3], sequence = fasta)
         })
         do.call(rbind, rows)
@@ -74,12 +70,12 @@ orthologServer <- function(input, output, session) {
     )
 
 
-    output$msaoutput = renderPrint({
+    output$msaoutput = shiny::renderPrint({
         if (is.null(input$orthoTable_rows_selected)) {
             return()
         }
-        con = do.call(dbConnect, args)
-        on.exit(dbDisconnect(con))
+        con = do.call(RPostgreSQL::dbConnect, args)
+        on.exit(RPostgreSQL::dbDisconnect(con))
 
 
         orthologs = orthologData()
@@ -91,16 +87,16 @@ orthologServer <- function(input, output, session) {
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
 
         query = sprintf('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s', paste0('(', formatted_list, ')'))
-        ret = dbGetQuery(con, query)
+        ret = RPostgreSQL::dbGetQuery(con, query)
         sequences = apply(ret, 1, function(row) {
             file = paste0(baseDir, '/', row[4])
-            fa = open(FaFile(file))
+            fa = open(Rsamtools::FaFile(file))
             idx = fastaIndexes[[row[4]]]
-            as.character(getSeq(fa, idx[seqnames(idx) == row[3]]))
+            as.character(Rsamtools::getSeq(fa, idx[Rsamtools::seqnames(idx) == row[3]]))
         })
         sequences = DNAStringSet(sequences)
         names(sequences) = paste(ret[, 3], ret[, 2])
-        alignment = msa(sequences, type = 'dna')
+        alignment = msa::msa(sequences, type = 'dna')
         options(width = 160)
         print(alignment)
     })
@@ -110,8 +106,8 @@ orthologServer <- function(input, output, session) {
         if (is.null(input$orthoTable_rows_selected)) {
             return()
         }
-        con = do.call(dbConnect, args)
-        on.exit(dbDisconnect(con))
+        con = do.call(RPostgreSQL::dbConnect, args)
+        on.exit(RPostgreSQL::dbDisconnect(con))
 
         orthologs = orthologData()
         ids = orthologs[input$orthoTable_rows_selected, 2:ncol(orthologs)]
@@ -122,7 +118,7 @@ orthologServer <- function(input, output, session) {
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
 
         query = sprintf("SELECT g.gene_id, g.species_id, s.expression_file, s.species_name from genes g join species s on g.species_id = s.species_id where g.gene_id in %s", paste0('(', formatted_list, ')'))
-        ret = dbGetQuery(con, query)
+        ret = RPostgreSQL::dbGetQuery(con, query)
         heatmapData = list()
         species = c()
         geneAndTissue = c()
@@ -154,7 +150,7 @@ orthologServer <- function(input, output, session) {
 
         rownames(h) <- species
         colnames(h) <- geneAndTissue
-        pheatmap(log(h + 1), cluster_rows = F, cluster_cols = F)
+        pheatmap::pheatmap(log(h + 1), cluster_rows = F, cluster_cols = F)
     })
 
     source('common.R', local = TRUE)
