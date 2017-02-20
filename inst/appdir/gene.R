@@ -24,19 +24,6 @@ geneUI = function(id) {
 geneServer = function(input, output, session) {
 
 
-    # reactives
-    fastaIndexFile = reactive({
-        scanFaIndex(open(FaFile(fastaFile())))
-    })
-    fastaFile = reactive({
-        con = do.call(dbConnect, args)
-        on.exit(dbDisconnect(con))
-        data = geneTable()
-        row = data[input$table_rows_selected, ]
-        query = sprintf("SELECT transcriptome_fasta from species where species_name = '%s'", row$species_name)
-        df = dbGetQuery(con, query)
-        paste0(baseDir, '/', df)
-    })
     geneTable = reactive({
         if (is.null(input$species)) {
             return(NULL)
@@ -45,9 +32,9 @@ geneServer = function(input, output, session) {
         on.exit(dbDisconnect(con))
 
         if (input$species != "All") {
-            query = sprintf("SELECT gene_id, s.species_name from genes g join species s on g.species_id = s.species_id where s.species_name = '%s'", input$species)
+            query = sprintf("SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id where s.species_name = '%s'", input$species)
         } else {
-            query = sprintf("SELECT gene_id, s.species_name from genes g join species s on g.species_id = s.species_id")
+            query = sprintf("SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
         }
         dbGetQuery(con, query)
     })
@@ -67,7 +54,7 @@ geneServer = function(input, output, session) {
 
         file = fastaFile()
         fa = open(FaFile(file))
-        idx = fastaIndexFile()
+        idx = fastaIndexes[[file]]
 
         con = do.call(dbConnect, args)
         on.exit(dbDisconnect(con))
@@ -79,6 +66,7 @@ geneServer = function(input, output, session) {
             as.character(getSeq(fa, idx[seqnames(idx) == n]))
         })
         cbind(ret, seq)
+        data.frame(a=1,b=1)
     },
     options = list(columnDefs = list(list(
         targets = 3,
@@ -91,4 +79,5 @@ geneServer = function(input, output, session) {
     )
 
     source('common.R', local = TRUE)
+    source('dbparams.R', local = TRUE)
 }
