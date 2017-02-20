@@ -2,24 +2,6 @@ library(Rsamtools)
 library(pheatmap)
 library(msa)
 
-source('pheatmap.R')
-
-fastaIndexes = list()
-init <- function() {
-    source('dbparams.R', local = TRUE)
-    con = do.call(dbConnect, args)
-    query = sprintf('SELECT species, transcriptome_fasta from species')
-    ret = dbGetQuery(con, query)
-    fastaIndexes <<- lapply(ret$transcriptome_fasta, function(fasta) {
-        fa = open(FaFile(paste0(baseDir, '/', fasta)))
-        scanFaIndex(fa)
-    })
-    names(fastaIndexes) <<- ret$transcriptome_fasta
-    dbDisconnect(con)
-}
-init()
-print(names(fastaIndexes))
-
 orthologUI <- function(id) {
     ns <- NS(id)
     tagList(
@@ -39,7 +21,7 @@ orthologUI <- function(id) {
 
         fluidRow(
             h2('MSA'),
-            uiOutput(ns('myplot'))
+            verbatimTextOutput(ns('msaoutput'))
         )
     )
 }
@@ -90,7 +72,7 @@ orthologServer <- function(input, output, session) {
     )
 
 
-    output$myplot = renderPlot({
+    output$msaoutput = renderPrint({
         if (is.null(input$orthoTable_rows_selected)) {
             return()
         }
@@ -116,8 +98,7 @@ orthologServer <- function(input, output, session) {
         names(sequences) = paste(ret[,3], ret[,2])
         alignment = msa(sequences, type = 'dna')
         options(width = 160)
-        msaPrettyPrint(alignment, output="pdf",file="out.pdf")
-        tags$iframe(style="height:600px; width:100%", src="out.pdf")
+        print(alignment)
     })
     
 
@@ -145,7 +126,7 @@ orthologServer <- function(input, output, session) {
             if(!is.na(row[3])) {
                 expressionFile = paste0(baseDir, '/', row[3])
                 species = c(species, row[4])
-                expressionData = read.csv(expressionFile, header=T)
+                expressionData = expressionFiles[[expressionFile]]
                 geneExpressionData = expressionData[expressionData[,1] == as.character(row[1]), -1]
                 geneAndTissue = c(geneAndTissue, paste(row[1], names(geneExpressionData)))
                 heatmapData[[as.character(row[1])]] = geneExpressionData

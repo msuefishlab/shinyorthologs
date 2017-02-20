@@ -18,3 +18,8 @@ args = c(
     list(password = db_pass)[use_pass],
     list(port = db_port)[use_port]
 )
+
+
+trim.leading = function (x)  sub("^\\s+", "", x)
+trim.trailing = function (x) sub("\\s+$", "", x)
+trim = function (x) gsub("^\\s+|\\s+$", "", x)
