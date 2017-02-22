@@ -9,11 +9,18 @@ Shiny interface to an ortholog database
 - PostgreSQL
 - R
 
+Example installing for Ubuntu 16
+
+    sudo apt install r-base-core postgresql libpq-dev
+
 
 ## Install
 
+Use devtools and bioconductor to install shinyorthologs
+
     install.packages('devtools')
     source('https://bioconductor.org/biocLite.R')
+    biocLite()
     biocLite('msuefishlab/shinyorthologs')
 
 
@@ -38,4 +45,4 @@ The example.R script includes examples of configuring the environment to run thi
 In development, you can run
 
     devtools::install()
-    shinyorthologs()
+    shinyorthologs::shinyorthologs()
