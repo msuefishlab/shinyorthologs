@@ -18,7 +18,8 @@ Imports:
     RPostgreSQL (>= 0.4),
     msa (>=	1.6.0),
     pheatmap (>= 1.0.8),
-    msaR (>= 0.1.0)
+    msaR (>= 0.1.0),
+    msa (>= 1.6.0)
 Suggests:
     testthat
 License: MIT
