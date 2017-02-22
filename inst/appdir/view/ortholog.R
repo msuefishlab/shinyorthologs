@@ -1,4 +1,5 @@
 orthologUI = function(id) {
+
     ns = shiny::NS(id)
     shiny::tagList(
         shiny::fluidRow(
@@ -17,7 +18,7 @@ orthologUI = function(id) {
 
         shiny::fluidRow(
             shiny::h2('MSA'),
-            shiny::verbatimTextOutput(ns('msaoutput'))
+            msaR::msaROutput(ns('msaoutput'))
         )
     )
 }
@@ -70,7 +71,7 @@ orthologServer = function(input, output, session) {
     )
 
 
-    output$msaoutput = shiny::renderPrint({
+    output$msaoutput = msaR::renderMsaR({
         if (is.null(input$orthoTable_rows_selected)) {
             return()
         }
@@ -92,13 +93,13 @@ orthologServer = function(input, output, session) {
             file = paste0(baseDir, '/', row[4])
             fa = open(Rsamtools::FaFile(file))
             idx = fastaIndexes[[row[4]]]
-            as.character(Rsamtools::getSeq(fa, idx[Rsamtools::seqnames(idx) == row[3]]))
+            as.character(Rsamtools::getSeq(fa, idx[GenomicRanges::seqnames(idx) == row[3]]))
         })
         sequences = Biostrings::DNAStringSet(sequences)
         names(sequences) = paste(ret[, 3], ret[, 2])
-        alignment = msa::msa(sequences, type = 'dna')
-        options(width = 160)
-        print(alignment)
+        if (requireNamespace("Biostrings", quietly = TRUE)) {
+            msaR::msaR(sequences)
+        }
     })
 
 
@@ -126,14 +127,14 @@ orthologServer = function(input, output, session) {
         for (i in 1:nrow(ret)) {
             row = ret[i, ]
             if (!is.na(row[3])) {
-                expressionFile = paste0(baseDir, '/', row[3])
-                species = c(species, row[4])
-                expressionData = expressionFiles[[expressionFile]]
+                species = c(species, as.character(row[4]))
+                expressionData = expressionFiles[[as.character(row[3])]]
                 geneExpressionData = expressionData[expressionData[, 1] == as.character(row[1]), -1]
                 geneAndTissue = c(geneAndTissue, paste(row[1], names(geneExpressionData)))
                 heatmapData[[as.character(row[1])]] = geneExpressionData
             }
         }
+
         ncol = sum(sapply(heatmapData, length))
         nrow = length(heatmapData)
         h = matrix(ncol = ncol, nrow = nrow)

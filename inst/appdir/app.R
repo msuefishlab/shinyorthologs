@@ -38,11 +38,11 @@ initExpressionFiles()
 
 ui <- function(request) {
     shiny::fluidPage(
-        shiny::titlePanel('webcompare'),
+        shiny::titlePanel('shinyorthologs'),
 
         shiny::tabsetPanel(id = 'inTabset',
-            shiny::tabPanel('Comparisons', comparisonsUI('comparisons')),
             shiny::tabPanel('Orthologs', orthologUI('orthologs')),
+            shiny::tabPanel('Comparisons', comparisonsUI('comparisons')),
             shiny::tabPanel('Genes', searchUI('search')),
             shiny::tabPanel('Species', speciesUI('species')),
             shiny::tabPanel('Edit', editUI('edit')),
