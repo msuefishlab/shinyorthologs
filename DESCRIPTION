@@ -8,9 +8,9 @@ Maintainer: Colin Diesh <dieshcol@msu.edu>
 Description: shinyorthologs is a RStudio shiny application to compare orthologs \
     from different species
 Depends:
-    R (>= 3.3.1)
+    R (>= 3.2.3)
 Imports:
-    tools (>= 3.3.1),
+    tools (>= 3.2.3),
     data.table (>= 1.10.0),
     DT (>= 0.2),
     shiny (>= 0.14.2),
