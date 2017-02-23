@@ -1,3 +1,5 @@
+library(msa)
+
 orthologUI = function(id) {
 
     ns = shiny::NS(id)
@@ -98,10 +100,8 @@ orthologServer = function(input, output, session) {
         sequences = Biostrings::DNAStringSet(sequences)
         names(sequences) = paste(ret[, 3], ret[, 2])
         if (requireNamespace("Biostrings", quietly = TRUE)) {
-            if (requireNamespace("msa", quietly = TRUE)) {
-                alignment = msa::msa(sequences)
-                msaR::msaR(DNAStringSet(as.character(alignment)))
-            }
+            alignment = msa(sequences)
+            msaR::msaR(DNAStringSet(as.character(alignment)))
         }
     })
 
