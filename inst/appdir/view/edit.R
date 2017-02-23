@@ -18,7 +18,7 @@ editUI = function(id) {
 editServer = function(input, output, session) {
 
     dataTable = shiny::reactive({
-        con = do.call(RPostgreSQL::dbConnect, args)
+        con = do.call(RPostgreSQL::dbConnect, .args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
         query = sprintf("SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
@@ -43,7 +43,7 @@ editServer = function(input, output, session) {
     values = reactiveValues(x="someValue")
 
     shiny::observeEvent(input$submit, {
-        con = do.call(RPostgreSQL::dbConnect, args)
+        con = do.call(RPostgreSQL::dbConnect, .args)
         on.exit(RPostgreSQL::dbDisconnect(con))
         data = dataTable()
         ret = data[input$searchTable_rows_selected, ]
@@ -57,5 +57,4 @@ editServer = function(input, output, session) {
     })
 
     source('common.R', local = TRUE)
-    source('dbparams.R', local = TRUE)
 }

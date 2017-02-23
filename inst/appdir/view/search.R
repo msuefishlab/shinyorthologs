@@ -1,3 +1,5 @@
+source('globals.R')
+
 searchUI = function(id) {
     ns = shiny::NS(id)
     shiny::tagList(
@@ -20,7 +22,7 @@ searchServer = function(input, output, session) {
 
 
     searchTable = shiny::reactive({
-        con = do.call(RPostgreSQL::dbConnect, args)
+        con = do.call(RPostgreSQL::dbConnect, .args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
         s1 = ''
@@ -43,5 +45,4 @@ searchServer = function(input, output, session) {
     )
 
     source('common.R', local = TRUE)
-    source('dbparams.R', local = TRUE)
 }

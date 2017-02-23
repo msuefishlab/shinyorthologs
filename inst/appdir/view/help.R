@@ -17,5 +17,4 @@ helpServer = function(input, output, session) {
     })
 
     source('common.R', local = TRUE)
-    source('dbparams.R', local = TRUE)
 }

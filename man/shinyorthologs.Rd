@@ -4,7 +4,19 @@
 \alias{shinyorthologs}
 \title{Launch the shinyorthologs app}
 \usage{
-shinyorthologs()
+shinyorthologs(db_user = NULL, db_host = NULL, db_port = NULL,
+  db_pass = NULL, db_name = NULL)
+}
+\arguments{
+\item{db_user}{Database user}
+
+\item{db_host}{Database host}
+
+\item{db_port}{Database port}
+
+\item{db_pass}{Database password}
+
+\item{db_name}{Database name}
 }
 \description{
 Executing this function will launch the shinyorthologs application in
