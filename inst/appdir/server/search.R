@@ -1,10 +1,4 @@
-source('globals.R')
-
-
-
 searchServer = function(input, output, session) {
-
-
     searchTable = shiny::reactive({
         con = do.call(RPostgreSQL::dbConnect, .args)
         on.exit(RPostgreSQL::dbDisconnect(con))
@@ -12,7 +6,7 @@ searchServer = function(input, output, session) {
         s1 = ''
 
         # match ortholog or gene
-        if (trim(input$gene) != "") {
+        if (input$gene != "") {
             s1 = sprintf("where g.gene_id LIKE '%s%%' or g.symbol LIKE '%s%%' or o.ortholog_id LIKE '%s%%' or d.description LIKE '%s%%'", input$gene, input$gene, input$gene, input$gene)
         }
         query = sprintf("SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id %s", s1)

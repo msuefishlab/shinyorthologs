@@ -1,13 +1,28 @@
-
-
 orthologServer = function(input, output, session) {
 
     orthologTable = shiny::reactive({
-        data = orthologData()
-        data
+        con = do.call(RPostgreSQL::dbConnect, .args)
+        on.exit(RPostgreSQL::dbDisconnect(con))
+
+        g = ifelse(is.null(input$gene), '*', input$gene)
+        query = sprintf("SELECT $$SELECT * FROM crosstab('SELECT ortholog_id, species_id, gene_id FROM orthologs ORDER  BY 1, 2 WHERE ortholog_id LIKE \"%%%s%%\"') AS ct (ortholog_id varchar(255), $$ || string_agg(quote_ident(species_id), ' varchar(255), ' ORDER BY species_id) || ' varchar(255))' FROM species", g)
+        print(query)
+
+        # query returns another query
+        query2 = RPostgreSQL::dbGetQuery(con, query)
+        RPostgreSQL::dbGetQuery(con, query2[1, ])
     })
 
-    output$orthoTable = DT::renderDataTable(orthologTable(), selection = 'single')
+    output$orthoTable = DT::renderDataTable({
+        orthologTable()
+    }, selection = 'single')
+
+    output$downloadData <- shiny::downloadHandler(
+        filename = 'search.csv',
+        content = function(file) {
+            write.csv(orthologTable(), file)
+        }
+    )
 
 
     output$row = DT::renderDataTable({

@@ -1,18 +1,14 @@
-source('globals.R')
-
-
 comparisonsServer <- function(input, output, session) {
     output$heatmap = shiny::renderPlot({
         if (is.null(input$genes)) {
             return()
         }
-        if (trim(input$genes) == "") {
+        if (input$genes == "") {
             return()
         }
 
         x = strsplit(input$genes, "\n")
-        y = lapply(x, trim)
-        formatted_ids = sapply(y, function(e) {
+        formatted_ids = sapply(x, function(e) {
             paste0("''", e, "''")
         })
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
