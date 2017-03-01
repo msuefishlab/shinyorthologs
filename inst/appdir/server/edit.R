@@ -3,7 +3,7 @@
 editServer = function(input, output, session) {
 
     dataTable = shiny::reactive({
-        con = do.call(RPostgreSQL::dbConnect, .args)
+        con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
         query = sprintf("SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
@@ -19,16 +19,16 @@ editServer = function(input, output, session) {
     observeEvent(input$searchTable_rows_selected, {
         data = dataTable()
         ret = data[input$searchTable_rows_selected, ]
-        updateTextInput(session, "name", value = as.character(ret[1]))
-        updateTextInput(session, "symbol", value = as.character(ret[2]))
-        updateTextInput(session, "ortholog", value = as.character(ret[3]))
-        updateTextInput(session, "evidence", value = as.character(ret[4]))
+        shiny::updateTextInput(session, "name", value = as.character(ret[1]))
+        shiny::updateTextInput(session, "symbol", value = as.character(ret[2]))
+        shiny::updateTextInput(session, "ortholog", value = as.character(ret[3]))
+        shiny::updateTextInput(session, "evidence", value = as.character(ret[4]))
     })
 
-    values = reactiveValues(x="someValue")
+    values = shiny::reactiveValues(x = "someValue")
 
     shiny::observeEvent(input$submit, {
-        con = do.call(RPostgreSQL::dbConnect, .args)
+        con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
         data = dataTable()
         ret = data[input$searchTable_rows_selected, ]

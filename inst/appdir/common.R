@@ -19,7 +19,3 @@ transcriptData = reactive({
     query <- sprintf("SELECT * from transcripts")
     RPostgreSQL::dbGetQuery(con, query)
 })
-
-
-
-

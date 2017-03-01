@@ -1,6 +1,6 @@
 searchServer = function(input, output, session) {
     searchTable = shiny::reactive({
-        con = do.call(RPostgreSQL::dbConnect, .args)
+        con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
         s1 = ''

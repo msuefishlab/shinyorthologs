@@ -8,6 +8,15 @@
 #' shinyorthologs()
 #' }
 
+
+runShinyOrthologs <- function(args, baseDir) {
+    .GlobalEnv$args <- args
+    .GlobalEnv$baseDir <- baseDir
+    on.exit(rm(args, envir = .GlobalEnv))
+    on.exit(rm(baseDir, envir = .GlobalEnv))
+    filename <-  base::system.file("appdir", package = "shinyorthologs")
+    shiny::runApp(filename, launch.browser = TRUE)
+}
 #' @export
 #' @param db_host Database host
 #' @param db_port Database port
@@ -34,15 +43,13 @@ shinyorthologs <- function(db_user = NULL, db_host = NULL, db_port = NULL, db_pa
 }
 
 
-runShinyOrthologs <- function(args, baseDir) {
-    .GlobalEnv$.args <- args
-    .GlobalEnv$.baseDir <- baseDir
-    on.exit(rm(.args, envir = .GlobalEnv))
-    on.exit(rm(.baseDir, envir = .GlobalEnv))
-    filename <-  base::system.file("appdir", package = "shinyorthologs")
-    shiny::runApp(filename, launch.browser = TRUE)
+runShinyOrthologsDev <- function(args, baseDir) {
+    .GlobalEnv$args <- args
+    .GlobalEnv$baseDir <- baseDir
+    on.exit(rm(args, envir = .GlobalEnv))
+    on.exit(rm(baseDir, envir = .GlobalEnv))
+    shiny::runApp('inst/appdir', launch.browser = TRUE)
 }
-
 
 shinyorthologsDev <- function(db_user = NULL, db_host = NULL, db_port = NULL, db_pass = NULL, db_name = NULL, baseDir = NULL){
     use_name = !is.null(db_name)
@@ -61,12 +68,3 @@ shinyorthologsDev <- function(db_user = NULL, db_host = NULL, db_port = NULL, db
     runShinyOrthologsDev(args, baseDir)
     return(invisible())
 }
-
-runShinyOrthologsDev <- function(args, baseDir) {
-    .GlobalEnv$.args <- args
-    .GlobalEnv$.baseDir <- baseDir
-    on.exit(rm(.args, envir = .GlobalEnv))
-    on.exit(rm(.baseDir, envir = .GlobalEnv))
-    shiny::runApp('inst/appdir', launch.browser = TRUE)
-}
-

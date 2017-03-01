@@ -2,7 +2,7 @@
 
 speciesServer = function(input, output, session) {
     speciesTable = shiny::reactive({
-        con = do.call(RPostgreSQL::dbConnect, .args)
+        con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
         query = sprintf("SELECT * from species")

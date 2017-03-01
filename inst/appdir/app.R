@@ -1,12 +1,12 @@
 source('pheatmap.R')
 
-fastaIndexes <<- list()
+fastaIndexes = list()
 initFastaIndexes <- function() {
     con = do.call(RPostgreSQL::dbConnect, .args)
     query = sprintf('SELECT transcriptome_fasta from species')
     ret = RPostgreSQL::dbGetQuery(con, query)
     fastaIndexes <<- lapply(ret$transcriptome_fasta, function(fasta) {
-        file = file.path(.baseDir, fasta)
+        file = file.path(baseDir, fasta)
         print(file)
         fa = open(Rsamtools::FaFile(file))
         Rsamtools::scanFaIndex(fa)
@@ -16,27 +16,29 @@ initFastaIndexes <- function() {
 }
 initFastaIndexes()
 
-expressionFiles <<- list()
+expressionFiles = list()
 initExpressionFiles <- function() {
     con = do.call(RPostgreSQL::dbConnect, .args)
     query = sprintf('SELECT expression_file from species')
     ret = RPostgreSQL::dbGetQuery(con, query)
     files = ret$expression_file[!is.na(ret$expression_file)]
     expressionFiles <<- lapply(files, function(expr) {
-        read.csv(file.path(.baseDir, expr))
+        read.csv(file.path(baseDir, expr))
     })
     names(expressionFiles) <<- files
     RPostgreSQL::dbDisconnect(con)
 }
 initExpressionFiles()
 
+source('ui/search.R')
+source('ui/ortholog.R')
+source('ui/comparisons.R')
+source('ui/edit.R')
+source('ui/species.R')
+source('ui/help.R')
+
 ui <- function(request) {
-    source('ui/search.R', local = T)
-    source('ui/ortholog.R', local = T)
-    source('ui/comparisons.R', local = T)
-    source('ui/edit.R', local = T)
-    source('ui/species.R', local = T)
-    source('ui/help.R', local = T)
+    
     shiny::fluidPage(
         shiny::titlePanel('shinyorthologs2'),
 
@@ -72,6 +74,5 @@ server <- function(input, output, session) {
     })
     shiny::enableBookmarking("url")
 }
-
 
 shiny::shinyApp(ui, server)

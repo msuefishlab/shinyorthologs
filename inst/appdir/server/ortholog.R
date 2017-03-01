@@ -1,7 +1,7 @@
 orthologServer = function(input, output, session) {
 
     orthologTable = shiny::reactive({
-        con = do.call(RPostgreSQL::dbConnect, .args)
+        con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
         g = ifelse(is.null(input$gene), '*', input$gene)
@@ -29,11 +29,11 @@ orthologServer = function(input, output, session) {
         if (is.null(input$orthoTable_rows_selected)) {
             return()
         }
-        con = do.call(RPostgreSQL::dbConnect, .args)
+        con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
 
-        orthologs = orthologData()
+        orthologs = orthologTable()
         ids = orthologs[input$orthoTable_rows_selected, 2:ncol(orthologs)]
         ids = ids[!is.na(ids)]
         formatted_ids = sapply(ids, function(e) {
@@ -44,7 +44,7 @@ orthologServer = function(input, output, session) {
         query = sprintf('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s', paste0('(', formatted_list, ')'))
         ret = RPostgreSQL::dbGetQuery(con, query)
         rows = apply(ret, 1, function(row) {
-            file = file.path(.baseDir, row[4])
+            file = file.path(baseDir, row[4])
             fa = open(Rsamtools::FaFile(file))
             idx = fastaIndexes[[row[4]]]
             fasta = as.character(Rsamtools::getSeq(fa, idx[GenomicRanges::seqnames(idx) == row[3]]))
@@ -67,11 +67,11 @@ orthologServer = function(input, output, session) {
         if (is.null(input$orthoTable_rows_selected)) {
             return()
         }
-        con = do.call(RPostgreSQL::dbConnect, .args)
+        con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
 
-        orthologs = orthologData()
+        orthologs = orthologTable()
         ids = orthologs[input$orthoTable_rows_selected, 2:ncol(orthologs)]
         ids = ids[!is.na(ids)]
         formatted_ids = sapply(ids, function(e) {
@@ -82,7 +82,7 @@ orthologServer = function(input, output, session) {
         query = sprintf('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s', paste0('(', formatted_list, ')'))
         ret = RPostgreSQL::dbGetQuery(con, query)
         sequences = apply(ret, 1, function(row) {
-            file = file.path(.baseDir, row[4])
+            file = file.path(baseDir, row[4])
             fa = open(Rsamtools::FaFile(file))
             idx = fastaIndexes[[row[4]]]
             as.character(Rsamtools::getSeq(fa, idx[GenomicRanges::seqnames(idx) == row[3]]))
@@ -98,10 +98,10 @@ orthologServer = function(input, output, session) {
         if (is.null(input$orthoTable_rows_selected)) {
             return()
         }
-        con = do.call(RPostgreSQL::dbConnect, .args)
+        con = do.call(RPostgreSQL::dbConnect, args)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
-        orthologs = orthologData()
+        orthologs = orthologTable()
         ids = orthologs[input$orthoTable_rows_selected, 2:ncol(orthologs)]
         ids = ids[!is.na(ids)]
         formatted_ids = sapply(ids, function(e) {
