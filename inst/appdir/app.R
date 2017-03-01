@@ -38,7 +38,7 @@ initExpressionFiles()
 
 ui <- function(request) {
     shiny::fluidPage(
-        shiny::titlePanel('shinyorthologs'),
+        shiny::titlePanel('shinyorthologs2'),
 
         shiny::tabsetPanel(id = 'inTabset',
             shiny::tabPanel('Orthologs', orthologUI('orthologs')),

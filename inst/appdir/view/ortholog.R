@@ -97,10 +97,8 @@ orthologServer = function(input, output, session) {
         })
         sequences = Biostrings::DNAStringSet(sequences)
         names(sequences) = paste(ret[, 3], ret[, 2])
-        if (requireNamespace("msa", quietly = TRUE)) {
-            alignment = msa(sequences, "Muscle")
-            msaR::msaR(Biostrings::DNAStringSet(as.character(alignment)))
-        }
+        alignment = msa::msaClustalW(sequences)
+        msaR::msaR(Biostrings::DNAStringSet(as.character(alignment)))
     })
 
 
