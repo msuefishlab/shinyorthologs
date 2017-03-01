@@ -1,19 +1,20 @@
 speciesUI = function(id) {
-    ns = shiny::NS(id)
-    shiny::tagList(
-        shiny::h1("Species listing"),
-        shiny::fluidRow(
-            shiny::h2("Data table"),
+    ns = NS(id)
+    tagList(
+        h1("Species listing"),
+        fluidRow(
+            h2("Data table"),
             DT::dataTableOutput(ns("table"))
         ),
-        shiny::p('Download as CSV'),
-        shiny::downloadButton(ns('downloadData'), 'Download')
+        p('Download as CSV'),
+        downloadButton(ns('downloadData'), 'Download')
     )
 }
 
+
 speciesServer = function(input, output, session) {
-    speciesTable = shiny::reactive({
-        con = do.call(RPostgreSQL::dbConnect, .args)
+    speciesTable = reactive({
+        con = do.call(RPostgreSQL::dbConnect, dbargs)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
         query = sprintf("SELECT * from species")
@@ -21,12 +22,10 @@ speciesServer = function(input, output, session) {
     })
 
     output$table = DT::renderDataTable(speciesTable())
-    output$downloadData <- shiny::downloadHandler(
+    output$downloadData <- downloadHandler(
         filename = 'species.csv',
         content = function(file) {
             write.csv(speciesTable(), file)
         }
     )
-
-    source('common.R', local = TRUE)
 }

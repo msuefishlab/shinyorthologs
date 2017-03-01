@@ -17,9 +17,8 @@ Imports:
     Rsamtools (>= 1.26.1),
     RPostgreSQL (>= 0.4),
     msa (>=	1.6.0),
-    pheatmap (>= 1.0.8),
+    d3heatmap (>= 0.6.1.1),
     msaR (>= 0.1.0),
-    msa (>= 1.6.0),
     reshape2 (>= 1.4.2)
 Suggests:
     testthat

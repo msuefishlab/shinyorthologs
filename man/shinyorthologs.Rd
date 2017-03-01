@@ -4,19 +4,23 @@
 \alias{shinyorthologs}
 \title{Launch the shinyorthologs app}
 \usage{
-shinyorthologs(db_user = NULL, db_host = NULL, db_port = NULL,
-  db_pass = NULL, db_name = NULL)
+shinyorthologs(user = NULL, host = NULL, port = NULL, password = NULL,
+  dbname = NULL, basedir = NULL, dev = F)
 }
 \arguments{
-\item{db_user}{Database user}
+\item{user}{Database user}
 
-\item{db_host}{Database host}
+\item{host}{Database host}
 
-\item{db_port}{Database port}
+\item{port}{Database port}
 
-\item{db_pass}{Database password}
+\item{password}{Database password}
 
-\item{db_name}{Database name}
+\item{dbname}{Database name}
+
+\item{basedir}{Root directory for fasta/expression files}
+
+\item{dev}{Boolean if using dev environment, loads from local directories}
 }
 \description{
 Executing this function will launch the shinyorthologs application in
@@ -24,9 +28,6 @@ the user's default web browser.
 }
 \examples{
 \dontrun{
-shinyorthologs()
+shinyorthologs(basedir='/data/dir', dbname = 'shinyorthologs')
 }
-}
-\author{
-Colin Diesh \email{dieshcol@msu.edu}
 }

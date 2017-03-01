@@ -1,24 +1,25 @@
 editUI = function(id) {
-    ns = shiny::NS(id)
-    shiny::tagList(
-        shiny::fluidRow(
+    ns = NS(id)
+    tagList(
+        fluidRow(
             h2("Edit gene information"),
-            shiny::textInput(ns("symbol"), "Symbol: "),
-            shiny::textInput(ns("evidence"), "Evidence: "),
-            shiny::actionButton(ns("submit"), "Submit")
+            textInput(ns("symbol"), "Symbol: "),
+            textInput(ns("evidence"), "Evidence: "),
+            actionButton(ns("submit"), "Submit")
         ),
 
-        shiny::fluidRow(
-            shiny::h2("Data table"),
+        fluidRow(
+            h2("Data table"),
             DT::dataTableOutput(ns("searchTable"))
         )
     )
 }
 
+
 editServer = function(input, output, session) {
 
-    dataTable = shiny::reactive({
-        con = do.call(RPostgreSQL::dbConnect, .args)
+    dataTable = reactive({
+        con = do.call(RPostgreSQL::dbConnect, dbargs)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
         query = sprintf("SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
@@ -40,10 +41,10 @@ editServer = function(input, output, session) {
         updateTextInput(session, "evidence", value = as.character(ret[4]))
     })
 
-    values = reactiveValues(x="someValue")
+    values = reactiveValues(x = "someValue")
 
-    shiny::observeEvent(input$submit, {
-        con = do.call(RPostgreSQL::dbConnect, .args)
+    observeEvent(input$submit, {
+        con = do.call(RPostgreSQL::dbConnect, dbargs)
         on.exit(RPostgreSQL::dbDisconnect(con))
         data = dataTable()
         ret = data[input$searchTable_rows_selected, ]
@@ -55,6 +56,4 @@ editServer = function(input, output, session) {
         ret = RPostgreSQL::dbGetQuery(con, query)
         values$x = paste(name, input$evidence, input$symbol)
     })
-
-    source('common.R', local = TRUE)
 }

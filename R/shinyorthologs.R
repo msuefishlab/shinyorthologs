@@ -1,44 +1,61 @@
+library('shiny')
+
+init = function(dbargs, basedir) {
+    fastaIndexes = list()
+    con = do.call(RPostgreSQL::dbConnect, dbargs)
+    query = sprintf('SELECT transcriptome_fasta from species')
+    ret = RPostgreSQL::dbGetQuery(con, query)
+    fastaIndexes <<- lapply(ret$transcriptome_fasta, function(fasta) {
+        file = file.path(basedir, fasta)
+        print(file)
+        fa = open(Rsamtools::FaFile(file))
+        Rsamtools::scanFaIndex(fa)
+    })
+    names(fastaIndexes) <<- ret$transcriptome_fasta
+
+    expressionFiles = list()
+    query = sprintf('SELECT expression_file from species')
+    ret = RPostgreSQL::dbGetQuery(con, query)
+    files = ret$expression_file[!is.na(ret$expression_file)]
+    expressionFiles <<- lapply(files, function(expr) {
+        utils::read.csv(file.path(basedir, expr))
+    })
+    names(expressionFiles) <<- files
+    RPostgreSQL::dbDisconnect(con)
+}
 #' Launch the shinyorthologs app
 #'
 #' Executing this function will launch the shinyorthologs application in
 #' the user's default web browser.
-#' @author Colin Diesh \email{dieshcol@msu.edu}
 #' @examples
 #' \dontrun{
-#' shinyorthologs()
+#' shinyorthologs(basedir='/data/dir', dbname = 'shinyorthologs')
 #' }
-
 #' @export
-#' @param db_host Database host
-#' @param db_port Database port
-#' @param db_name Database name
-#' @param db_user Database user
-#' @param db_pass Database password
-#' @param baseDir Root directory for fasta/expression files
-shinyorthologs <- function(db_user = NULL, db_host = NULL, db_port = NULL, db_pass = NULL, db_name = NULL, baseDir = NULL){
-    use_name = !is.null(db_name)
-    use_port = !is.null(db_port)
-    use_user = !is.null(db_user)
-    use_pass = !is.null(db_pass)
-    use_host = !is.null(db_host)
-    args = c(
+#' @param host Database host
+#' @param port Database port
+#' @param dbname Database name
+#' @param user Database user
+#' @param password Database password
+#' @param basedir Root directory for fasta/expression files
+#' @param dev Boolean if using dev environment, loads from local directories
+shinyorthologs = function(user = NULL, host = NULL, port = NULL, password = NULL, dbname = NULL, basedir = NULL, dev = F) {
+    dbargs = c(
         RPostgreSQL::PostgreSQL(),
-        list(dbname = db_name)[use_name],
-        list(host = db_host)[use_host],
-        list(user = db_user)[use_user],
-        list(password = db_pass)[use_pass],
-        list(port = db_port)[use_port]
+        list(dbname = dbname)[!is.null(dbname)],
+        list(host = host)[!is.null(host)],
+        list(user = user)[!is.null(user)],
+        list(password = password)[!is.null(password)],
+        list(port = port)[!is.null(port)]
     )
-    runShinyOrthologs(args, baseDir)
-    return(invisible())
-}
-
-
-runShinyOrthologs <- function(args, baseDir){
-    .GlobalEnv$.args <- args
-    .GlobalEnv$.baseDir <- baseDir
-    on.exit(rm(.args, envir = .GlobalEnv))
-    on.exit(rm(.baseDir, envir = .GlobalEnv))
-    filename <-  base::system.file("appdir", package = "shinyorthologs")
-    shiny::runApp(filename, launch.browser = TRUE)
+    init(dbargs, basedir)
+    assign("dbargs", dbargs, envir = .GlobalEnv)
+    assign("basedir", basedir, envir = .GlobalEnv)
+    on.exit(rm(dbargs, envir = .GlobalEnv))
+    on.exit(rm(basedir, envir = .GlobalEnv))
+    if (!dev) {
+        shiny::runApp(base::system.file("appdir", package = "shinyorthologs"))
+    } else {
+        shiny::runApp('inst/appdir')
+    }
 }
