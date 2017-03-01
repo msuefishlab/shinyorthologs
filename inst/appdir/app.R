@@ -1,9 +1,3 @@
-source('view/search.R')
-source('view/ortholog.R')
-source('view/comparisons.R')
-source('view/edit.R')
-source('view/species.R')
-source('view/help.R')
 source('pheatmap.R')
 
 fastaIndexes <<- list()
@@ -37,6 +31,12 @@ initExpressionFiles <- function() {
 initExpressionFiles()
 
 ui <- function(request) {
+    source('ui/search.R', local=T)
+    source('ui/ortholog.R', local=T)
+    source('ui/comparisons.R', local=T)
+    source('ui/edit.R', local=T)
+    source('ui/species.R', local=T)
+    source('ui/help.R', local=T)
     shiny::fluidPage(
         shiny::titlePanel('shinyorthologs2'),
 
@@ -52,6 +52,12 @@ ui <- function(request) {
 }
 
 server <- function(input, output, session) {
+    source('server/search.R', local=T)
+    source('server/ortholog.R', local=T)
+    source('server/comparisons.R', local=T)
+    source('server/edit.R', local=T)
+    source('server/species.R', local=T)
+    source('server/help.R', local=T)
     shiny::callModule(searchServer, 'search')
     shiny::callModule(orthologServer, 'orthologs')
     shiny::callModule(comparisonsServer, 'comparisons')
