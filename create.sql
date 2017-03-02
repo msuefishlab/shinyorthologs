@@ -4,8 +4,8 @@ CREATE TABLE genes (GENE_ID varchar(255) PRIMARY KEY, SPECIES_ID varchar(255) RE
 CREATE TABLE orthodescriptions (ORTHOLOG_ID varchar(255) PRIMARY KEY, DESCRIPTION varchar(2024));
 CREATE TABLE orthologs (ORTHOLOG_ID varchar(255) REFERENCES orthodescriptions, SPECIES_ID varchar(255) REFERENCES species, GENE_ID varchar(255) REFERENCES genes, EVIDENCE varchar(255));
 CREATE TABLE transcripts (TRANSCRIPT_ID varchar(255), GENE_ID varchar(255));
-COPY species FROM '/Users/cdiesh/testdata/species.csv' CSV HEADER;
-COPY genes FROM '/Users/cdiesh/testdata/genes.csv' CSV HEADER;
-COPY orthodescriptions FROM '/Users/cdiesh/testdata/ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
-COPY orthologs FROM '/Users/cdiesh/testdata/orthologs.csv' CSV HEADER;
-COPY transcripts FROM '/Users/cdiesh/testdata/transcripts.csv' CSV HEADER;
+COPY species FROM 'C:/Users/2010/Desktop/extdata/species.csv' CSV HEADER;
+COPY genes FROM 'C:/Users/2010/Desktop/extdata/genes.csv' CSV HEADER;
+COPY orthodescriptions FROM 'C:/Users/2010/Desktop/extdata/ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
+COPY orthologs FROM 'C:/Users/2010/Desktop/extdata/orthologs.csv' CSV HEADER;
+COPY transcripts FROM 'C:/Users/2010/Desktop/extdata/transcripts.csv' CSV HEADER;

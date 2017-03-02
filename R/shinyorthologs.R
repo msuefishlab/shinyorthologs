@@ -1,70 +1,62 @@
+library('shiny')
+
 #' Launch the shinyorthologs app
 #'
 #' Executing this function will launch the shinyorthologs application in
 #' the user's default web browser.
-#' @author Colin Diesh \email{dieshcol@msu.edu}
 #' @examples
 #' \dontrun{
-#' shinyorthologs()
+#' shinyorthologs(basedir='/data/dir', dbname = 'shinyorthologs')
 #' }
-
-
-runShinyOrthologs <- function(args, baseDir) {
-    .GlobalEnv$args <- args
-    .GlobalEnv$baseDir <- baseDir
-    on.exit(rm(args, envir = .GlobalEnv))
-    on.exit(rm(baseDir, envir = .GlobalEnv))
-    filename <-  base::system.file("appdir", package = "shinyorthologs")
-    shiny::runApp(filename, launch.browser = TRUE)
-}
 #' @export
-#' @param db_host Database host
-#' @param db_port Database port
-#' @param db_name Database name
-#' @param db_user Database user
-#' @param db_pass Database password
-#' @param baseDir Root directory for fasta/expression files
-shinyorthologs <- function(db_user = NULL, db_host = NULL, db_port = NULL, db_pass = NULL, db_name = NULL, baseDir = NULL){
-    use_name = !is.null(db_name)
-    use_port = !is.null(db_port)
-    use_user = !is.null(db_user)
-    use_pass = !is.null(db_pass)
-    use_host = !is.null(db_host)
+#' @param host Database host
+#' @param port Database port
+#' @param dbname Database name
+#' @param user Database user
+#' @param password Database password
+#' @param basedir Root directory for fasta/expression files
+shinyorthologs <- function(user = NULL, host = NULL, port = NULL, password = NULL, dbname = NULL, basedir = NULL) {
+    
+    
     args = c(
         RPostgreSQL::PostgreSQL(),
-        list(dbname = db_name)[use_name],
-        list(host = db_host)[use_host],
-        list(user = db_user)[use_user],
-        list(password = db_pass)[use_pass],
-        list(port = db_port)[use_port]
+        list(dbname = dbname)[!is.null(dbname)],
+        list(host = host)[!is.null(host)],
+        list(user = user)[!is.null(user)],
+        list(password = password)[!is.null(password)],
+        list(port = port)[!is.null(port)]
     )
-    runShinyOrthologs(args, baseDir)
-    return(invisible())
-}
+    assign("args", args, envir = .GlobalEnv)
+    
+    source('R/page/search.R')
+    source('R/page/ortholog.R')
+    source('R/page/comparisons.R')
+    source('R/page/species.R')
+    source('R/page/edit.R')
+    source('R/page/help.R')
+    
+    shinyApp(
+        function(request) {
+            fluidPage(
+                titlePanel('shinyorthologs2'),
+                tabsetPanel(id = 'inTabset',
+                            tabPanel('Comparisons', comparisonsUI('comparisons')),
+                            tabPanel('Genes', searchUI('search')),
+                            tabPanel('Species', speciesUI('species')),
+                            tabPanel('Edit', editUI('edit')),
+                            tabPanel('Help', helpUI('help')
+                            )
+                )
+            )
+        }, function(input, output, session) {
 
-
-runShinyOrthologsDev <- function(args, baseDir) {
-    .GlobalEnv$args <- args
-    .GlobalEnv$baseDir <- baseDir
-    on.exit(rm(args, envir = .GlobalEnv))
-    on.exit(rm(baseDir, envir = .GlobalEnv))
-    shiny::runApp('inst/appdir', launch.browser = TRUE)
-}
-
-shinyorthologsDev <- function(db_user = NULL, db_host = NULL, db_port = NULL, db_pass = NULL, db_name = NULL, baseDir = NULL){
-    use_name = !is.null(db_name)
-    use_port = !is.null(db_port)
-    use_user = !is.null(db_user)
-    use_pass = !is.null(db_pass)
-    use_host = !is.null(db_host)
-    args = c(
-        RPostgreSQL::PostgreSQL(),
-        list(dbname = db_name)[use_name],
-        list(host = db_host)[use_host],
-        list(user = db_user)[use_user],
-        list(password = db_pass)[use_pass],
-        list(port = db_port)[use_port]
+            callModule(searchServer, 'search')
+            callModule(comparisonsServer, 'comparisons')
+            callModule(speciesServer, 'species')
+            callModule(editServer, 'edit')
+            
+        }
     )
-    runShinyOrthologsDev(args, baseDir)
-    return(invisible())
 }
+
+
