@@ -6,12 +6,13 @@ orthologUI = function(id) {
             h2('Ortholog information')
         ),
         fluidRow(
-            DT::dataTableOutput(ns('table'))
+            DT::dataTableOutput(ns('table')),
+            downloadButton(ns('downloadData'), 'Download CSV')
         )
     )
 }
 orthologServer = function(input, output, session) {
-
+    setBookmarkExclude(c("table_rows_current", "table_cell_clicked", "table_search", "table_rows_selected", "table_rows_all", "table_state"))
     orthologTable = reactive({
         con = do.call(RPostgreSQL::dbConnect, dbargs)
         on.exit(RPostgreSQL::dbDisconnect(con))
@@ -31,15 +32,14 @@ orthologServer = function(input, output, session) {
     selection = 'single', escape = F)
 
 
-    output$downloadData <- downloadHandler(
-        filename = 'search.csv',
+    output$downloadData = downloadHandler('orthologs.csv',
         content = function(file) {
-            write.csv(orthologTable(), file)
+            tab = orthologTable()
+            write.csv(tab[input$table_rows_all, , drop = FALSE], file)
         }
     )
 
     createLink <- function(val) {
         sprintf('<a href="?_inputs_&inTabset=Gene%%20page&ortholog=%s">%s</a>', val, val)
     }
-
 }

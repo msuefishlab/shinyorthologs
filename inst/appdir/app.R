@@ -9,7 +9,6 @@ ui = function(request) {
     source('page/species.R', local = T)
     fluidPage(
         titlePanel('shinyorthologs3'),
-        bookmarkButton(),
         tabsetPanel(id = 'inTabset',
             tabPanel(id = 'comparisons', 'Multi-ortholog heatmap', comparisonsUI('comparisons')),
             tabPanel(id = 'search', 'Gene search', searchUI('search')),
@@ -41,15 +40,9 @@ server = function(input, output, session) {
     callModule(speciesServer, 'species')
     callModule(editServer, 'edit')
 
+
     observeEvent(input$inTabset, {
-        print('here2')
-        print(input$inTabset)
-    })
-    observe({
-        query <- parseQueryString(session$clientData$url_search)
-        if (!is.null(query[['tab']])) {
-            updateTabsetPanel(session, "inTabset", selected = query[['tab']])
-        }
+        session$doBookmark()
     })
     onBookmarked(function(url) {
         updateQueryString(url)

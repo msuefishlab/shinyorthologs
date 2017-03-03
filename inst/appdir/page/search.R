@@ -3,9 +3,6 @@ searchUI = function(id) {
     tagList(
         h1("Gene data"),
         p("Search for genes or orthologs in this table, and select them by clicking each row. The selected genes will be added to a 'workplace' that you can do further analysis with."),
-        fluidRow(
-            column(4, textInput(ns("gene"), "Search: "))
-        ),
 
         fluidRow(
             h2("Data table"),
@@ -16,26 +13,25 @@ searchUI = function(id) {
     )
 }
 searchServer = function(input, output, session) {
+
+    setBookmarkExclude(c("search-table_rows_current", "search-table_cell_clicked", "search-table_search", "search-table_rows_selected", "search-table_rows_all", "search-table_state"))
+    
     searchTable = reactive({
         con = do.call(RPostgreSQL::dbConnect, dbargs)
         on.exit(RPostgreSQL::dbDisconnect(con))
 
-        s1 = ''
-
         # match ortholog or gene
-        if (input$gene != "") {
-            s1 = sprintf("where g.gene_id LIKE '%s%%' or g.symbol LIKE '%s%%' or o.ortholog_id LIKE '%s%%' or d.description LIKE '%s%%'", input$gene, input$gene, input$gene, input$gene)
-        }
-        query = sprintf("SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id %s", s1)
+        query = sprintf("SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
 
         RPostgreSQL::dbGetQuery(con, query)
     })
 
-    output$table = DT::renderDataTable(searchTable(), options = list(bFilter = 0), selection = 'single')
-    output$downloadData <- downloadHandler(
-        filename = 'search.csv',
+    output$table = DT::renderDataTable(searchTable(), selection = 'single')
+
+    output$downloadData = downloadHandler('genes.csv',
         content = function(file) {
-            write.csv(searchTable(), file)
+            tab = searchTable()
+            write.csv(tab[input$table_rows_all, , drop = FALSE], file)
         }
     )
 }

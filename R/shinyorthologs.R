@@ -39,7 +39,7 @@ init = function(dbargs, basedir) {
 #' @param password Database password
 #' @param basedir Root directory for fasta/expression files
 #' @param dev Boolean if using dev environment, loads from local directories
-shinyorthologs = function(user = NULL, host = NULL, port = NULL, password = NULL, dbname = NULL, basedir = NULL, dev = F) {
+shinyorthologs = function(user = NULL, host = NULL, port = NULL, password = NULL, dbname = 'shinyorthologs', basedir = NULL, dev = F) {
     dbargs = c(
         RPostgreSQL::PostgreSQL(),
         list(dbname = dbname)[!is.null(dbname)],
