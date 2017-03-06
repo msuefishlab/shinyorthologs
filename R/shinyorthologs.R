@@ -34,7 +34,7 @@ init = function(dbargs, basedir) {
 #' @export
 #' @param host Database host
 #' @param port Database port
-#' @param dbname Database name
+#' @param dbname Database name. Default: shinyorthologs
 #' @param user Database user
 #' @param password Database password
 #' @param basedir Root directory for fasta/expression files

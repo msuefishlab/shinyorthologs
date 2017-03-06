@@ -5,7 +5,7 @@
 \title{Launch the shinyorthologs app}
 \usage{
 shinyorthologs(user = NULL, host = NULL, port = NULL, password = NULL,
-  dbname = NULL, basedir = NULL, dev = F)
+  dbname = "shinyorthologs", basedir = NULL, dev = F)
 }
 \arguments{
 \item{user}{Database user}
@@ -16,7 +16,7 @@ shinyorthologs(user = NULL, host = NULL, port = NULL, password = NULL,
 
 \item{password}{Database password}
 
-\item{dbname}{Database name}
+\item{dbname}{Database name. Default: shinyorthologs}
 
 \item{basedir}{Root directory for fasta/expression files}
 

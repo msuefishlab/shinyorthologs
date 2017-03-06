@@ -39,6 +39,6 @@ orthologServer = function(input, output, session) {
     )
 
     createLink <- function(val) {
-        sprintf('<a href="?_inputs_&inTabset=Gene%%20page&ortholog=%s">%s</a>', val, val)
+        sprintf("<a href='?_inputs_&inTabset=\"Gene%%20page\"&genepage-ortholog=%s'>%s</a>", val, val)
     }
 }
