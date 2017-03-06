@@ -32,6 +32,9 @@ server = function(input, output, session) {
     source('page/edit.R', local = T)
     source('page/species.R', local = T)
 
+    setBookmarkExclude(c("search-table_rows_current", "search-table_cell_clicked", "search-table_search", "search-table_rows_selected", "search-table_rows_all", "search-table_state", "search-table_row_last_clicked",
+                         "orthologs-table_rows_current", "orthologs-table_cell_clicked", "orthologs-table_orthologs", "orthologs-table_rows_selected", "orthologs-table_rows_all", "orthologs-table_state", "orthologs-table_row_last_clicked"))
+
     callModule(searchServer, 'search')
     callModule(comparisonsServer, 'comparisons')
     callModule(orthologServer, 'orthologs')

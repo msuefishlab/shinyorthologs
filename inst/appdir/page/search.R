@@ -13,9 +13,6 @@ searchUI = function(id) {
     )
 }
 searchServer = function(input, output, session) {
-
-    setBookmarkExclude(c("search-table_rows_current", "search-table_cell_clicked", "search-table_search", "search-table_rows_selected", "search-table_rows_all", "search-table_state"))
-    
     searchTable = reactive({
         con = do.call(RPostgreSQL::dbConnect, dbargs)
         on.exit(RPostgreSQL::dbDisconnect(con))

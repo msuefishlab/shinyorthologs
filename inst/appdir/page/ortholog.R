@@ -12,7 +12,6 @@ orthologUI = function(id) {
     )
 }
 orthologServer = function(input, output, session) {
-    setBookmarkExclude(c("table_rows_current", "table_cell_clicked", "table_search", "table_rows_selected", "table_rows_all", "table_state"))
     orthologTable = reactive({
         con = do.call(RPostgreSQL::dbConnect, dbargs)
         on.exit(RPostgreSQL::dbDisconnect(con))
