@@ -14,11 +14,11 @@ speciesUI = function(id) {
 
 speciesServer = function(input, output, session) {
     speciesTable = reactive({
-        con = do.call(RPostgreSQL::dbConnect, dbargs)
-        on.exit(RPostgreSQL::dbDisconnect(con))
-        
-        query = sprintf("SELECT * from species")
-        RPostgreSQL::dbGetQuery(con, query)
+        conn = poolCheckout(pool)
+        rs = dbSendQuery(conn, "SELECT * FROM species")
+        ret = dbFetch(rs)
+        poolReturn(conn) 
+        ret
     })
     
     output$table = DT::renderDataTable(speciesTable())

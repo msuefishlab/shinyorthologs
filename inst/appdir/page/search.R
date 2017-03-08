@@ -14,13 +14,11 @@ searchUI = function(id) {
 }
 searchServer = function(input, output, session) {
     searchTable = reactive({
-        con = do.call(RPostgreSQL::dbConnect, dbargs)
-        on.exit(RPostgreSQL::dbDisconnect(con))
-        
-        # match ortholog or gene
-        query = sprintf("SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
-        
-        RPostgreSQL::dbGetQuery(con, query)
+        conn = poolCheckout(pool)
+        rs = dbSendQuery(conn, "SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
+        ret = dbFetch(rs)
+        poolReturn(conn)
+        ret
     })
     
     output$table = DT::renderDataTable(searchTable(), selection = 'single')

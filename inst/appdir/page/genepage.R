@@ -10,10 +10,6 @@ genepageUI = function(id) {
 genepageServer = function(input, output, session) {
 
     output$species = DT::renderDataTable({
-        con = do.call(RPostgreSQL::dbConnect, dbargs)
-        on.exit(RPostgreSQL::dbDisconnect(con))
 
-        query = sprintf("SELECT ortholog_id, species_id, gene_id FROM orthologs WHERE ortholog_id='%s'", input$ortholog)
-        RPostgreSQL::dbGetQuery(con, query)
     })
 }

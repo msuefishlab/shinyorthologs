@@ -19,9 +19,15 @@ Imports:
     msa (>=	1.6.0),
     d3heatmap (>= 0.6.1.1),
     msaR (>= 0.1.0),
-    reshape2 (>= 1.4.2)
+    reshape2 (>= 1.4.2),
+    DBI (>= 0.5),
+    pool (>= 0.1.0)
 Suggests:
     testthat
+Remotes:
+    rstats-db/DBI,
+    rstudio/pool,
+    rstudio/shiny
 License: MIT
 Encoding: UTF-8
 RoxygenNote: 6.0.1.9000

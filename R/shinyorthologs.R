@@ -1,10 +1,12 @@
-library('shiny')
+library(DBI)
+library(pool)
+library(shiny)
 
-init = function(dbargs, basedir) {
+init = function(pool, basedir) {
     fastaIndexes = list()
-    con = do.call(RPostgreSQL::dbConnect, dbargs)
-    query = sprintf('SELECT transcriptome_fasta from species')
-    ret = RPostgreSQL::dbGetQuery(con, query)
+    conn <- poolCheckout(pool)
+    query = dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
+    ret = dbFetch(query)
     fastaIndexes <<- lapply(ret$transcriptome_fasta, function(fasta) {
         file = file.path(basedir, fasta)
         print(file)
@@ -12,16 +14,16 @@ init = function(dbargs, basedir) {
         Rsamtools::scanFaIndex(fa)
     })
     names(fastaIndexes) <<- ret$transcriptome_fasta
-
+    
     expressionFiles = list()
-    query = sprintf('SELECT expression_file from species')
-    ret = RPostgreSQL::dbGetQuery(con, query)
+    query = dbSendQuery(conn, 'SELECT expression_file from species')
+    ret = dbFetch(query)
     files = ret$expression_file[!is.na(ret$expression_file)]
     expressionFiles <<- lapply(files, function(expr) {
         utils::read.csv(file.path(basedir, expr))
     })
     names(expressionFiles) <<- files
-    RPostgreSQL::dbDisconnect(con)
+    poolReturn(conn)
 }
 #' Launch the shinyorthologs app
 #'
@@ -48,14 +50,16 @@ shinyorthologs = function(user = NULL, host = NULL, port = NULL, password = NULL
         list(password = password)[!is.null(password)],
         list(port = port)[!is.null(port)]
     )
-    init(dbargs, basedir)
-    assign("dbargs", dbargs, envir = .GlobalEnv)
+    pool = do.call(dbPool, dbargs)
+    
+    init(pool, basedir)
+    assign("pool", pool, envir = .GlobalEnv)
     assign("basedir", basedir, envir = .GlobalEnv)
-    on.exit(rm(dbargs, envir = .GlobalEnv))
+    on.exit(rm(pool, envir = .GlobalEnv))
     on.exit(rm(basedir, envir = .GlobalEnv))
     if (!dev) {
-        shiny::runApp(base::system.file("appdir", package = "shinyorthologs"))
+        runApp(base::system.file("appdir", package = "shinyorthologs"))
     } else {
-        shiny::runApp('inst/appdir')
+        runApp('inst/appdir')
     }
 }

@@ -16,11 +16,10 @@ msaServer = function(input, output, session) {
 
 
     output$msaoutput = msaR::renderMsaR({
-        if (is.null(input$orthoTable_rows_selected)) {
-            return()
-        }
-        con = do.call(RPostgreSQL::dbConnect, dbargs)
-        on.exit(RPostgreSQL::dbDisconnect(con))
+        conn <- poolCheckout(pool)
+        rs <- dbSendQuery(conn, "SELECT * FROM species")
+        ret=dbFetch(rs)
+        ret
 
 
         orthologs = orthologTable()
@@ -31,8 +30,11 @@ msaServer = function(input, output, session) {
         })
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
 
-        query = sprintf('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in %s', paste0('(', formatted_list, ')'))
-        ret = RPostgreSQL::dbGetQuery(con, query)
+        query = dbSendQuery('SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in ?')
+        res=dbBind(query,paste0('(', formatted_list, ')'))
+        ret = dbFetch(res)
+        
+        poolReturn(conn) 
         sequences = apply(ret, 1, function(row) {
             file = file.path(basedir, row[4])
             fa = open(Rsamtools::FaFile(file))
@@ -43,6 +45,7 @@ msaServer = function(input, output, session) {
         names(sequences) = paste(ret[, 3], ret[, 2])
         alignment = msa::msaClustalW(sequences)
         msaR::msaR(Biostrings::DNAStringSet(as.character(alignment)))
+        
     })
 
 

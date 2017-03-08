@@ -13,12 +13,11 @@ orthologUI = function(id) {
 }
 orthologServer = function(input, output, session) {
     orthologTable = reactive({
-        con = do.call(RPostgreSQL::dbConnect, dbargs)
-        on.exit(RPostgreSQL::dbDisconnect(con))
-        
-        query = sprintf("SELECT * FROM orthodescriptions;")
-        
-        RPostgreSQL::dbGetQuery(con, query)
+        conn <- poolCheckout(pool)
+        rs <- dbSendQuery(conn, "SELECT * FROM species")
+        ret=dbFetch(rs)
+        poolReturn(conn) 
+        ret
     })
     
     observe({

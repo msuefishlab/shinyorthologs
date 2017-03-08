@@ -28,12 +28,14 @@ comparisonsServer <- function(input, output, session) {
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
         mylist = paste0('(', formatted_list, ')')
         
+        conn <- poolCheckout(pool)
+        rs <- dbSendQuery(conn, "SELECT $$SELECT * FROM crosstab('SELECT ortholog_id, species_id, gene_id FROM orthologs WHERE ortholog_id IN %s ORDER  BY 1, 2') AS ct (ortholog_id varchar(255), $$ || string_agg(quote_ident(species_id), ' varchar(255), ' ORDER BY species_id) || ' varchar(255))' FROM species")
+        query = dbBind(rs, mylist)
+        ret=dbFetch(query)
+        rs <- dbSendQuery(conn, ret[1, ])
+        ret2=dbFetch(query)
+        poolReturn(conn) 
         
-        con = do.call(RPostgreSQL::dbConnect, dbargs)
-        on.exit(RPostgreSQL::dbDisconnect(con))
-        query = sprintf("SELECT $$SELECT * FROM crosstab('SELECT ortholog_id, species_id, gene_id FROM orthologs WHERE ortholog_id IN %s ORDER  BY 1, 2') AS ct (ortholog_id varchar(255), $$ || string_agg(quote_ident(species_id), ' varchar(255), ' ORDER BY species_id) || ' varchar(255))' FROM species", mylist)
-        ret = RPostgreSQL::dbGetQuery(con, query)
-        ret2 = RPostgreSQL::dbGetQuery(con, ret[1, ])
         ids = ret2[, 1]
         
         ids = ids[!is.na(ids)]
