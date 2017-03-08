@@ -20,9 +20,9 @@ CREATE TABLE orthologs (
     SPECIES_ID varchar(255) REFERENCES species,
     GENE_ID varchar(255) REFERENCES genes,
     EVIDENCE varchar(255),
-    REMOVED BOOLEAN DEFAULT FALSE,
-    EDITED BOOLEAN DEFAULT FALSE,
-    lastUpdated TIMESTAMP DEFAULT (now() at time zone 'utc')
+    REMOVED BOOLEAN NOT NULL DEFAULT FALSE,
+    EDITED BOOLEAN NOT NULL DEFAULT FALSE,
+    lastUpdated TIMESTAMP NOT NULL DEFAULT (now() at time zone 'utc')
 );
 CREATE TABLE transcripts (
     TRANSCRIPT_ID varchar(255),
@@ -31,5 +31,5 @@ CREATE TABLE transcripts (
 COPY species FROM '/Users/cdiesh/testdata/species.csv' CSV HEADER;
 COPY genes FROM '/Users/cdiesh/testdata/genes.csv' CSV HEADER;
 COPY orthodescriptions FROM '/Users/cdiesh/testdata/ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
-COPY orthologs FROM '/Users/cdiesh/testdata/orthologs.csv' CSV HEADER;
+COPY orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM '/Users/cdiesh/testdata/orthologs.csv' CSV HEADER;
 COPY transcripts FROM '/Users/cdiesh/testdata/transcripts.csv' CSV HEADER;

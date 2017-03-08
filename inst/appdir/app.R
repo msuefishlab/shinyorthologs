@@ -7,21 +7,19 @@ ui = function(request) {
     source('page/help.R', local = T)
     source('page/edit.R', local = T)
     source('page/species.R', local = T)
+    source('page/updates.R', local = T)
     fluidPage(
         titlePanel('shinyorthologs3'),
         tabsetPanel(
             id = 'inTabset',
-            tabPanel(
-                id = 'comparisons',
-                'Multi-ortholog heatmap',
-                comparisonsUI('comparisons')
-            ),
+            tabPanel(id = 'comparisons', 'Heatmap', comparisonsUI('comparisons')),
             tabPanel(id = 'search', 'Gene search', searchUI('search')),
             tabPanel(id = 'orthologs', 'Ortholog search', orthologUI('orthologs')),
             tabPanel(id = 'species', 'Species table', speciesUI('species')),
             tabPanel(id = 'msa', 'MSA', msaUI('msa')),
             tabPanel(id = 'genepage', 'Gene page', genepageUI('genepage')),
-            tabPanel(id = 'edit', 'Edit', editUI('edit')),
+            tabPanel(id = 'edit', 'Edit', editUI('edits')),
+            tabPanel(id = 'updated', 'Recent updates', updatesUI('updates')),
             tabPanel(id = 'help', 'Help', helpUI('help'))
         )
     )
@@ -36,6 +34,7 @@ server = function(input, output, session) {
     source('page/genepage.R', local = T)
     source('page/edit.R', local = T)
     source('page/species.R', local = T)
+    source('page/updates.R', local = T)
     setBookmarkExclude(
         c(
             "search-table_rows_current",
@@ -58,7 +57,20 @@ server = function(input, output, session) {
             "species-table_rows_selected",
             "species-table_rows_all",
             "species-table_state",
-            "species-table_row_last_clicked"
+            "species-table_row_last_clicked",
+            "updates-table_rows_current",
+            "updates-table_cell_clicked",
+            "updates-table_species",
+            "updates-table_rows_selected",
+            "updates-table_rows_all",
+            "updates-table_state",
+            "updates-table_row_last_clicked",
+            "edits-table_rows_current",
+            "edits-table_cell_clicked",
+            "edits-table_species",
+            "edits-table_rows_all",
+            "edits-table_state",
+            "edits-table_row_last_clicked"
         )
     )
     callModule(searchServer, 'search')
@@ -67,7 +79,8 @@ server = function(input, output, session) {
     callModule(genepageServer, 'genepage')
     callModule(msaServer, 'msa')
     callModule(speciesServer, 'species')
-    callModule(editServer, 'edit')
+    callModule(editServer, 'edits')
+    callModule(updatesServer, 'updates')
     observeEvent(input$inTabset, {
         session$doBookmark()
     })

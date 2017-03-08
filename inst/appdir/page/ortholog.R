@@ -1,10 +1,10 @@
 orthologUI = function(id) {
     ns = NS(id)
-    tagList(fluidRow(h2('Ortholog information')),
-            fluidRow(textInput(ns('search'), 'Search'),
-                     uiOutput(ns(
-                         'search_results'
-                     ))))
+    tagList(fluidRow(
+        h2('Ortholog information'),
+        textInput(ns('search'), 'Search'),
+        uiOutput(ns('search_results'))
+    ))
 }
 orthologServer = function(input, output, session) {
     orthologTable = reactive({
@@ -14,10 +14,11 @@ orthologServer = function(input, output, session) {
         poolReturn(conn)
         ret
     })
-
+    
     observe({
+        
     })
-
+    
     output$downloadData = downloadHandler(
         'orthologs.csv',
         content = function(file) {
@@ -25,7 +26,7 @@ orthologServer = function(input, output, session) {
             write.csv(tab[input$table_rows_all, , drop = FALSE], file)
         }
     )
-
+    
     createLink <- function(val) {
         sprintf(
             "<a href='?_inputs_&inTabset=\"Gene%%20page\"&genepage-ortholog=\"%s\"'>%s</a>",

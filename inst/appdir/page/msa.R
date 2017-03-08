@@ -37,6 +37,5 @@ msaServer = function(input, output, session) {
         names(sequences) = paste(ret[, 3], ret[, 2])
         alignment = msa::msaClustalW(sequences)
         msaR::msaR(Biostrings::DNAStringSet(as.character(alignment)))
-
     })
 }
