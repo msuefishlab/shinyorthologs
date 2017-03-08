@@ -2,3 +2,4 @@
 .DS_Store
 shinyorthologs*.tar.gz
 *.Rcheck
+.Rproj.user
