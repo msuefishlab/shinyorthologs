@@ -26,27 +26,19 @@ editServer = function(input, output, session) {
         )
         res = dbFetch(rs)
         poolReturn(conn)
-        
         res
     })
-    
     output$editTable = DT::renderDataTable({
         dataTable()
     }, selection = 'single')
-    
-    
     observeEvent(input$deleterow, {
         data = dataTable()
         ret = data[input$editTable_rows_selected, ]
         name = as.character(ret[1])
-        
         conn = poolCheckout(pool)
         query = "UPDATE orthologs SET removed=true WHERE gene_id=?name"
         q = sqlInterpolate(conn, query, name = name)
-        print(q)
         rs = dbExecute(conn, q)
-        print(rs)
-        
         poolReturn(conn)
     })
     observeEvent(input$editrow, {
@@ -57,7 +49,5 @@ editServer = function(input, output, session) {
         updateTextInput(session, "ortholog", value = as.character(ret[3]))
         updateTextInput(session, "evidence", value = as.character(ret[4]))
     })
-    
     values = reactiveValues(x = "someValue")
-    
 }

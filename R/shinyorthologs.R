@@ -15,7 +15,7 @@ init = function(pool, basedir) {
             Rsamtools::scanFaIndex(fa)
         })
     names(fastaIndexes) <<- ret$transcriptome_fasta
-    
+
     expressionFiles = list()
     query = dbSendQuery(conn, 'SELECT expression_file from species')
     ret = dbFetch(query)
@@ -58,7 +58,7 @@ shinyorthologs = function(user = NULL,
         list(port = port)[!is.null(port)]
     )
     pool = do.call(dbPool, dbargs)
-    
+
     init(pool, basedir)
     assign("pool", pool, envir = .GlobalEnv)
     assign("basedir", basedir, envir = .GlobalEnv)

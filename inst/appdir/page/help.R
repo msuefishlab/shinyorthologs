@@ -10,5 +10,4 @@ helpUI = function(id) {
 
 
 helpServer = function(input, output, session) {
-    
 }

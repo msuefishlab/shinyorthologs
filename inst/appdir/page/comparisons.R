@@ -1,6 +1,3 @@
-
-
-
 comparisonsUI <- function(id) {
     ns <- NS(id)
     tagList(
@@ -28,7 +25,6 @@ comparisonsServer <- function(input, output, session) {
         if (input$genes == "") {
             return()
         }
-        
         x = strsplit(input$genes, "\n")
         print(x)
         formatted_ids = sapply(x, function(e) {
@@ -48,24 +44,21 @@ comparisonsServer <- function(input, output, session) {
         rs <- dbSendQuery(conn, ret[1, ])
         ret2 = dbFetch(query)
         poolReturn(conn)
-        
         ids = ret2[, 1]
-        
         ids = ids[!is.na(ids)]
         formatted_ids = sapply(ids, function(e) {
             paste0("'", e, "'")
         })
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
-        
         query = sprintf(
             "SELECT g.gene_id, g.species_id, s.expression_file, s.species_name, o.ortholog_id from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id where o.ortholog_id in %s",
             paste0('(', formatted_list, ')')
         )
-        ret = RPostgreSQL::dbGetQuery(con, query)
+        rs <- dbSendQuery(conn, query)
+        ret = dbFetch(query)
         dat = data.frame(ID = character(0),
                          variable = character(0),
                          value = numeric(0))
-        
         for (i in 1:nrow(ret)) {
             row = ret[i, ]
             if (!is.na(row[3])) {
@@ -78,12 +71,10 @@ comparisonsServer <- function(input, output, session) {
                 dat = rbind(dat, m)
             }
         }
-        
         h = reshape2::acast(dat, ID ~ variable)
         h[is.na(h)] = 0
         d3heatmap::d3heatmap(log(h + 1), dendrogram = "none")
     })
-    
     observeEvent(input$example, {
         updateTextAreaInput(session, 'genes', value = 'ORTHO:00000006\nORTHO:00000008\nORTHO:00000010\nORTHO:00000014\nORTHO:00000015\nORTHO:00000016\nORTHO:00000018\nORTHO:00000019\nORTHO:00000011\nORTHO:00000012\nORTHO:00000013')
     })

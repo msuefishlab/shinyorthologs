@@ -5,7 +5,6 @@ searchUI = function(id) {
         p(
             "Search for genes or orthologs in this table, and select them by clicking each row. The selected genes will be added to a 'workplace' that you can do further analysis with."
         ),
-        
         fluidRow(h2("Data table"),
                  DT::dataTableOutput(ns("table"))),
         p('Download as CSV'),
@@ -23,9 +22,7 @@ searchServer = function(input, output, session) {
         poolReturn(conn)
         ret
     })
-    
     output$table = DT::renderDataTable(searchTable(), selection = 'single')
-    
     output$downloadData = downloadHandler(
         'genes.csv',
         content = function(file) {

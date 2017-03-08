@@ -1,7 +1,3 @@
-
-
-
-
 ui = function(request) {
     source('page/search.R', local = T)
     source('page/ortholog.R', local = T)
@@ -40,7 +36,6 @@ server = function(input, output, session) {
     source('page/genepage.R', local = T)
     source('page/edit.R', local = T)
     source('page/species.R', local = T)
-    
     setBookmarkExclude(
         c(
             "search-table_rows_current",
@@ -66,7 +61,6 @@ server = function(input, output, session) {
             "species-table_row_last_clicked"
         )
     )
-    
     callModule(searchServer, 'search')
     callModule(comparisonsServer, 'comparisons')
     callModule(orthologServer, 'orthologs')
@@ -74,8 +68,6 @@ server = function(input, output, session) {
     callModule(msaServer, 'msa')
     callModule(speciesServer, 'species')
     callModule(editServer, 'edit')
-    
-    
     observeEvent(input$inTabset, {
         session$doBookmark()
     })

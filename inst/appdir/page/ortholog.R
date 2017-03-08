@@ -14,11 +14,10 @@ orthologServer = function(input, output, session) {
         poolReturn(conn)
         ret
     })
-    
+
     observe({
-        
     })
-    
+
     output$downloadData = downloadHandler(
         'orthologs.csv',
         content = function(file) {
@@ -26,7 +25,7 @@ orthologServer = function(input, output, session) {
             write.csv(tab[input$table_rows_all, , drop = FALSE], file)
         }
     )
-    
+
     createLink <- function(val) {
         sprintf(
             "<a href='?_inputs_&inTabset=\"Gene%%20page\"&genepage-ortholog=\"%s\"'>%s</a>",
