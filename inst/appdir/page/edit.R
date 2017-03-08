@@ -24,7 +24,7 @@ editServer = function(input, output, session) {
     dataTable = reactive({
         
         conn = poolCheckout(pool)
-        rs = dbSendQuery(conn, "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
+        rs = dbSendQuery(conn, "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence, o.removed, o.edited from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
         res = dbFetch(rs)
         poolReturn(conn) 
         
@@ -42,10 +42,11 @@ editServer = function(input, output, session) {
         name = as.character(ret[1])
         
         conn = poolCheckout(pool)
-        rs = dbSendQuery(conn, "UPDATE orthologs SET ortho_removed='true' WHERE gene_id='?'")
-        res = dbBind(rs, list(name))
-        ret = dbFetch(rs)
-        print(ret)
+        query = "UPDATE orthologs SET removed=true WHERE gene_id=?name"
+        q = sqlInterpolate(conn, query, name = name)
+        print(q)
+        rs = dbExecute(conn, q)
+        print(rs)
         
         poolReturn(conn) 
     })
