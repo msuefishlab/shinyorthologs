@@ -16,11 +16,11 @@ speciesServer = function(input, output, session) {
     speciesTable = reactive({
         con = do.call(RPostgreSQL::dbConnect, dbargs)
         on.exit(RPostgreSQL::dbDisconnect(con))
-
+        
         query = sprintf("SELECT * from species")
         RPostgreSQL::dbGetQuery(con, query)
     })
-
+    
     output$table = DT::renderDataTable(speciesTable())
     output$downloadData <- downloadHandler(
         filename = 'species.csv',
