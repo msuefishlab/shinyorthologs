@@ -1,10 +1,8 @@
 editUI = function(id) {
     ns = NS(id)
     tagList(
-        fluidRow(
-            h2("Data table"),
-            DT::dataTableOutput(ns("editTable"))
-        ),
+        fluidRow(h2("Data table"),
+                 DT::dataTableOutput(ns("editTable"))),
         fluidRow(
             actionButton(ns("editrow"), "Edit ortholog relation"),
             actionButton(ns("deleterow"), "Delete ortholog relation")
@@ -20,13 +18,14 @@ editUI = function(id) {
 
 
 editServer = function(input, output, session) {
-    
     dataTable = reactive({
-        
         conn = poolCheckout(pool)
-        rs = dbSendQuery(conn, "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence, o.removed, o.edited from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id")
+        rs = dbSendQuery(
+            conn,
+            "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence, o.removed, o.edited from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id"
+        )
         res = dbFetch(rs)
-        poolReturn(conn) 
+        poolReturn(conn)
         
         res
     })
@@ -48,7 +47,7 @@ editServer = function(input, output, session) {
         rs = dbExecute(conn, q)
         print(rs)
         
-        poolReturn(conn) 
+        poolReturn(conn)
     })
     observeEvent(input$editrow, {
         data = dataTable()

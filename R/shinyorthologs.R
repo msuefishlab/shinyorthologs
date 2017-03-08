@@ -7,12 +7,13 @@ init = function(pool, basedir) {
     conn <- poolCheckout(pool)
     query = dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
     ret = dbFetch(query)
-    fastaIndexes <<- lapply(ret$transcriptome_fasta, function(fasta) {
-        file = file.path(basedir, fasta)
-        print(file)
-        fa = open(Rsamtools::FaFile(file))
-        Rsamtools::scanFaIndex(fa)
-    })
+    fastaIndexes <<-
+        lapply(ret$transcriptome_fasta, function(fasta) {
+            file = file.path(basedir, fasta)
+            print(file)
+            fa = open(Rsamtools::FaFile(file))
+            Rsamtools::scanFaIndex(fa)
+        })
     names(fastaIndexes) <<- ret$transcriptome_fasta
     
     expressionFiles = list()
@@ -41,7 +42,13 @@ init = function(pool, basedir) {
 #' @param password Database password
 #' @param basedir Root directory for fasta/expression files
 #' @param dev Boolean if using dev environment, loads from local directories
-shinyorthologs = function(user = NULL, host = NULL, port = NULL, password = NULL, dbname = 'shinyorthologs', basedir = NULL, dev = F) {
+shinyorthologs = function(user = NULL,
+                          host = NULL,
+                          port = NULL,
+                          password = NULL,
+                          dbname = 'shinyorthologs',
+                          basedir = NULL,
+                          dev = F) {
     dbargs = c(
         RPostgreSQL::PostgreSQL(),
         list(dbname = dbname)[!is.null(dbname)],
