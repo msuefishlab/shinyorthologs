@@ -1,3 +1,13 @@
+CREATE OR REPLACE FUNCTION update_changetimestamp_column()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.lastUpdated = now(); 
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+
+
 CREATE EXTENSION tablefunc;
 CREATE TABLE species (
     SPECIES_ID varchar(255) PRIMARY KEY,
@@ -28,6 +38,12 @@ CREATE TABLE transcripts (
     TRANSCRIPT_ID varchar(255),
 	GENE_ID varchar(255)
 );
+
+
+
+CREATE TRIGGER update_ab_changetimestamp BEFORE UPDATE ON orthologs FOR EACH ROW EXECUTE PROCEDURE update_changetimestamp_column();
+
+
 COPY species FROM '/Users/cdiesh/testdata/species.csv' CSV HEADER;
 COPY genes FROM '/Users/cdiesh/testdata/genes.csv' CSV HEADER;
 COPY orthodescriptions FROM '/Users/cdiesh/testdata/ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';

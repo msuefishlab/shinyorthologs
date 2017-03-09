@@ -7,7 +7,7 @@ ui = function(request) {
     source('page/help.R', local = T)
     source('page/edit.R', local = T)
     source('page/species.R', local = T)
-    source('page/updates.R', local = T)
+    source('page/recently_updated.R', local = T)
     fluidPage(
         titlePanel('shinyorthologs3'),
         tabsetPanel(
@@ -34,7 +34,7 @@ server = function(input, output, session) {
     source('page/genepage.R', local = T)
     source('page/edit.R', local = T)
     source('page/species.R', local = T)
-    source('page/updates.R', local = T)
+    source('page/recently_updated.R', local = T)
     setBookmarkExclude(
         c(
             "search-table_rows_current",

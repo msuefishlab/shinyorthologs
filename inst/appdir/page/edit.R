@@ -45,6 +45,9 @@ editServer = function(input, output, session) {
         data = dataTable()
         ret = data[input$table_rows_selected, ]
         name = as.character(ret[1])
+        updateTextInput(session, "name", value = '')
+        updateTextInput(session, "symbol", value = '')
+        updateTextInput(session, "evidence", value = '')
         conn = poolCheckout(pool)
         query = "UPDATE orthologs SET removed=true WHERE gene_id=?name"
         q = sqlInterpolate(conn, query, name = name)
