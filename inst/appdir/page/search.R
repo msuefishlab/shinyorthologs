@@ -18,7 +18,7 @@ searchServer = function(input, output, session) {
             return()
         }
         conn = poolCheckout(pool)
-        query = "SELECT * FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id WHERE to_tsvector(od.description || ' ' || o.ortholog_id || ' ' || od.symbol || ' ' || o.gene_id) @@ plainto_tsquery(?search)"
+        query = "SELECT o.ortholog_id, o.species_id, o.gene_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN dbxrefs db on o.gene_id = db.gene_id WHERE to_tsvector(od.description || ' ' || o.ortholog_id || ' ' || od.symbol || ' ' || o.gene_id || ' ' || db.database_gene_id) @@ plainto_tsquery(?search)"
         q = sqlInterpolate(conn, query, search = input$searchbox)
         rs = dbSendQuery(conn, q)
         ret = dbFetch(rs)
@@ -27,6 +27,9 @@ searchServer = function(input, output, session) {
     })
     
     output$results = DT::renderDataTable({
+        if(is.null(input$searchbox) || input$searchbox == '') {
+            return()
+        }
         dat = searchTable()
         dat$ortholog_id <- createLink(dat$ortholog_id)
         dat

@@ -9,13 +9,20 @@ $$ language 'plpgsql';
 
 
 CREATE EXTENSION tablefunc;
+
+CREATE TABLE dbxrefs (
+    GENE_ID varchar(255) PRIMARY KEY,
+    DATABASE varchar(255),
+    DATABASE_GENE_ID varchar(255)
+);
 CREATE TABLE species (
     SPECIES_ID varchar(255) PRIMARY KEY,
     TRANSCRIPTOME_FASTA varchar(255),
     SPECIES_NAME varchar(255),
     EXPRESSION_FILE varchar(255),
     TAXONOMY_ID int,
-    COMMON_NAME varchar(255));
+    COMMON_NAME varchar(255)
+);
 CREATE TABLE genes (
     GENE_ID varchar(255) PRIMARY KEY,
     SPECIES_ID varchar(255) REFERENCES species,
@@ -45,6 +52,7 @@ COPY genes FROM '/Users/cdiesh/testdata/genes.csv' CSV HEADER;
 COPY orthodescriptions FROM '/Users/cdiesh/testdata/ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
 COPY orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM '/Users/cdiesh/testdata/orthologs.csv' CSV HEADER;
 COPY transcripts FROM '/Users/cdiesh/testdata/transcripts.csv' CSV HEADER;
+COPY dbxrefs FROM '/Users/cdiesh/testdata/dbxrefs.csv' CSV HEADER DELIMITER E'\t';
 
 
 
