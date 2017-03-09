@@ -17,10 +17,11 @@ editUI = function(id) {
 
 
 editServer = function(input, output, session) {
-    dataTable = reactive({
+
+    # not using reactive because reactive depends on button clicks and thus creates circular dependency https://groups.google.com/forum/#!topic/shiny-discuss/sG4Faxufg3Q
+    output$table = DT::renderDataTable({
         input$deleterow
         input$submit
-        
         conn = poolCheckout(pool)
         rs = dbSendQuery(
             conn,
@@ -29,20 +30,29 @@ editServer = function(input, output, session) {
         res = dbFetch(rs)
         poolReturn(conn)
         res
-    })
-    output$table = DT::renderDataTable({
-        dataTable()
     }, selection = 'single')
     
     observeEvent(input$table_rows_selected, {
-        data = dataTable()
+        conn = poolCheckout(pool)
+        rs = dbSendQuery(
+            conn,
+            "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false"
+        )
+        data = dbFetch(rs)
+        poolReturn(conn)
         ret = data[input$table_rows_selected, ]
         updateTextInput(session, "name", value = as.character(ret[1]))
         updateTextInput(session, "symbol", value = as.character(ret[2]))
         updateTextInput(session, "evidence", value = as.character(ret[4]))
     })
     observeEvent(input$deleterow, {
-        data = dataTable()
+        conn = poolCheckout(pool)
+        rs = dbSendQuery(
+            conn,
+            "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false"
+        )
+        data = dbFetch(rs)
+        poolReturn(conn)
         ret = data[input$table_rows_selected, ]
         name = as.character(ret[1])
         updateTextInput(session, "name", value = '')
@@ -52,10 +62,20 @@ editServer = function(input, output, session) {
         query = "UPDATE orthologs SET removed=true WHERE gene_id=?name"
         q = sqlInterpolate(conn, query, name = name)
         rs = dbExecute(conn, q)
+        
+        updateTextInput(session, "name", value = '')
+        updateTextInput(session, "symbol", value = '')
+        updateTextInput(session, "evidence", value = '')
         poolReturn(conn)
-    })
+    }, priority = 1) #update data first
     observeEvent(input$submit, {
-        data = dataTable()
+        conn = poolCheckout(pool)
+        rs = dbSendQuery(
+            conn,
+            "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false"
+        )
+        data = dbFetch(rs)
+        poolReturn(conn)
         ret = data[input$table_rows_selected, ]
         
         name = input$name
@@ -66,8 +86,11 @@ editServer = function(input, output, session) {
         query = "UPDATE orthologs SET evidence=?evidence, edited=true WHERE gene_id=?name"
         q = sqlInterpolate(conn, query, evidence = evidence, name = name)
         rs = dbExecute(conn, q)
+        
         poolReturn(conn)
-    })
+    }, priority = 1) #update data first
     
     vals = reactiveValues(submit = 0)
+    
+    return (input)
 }

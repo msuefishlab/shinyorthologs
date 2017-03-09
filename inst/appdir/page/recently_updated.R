@@ -10,7 +10,7 @@ updatesUI = function(id) {
         downloadButton(ns('downloadRemoved'), 'Download')
     )
 }
-updatesServer = function(input, output, session) {
+updatesServer = function(input, output, session, args) {
     setBookmarkExclude(
       c(
         "table_edited_rows_current",
@@ -30,6 +30,9 @@ updatesServer = function(input, output, session) {
       )
     )
     editedTable = reactive({
+        args$submit
+        
+        
         conn = poolCheckout(pool)
         rs = dbSendQuery(
             conn,

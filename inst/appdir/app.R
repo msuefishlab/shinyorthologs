@@ -96,8 +96,8 @@ server = function(input, output, session) {
     callModule(genepageServer, 'genepage', box)
     callModule(msaServer, 'msa', box)
     callModule(speciesServer, 'species')
-    callModule(editServer, 'edits')
-    callModule(updatesServer, 'updates')
+    deps = callModule(editServer, 'edits')
+    callModule(updatesServer, 'updates', deps)
     
     observeEvent(input$inTabset, {
         session$doBookmark()

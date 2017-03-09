@@ -40,13 +40,16 @@ CREATE TABLE transcripts (
 	GENE_ID varchar(255)
 );
 
-CREATE INDEX description_index ON orthodescriptions USING GIN (to_tsvector('english',description));
-
-CREATE TRIGGER update_ab_changetimestamp BEFORE UPDATE ON orthologs FOR EACH ROW EXECUTE PROCEDURE update_changetimestamp_column();
-
-
 COPY species FROM '/Users/cdiesh/testdata/species.csv' CSV HEADER;
 COPY genes FROM '/Users/cdiesh/testdata/genes.csv' CSV HEADER;
 COPY orthodescriptions FROM '/Users/cdiesh/testdata/ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
 COPY orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM '/Users/cdiesh/testdata/orthologs.csv' CSV HEADER;
 COPY transcripts FROM '/Users/cdiesh/testdata/transcripts.csv' CSV HEADER;
+
+
+
+
+CREATE INDEX description_index ON orthodescriptions USING GIN (to_tsvector('english',description));
+
+CREATE TRIGGER update_ab_changetimestamp BEFORE UPDATE ON orthologs FOR EACH ROW EXECUTE PROCEDURE update_changetimestamp_column();
+
