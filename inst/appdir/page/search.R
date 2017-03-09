@@ -2,12 +2,19 @@ searchUI = function(id) {
     ns = NS(id)
     tagList(
         textInput(ns('searchbox'), 'Search'),
-        DT::dataTableOutput(ns('results'))
+        fluidRow(
+            p("Example"),
+            actionButton(ns('example1'), 'sodium'),
+            actionButton(ns('example2'), 'scn4aa')
+        ),       
+        fluidRow(
+            DT::dataTableOutput(ns('results'))
+        )
     )
 }
 searchServer = function(input, output, session) {
     searchTable = reactive({
-        if(is.null(input$searchbox) || input$searchbox == "") {
+        if(is.null(input$searchbox) || input$searchbox == '') {
             return()
         }
         conn = poolCheckout(pool)
@@ -22,6 +29,12 @@ searchServer = function(input, output, session) {
     
     output$results = DT::renderDataTable({
         searchTable()
+    })
+    observeEvent(input$example1, {
+        updateTextInput(session, 'searchbox', value = 'sodium')
+    })
+    observeEvent(input$example2, {
+        updateTextInput(session, 'searchbox', value = 'scn4aa')
     })
     
     return(searchTable)
