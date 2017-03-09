@@ -1,6 +1,5 @@
 ui = function(request) {
     source('page/search.R', local = T)
-    source('page/ortholog.R', local = T)
     source('page/comparisons.R', local = T)
     source('page/msa.R', local = T)
     source('page/genepage.R', local = T)
@@ -15,7 +14,6 @@ ui = function(request) {
             
             tabPanel(id = 'search', 'Home', searchUI('search')),
             tabPanel(id = 'comparisons', 'Heatmap', comparisonsUI('comparisons')),
-            tabPanel(id = 'orthologs', 'Ortholog search', orthologUI('orthologs')),
             tabPanel(id = 'species', 'Species table', speciesUI('species')),
             tabPanel(id = 'msa', 'MSA', msaUI('msa')),
             tabPanel(id = 'genepage', 'Gene page', genepageUI('genepage')),
@@ -28,7 +26,6 @@ ui = function(request) {
 
 server = function(input, output, session) {
     source('page/search.R', local = T)
-    source('page/ortholog.R', local = T)
     source('page/comparisons.R', local = T)
     source('page/help.R', local = T)
     source('page/msa.R', local = T)
@@ -44,14 +41,6 @@ server = function(input, output, session) {
             "search-table_rows_selected",
             "search-table_rows_all",
             "search-table_state",
-            "search-table_row_last_clicked",
-            "orthologs-table_rows_current",
-            "orthologs-table_cell_clicked",
-            "orthologs-table_orthologs",
-            "orthologs-table_rows_selected",
-            "orthologs-table_rows_all",
-            "orthologs-table_state",
-            "orthologs-table_row_last_clicked",
             "species-table_rows_current",
             "species-table_cell_clicked",
             "species-table_species",
@@ -92,7 +81,6 @@ server = function(input, output, session) {
     
     box = callModule(searchServer, 'search')
     callModule(comparisonsServer, 'comparisons')
-    callModule(orthologServer, 'orthologs')
     callModule(genepageServer, 'genepage', box)
     callModule(msaServer, 'msa', box)
     callModule(speciesServer, 'species')

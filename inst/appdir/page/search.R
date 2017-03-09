@@ -18,8 +18,7 @@ searchServer = function(input, output, session) {
             return()
         }
         conn = poolCheckout(pool)
-        print(input$searchbox)
-        query = "SELECT * FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id WHERE to_tsvector(od.description || ' ' || o.ortholog_id || ' ' || od.symbol || ' ' || o.gene_id) @@ to_tsquery(?search)"
+        query = "SELECT * FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id WHERE to_tsvector(od.description || ' ' || o.ortholog_id || ' ' || od.symbol || ' ' || o.gene_id) @@ plainto_tsquery(?search)"
         q = sqlInterpolate(conn, query, search = input$searchbox)
         rs = dbSendQuery(conn, q)
         ret = dbFetch(rs)
@@ -28,14 +27,24 @@ searchServer = function(input, output, session) {
     })
     
     output$results = DT::renderDataTable({
-        searchTable()
-    })
+        dat = searchTable()
+        dat$ortholog_id <- createLink(dat$ortholog_id)
+        dat
+    }, selection = 'single', escape = F)
     observeEvent(input$example1, {
         updateTextInput(session, 'searchbox', value = 'sodium')
     })
     observeEvent(input$example2, {
         updateTextInput(session, 'searchbox', value = 'scn4aa')
     })
+    
+    createLink <- function(val) {
+        sprintf(
+            "<a href='?_inputs_&inTabset=\"Gene%%20page\"&genepage-ortholog=\"%s\"'>%s</a>",
+            val,
+            val
+        )
+    }
     
     return(searchTable)
 }
