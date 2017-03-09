@@ -7,7 +7,7 @@ genepageUI = function(id) {
         DT::dataTableOutput(ns("species"))
     )
 }
-genepageServer = function(input, output, session) {
+genepageServer = function(input, output, session, box) {
 
     output$species = DT::renderDataTable({
 

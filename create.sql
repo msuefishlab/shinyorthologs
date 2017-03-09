@@ -23,6 +23,7 @@ CREATE TABLE genes (
 );
 CREATE TABLE orthodescriptions (
     ORTHOLOG_ID varchar(255) PRIMARY KEY,
+    SYMBOL varchar(255),
     DESCRIPTION varchar(2024)
 );
 CREATE TABLE orthologs (

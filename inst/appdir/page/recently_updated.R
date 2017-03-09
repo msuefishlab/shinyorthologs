@@ -11,7 +11,24 @@ updatesUI = function(id) {
     )
 }
 updatesServer = function(input, output, session) {
-    
+    setBookmarkExclude(
+      c(
+        "table_edited_rows_current",
+        "table_edited_cell_clicked",
+        "table_edited_search",
+        "table_edited_rows_selected",
+        "table_edited_rows_all",
+        "table_edited_state",
+        "table_edited_row_last_clicked",
+        "table_removed_rows_current",
+        "table_removed_cell_clicked",
+        "table_removed_search",
+        "table_removed_rows_selected",
+        "table_removed_rows_all",
+        "table_removed_state",
+        "table_removed_row_last_clicked"
+      )
+    )
     editedTable = reactive({
         conn = poolCheckout(pool)
         rs = dbSendQuery(

@@ -7,7 +7,7 @@ msaUI = function(id) {
     fluidRow(h2('MSA'),
              msaR::msaROutput(ns('msaoutput'))))
 }
-msaServer = function(input, output, session) {
+msaServer = function(input, output, session, box) {
     output$msaoutput = msaR::renderMsaR({
         conn <- poolCheckout(pool)
         rs <- dbSendQuery(conn, "SELECT * FROM species")

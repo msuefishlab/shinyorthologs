@@ -12,8 +12,9 @@ ui = function(request) {
         titlePanel('shinyorthologs3'),
         tabsetPanel(
             id = 'inTabset',
+            
+            tabPanel(id = 'search', 'Home', searchUI('search')),
             tabPanel(id = 'comparisons', 'Heatmap', comparisonsUI('comparisons')),
-            tabPanel(id = 'search', 'Gene search', searchUI('search')),
             tabPanel(id = 'orthologs', 'Ortholog search', orthologUI('orthologs')),
             tabPanel(id = 'species', 'Species table', speciesUI('species')),
             tabPanel(id = 'msa', 'MSA', msaUI('msa')),
@@ -70,17 +71,34 @@ server = function(input, output, session) {
             "edits-table_species",
             "edits-table_rows_all",
             "edits-table_state",
-            "edits-table_row_last_clicked"
+            "edits-table_row_last_clicked",
+            "table_edited_rows_current",
+            "table_edited_cell_clicked",
+            "table_edited_search",
+            "table_edited_rows_selected",
+            "table_edited_rows_all",
+            "table_edited_state",
+            "table_edited_row_last_clicked",
+            "table_removed_rows_current",
+            "table_removed_cell_clicked",
+            "table_removed_search",
+            "table_removed_rows_selected",
+            "table_removed_rows_all",
+            "table_removed_state",
+            "table_removed_row_last_clicked"
         )
     )
-    callModule(searchServer, 'search')
+
+    
+    box = callModule(searchServer, 'search')
     callModule(comparisonsServer, 'comparisons')
     callModule(orthologServer, 'orthologs')
-    callModule(genepageServer, 'genepage')
-    callModule(msaServer, 'msa')
+    callModule(genepageServer, 'genepage', box)
+    callModule(msaServer, 'msa', box)
     callModule(speciesServer, 'species')
     callModule(editServer, 'edits')
     callModule(updatesServer, 'updates')
+    
     observeEvent(input$inTabset, {
         session$doBookmark()
     })
