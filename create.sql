@@ -40,7 +40,7 @@ CREATE TABLE transcripts (
 	GENE_ID varchar(255)
 );
 
-
+CREATE INDEX description_index ON orthodescriptions USING GIN (to_tsvector('english',description));
 
 CREATE TRIGGER update_ab_changetimestamp BEFORE UPDATE ON orthologs FOR EACH ROW EXECUTE PROCEDURE update_changetimestamp_column();
 
