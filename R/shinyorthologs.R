@@ -1,6 +1,7 @@
 library(DBI)
 library(pool)
 library(shiny)
+library(RPostgreSQL)
 
 init = function(pool, basedir) {
     fastaIndexes = list()
