@@ -20,12 +20,11 @@ Imports:
     d3heatmap (>= 0.6.1.1),
     msaR (>= 0.1.0),
     reshape2 (>= 1.4.2),
-    DBI (>= 0.5),
+    DBI (>= 0.6),
     pool (>= 0.1.0)
 Suggests:
     testthat
 Remotes:
-    rstats-db/DBI,
     rstudio/pool,
     rstudio/shiny
 License: MIT

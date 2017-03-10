@@ -1,3 +1,6 @@
+library(msa)
+library(msaR)
+library(Biostrings)
 msaUI = function(id) {
     ns = NS(id)
     tagList(
@@ -14,26 +17,27 @@ msaUI = function(id) {
 }
 msaServer = function(input, output, session, box) {
     output$msaoutput = msaR::renderMsaR({
+        if(is.null(input$ortholog) || input$ortholog == "") {
+            return()
+        }
         
         conn <- poolCheckout(pool)
         on.exit(poolReturn(conn))
-        query = "SELECT o.gene_id FROM orthologs o join species s on s.species_id = o.species_id where ortholog_id = ?orthoid"
+
+        progress <- shiny::Progress$new()
+        on.exit(progress$close())
+
+        progress$set(message = "Making plot", value = 0)
+        
+        progress$inc(1/4, detail = paste("Searching database"))
+        query = "SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from orthologs o join genes g on o.gene_id = g.gene_id join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where o.ortholog_id = ?orthoid"
         q = sqlInterpolate(conn, query, orthoid = input$ortholog)
         rs = dbSendQuery(conn, q)
         ret = dbFetch(rs)
         print(ret)
         
-        ids = ret[!is.na(ret[,1]),]
-        formatted_ids = sapply(ids, function(e) {
-            paste0("'", e, "'")
-        })
-        formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
-
-        query = "SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from genes g join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where g.gene_id in ?geneids"
-        q = sqlInterpolate(conn, query, geneids = paste0('(', formatted_list, ')'))
-        print(q)
-        rs = dbSendQuery(conn, q)
-        ret = dbFetch(rs)
+        
+        progress$inc(1/4, detail = paste("Loading FASTA"))
 
         sequences = apply(ret, 1, function(row) {
             file = file.path(basedir, row[4])
@@ -43,7 +47,9 @@ msaServer = function(input, output, session, box) {
         })
         sequences = Biostrings::DNAStringSet(sequences)
         names(sequences) = paste(ret[, 3], ret[, 2])
+        progress$inc(1/4, detail = paste("Aligning sequences"))
         alignment = msa::msaClustalW(sequences)
+        progress$inc(1/4, detail = paste("Creating plot"))
         msaR::msaR(Biostrings::DNAStringSet(as.character(alignment)))
     })
 }
