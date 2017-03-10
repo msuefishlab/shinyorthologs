@@ -8,18 +8,19 @@ ui = function(request) {
     source('page/species.R', local = T)
     source('page/recently_updated.R', local = T)
     fluidPage(
-        titlePanel('shinyorthologs3'),
-        tabsetPanel(
-            id = 'inTabset',
-            
-            tabPanel(id = 'search', 'Home', searchUI('search')),
-            tabPanel(id = 'comparisons', 'Heatmap', comparisonsUI('comparisons')),
-            tabPanel(id = 'species', 'Species table', speciesUI('species')),
-            tabPanel(id = 'msa', 'MSA', msaUI('msa')),
-            tabPanel(id = 'genepage', 'Gene page', genepageUI('genepage')),
-            tabPanel(id = 'edit', 'Edit', editUI('edits')),
-            tabPanel(id = 'updated', 'Recent updates', updatesUI('updates')),
-            tabPanel(id = 'help', 'Help', helpUI('help'))
+        includeCSS("styles.css"),
+        headerPanel('ShinyOrthologs'),
+        wellPanel(style = "background-color: #ffffff;", 
+            tabsetPanel(id = 'inTabset',
+                tabPanel(style = "margin: 20px;", id = 'search', 'Home', searchUI('search')),
+                tabPanel(style = "margin: 20px;", id = 'comparisons', 'Heatmap', comparisonsUI('comparisons')),
+                tabPanel(style = "margin: 20px;", id = 'species', 'Species table', speciesUI('species')),
+                tabPanel(style = "margin: 20px;", id = 'msa', 'MSA', msaUI('msa')),
+                tabPanel(style = "margin: 20px;", id = 'genepage', 'Gene page', genepageUI('genepage')),
+                tabPanel(style = "margin: 20px;", id = 'edit', 'Edit', editUI('edits')),
+                tabPanel(style = "margin: 20px;", id = 'updated', 'Recent updates', updatesUI('updates')),
+                tabPanel(style = "margin: 20px;", id = 'help', 'Help', helpUI('help'))
+            )
         )
     )
 }
