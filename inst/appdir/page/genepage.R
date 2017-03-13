@@ -1,21 +1,33 @@
 genepageUI = function(id) {
     ns = NS(id)
     tagList(
-        h1("Gene data"),
-        p("Search for genes or orthologs in this table, and select them by clicking each row. The selected genes will be added to a 'workplace' that you can do further analysis with."),
         textInput(ns("ortholog"), "Ortholog"),
-        DT::dataTableOutput(ns("genes"))
+        DT::dataTableOutput(ns("table")),
+        textAreaInput(ns("fasta"), "Selected transcript sequence")
     )
 }
 genepageServer = function(input, output, session, box) {
-
-    output$genes = DT::renderDataTable({
+    dataTable = reactive({
         conn <- poolCheckout(pool)
         on.exit(poolReturn(conn))
-        query = "SELECT s.species_id, o.ortholog_id, o.evidence FROM orthologs o join species s on s.species_id = o.species_id where ortholog_id = ?orthoid"
+        query = "SELECT s.transcriptome_fasta, s.species_id, o.ortholog_id, o.evidence, g.gene_id, g.symbol, od.description, t.transcript_id FROM orthologs o join genes g on g.gene_id = o.gene_id left join species s on s.species_id = o.species_id left join orthodescriptions od on o.ortholog_id = od.ortholog_id left join dbxrefs db on g.gene_id = db.gene_id join transcripts t on t.gene_id = g.gene_id where o.ortholog_id = ?orthoid"
         q = sqlInterpolate(conn, query, orthoid = input$ortholog)
         rs = dbSendQuery(conn, q)
         dbFetch(rs)
     })
-    
+    output$table = DT::renderDataTable({
+        dataTable()
+    })
+
+    observeEvent(input$table_rows_selected, {
+        ret = dataTable()
+        row = ret[input$table_rows_selected,]
+
+        file = file.path(basedir, row[[1]])
+        transcript_id = row[[8]]
+        fa = open(Rsamtools::FaFile(file))
+        idx = fastaIndexes[[row[[1]]]]
+        fasta = as.character(Rsamtools::getSeq(fa, idx[GenomicRanges::seqnames(idx) == transcript_id]))
+        updateTextAreaInput(session, 'fasta', value = paste0('>',transcript_id,'\n',as.character(fasta)))
+    })
 }

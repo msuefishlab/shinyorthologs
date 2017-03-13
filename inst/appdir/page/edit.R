@@ -2,7 +2,7 @@ editUI = function(id) {
     ns = NS(id)
     tagList(
         fluidRow(
-            h2("Data table"),
+            p("Select rows to edit or remove gene->ortholog relationships"),
             DT::dataTableOutput(ns("table"))
         ),
         fluidRow(
