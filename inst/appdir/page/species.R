@@ -13,10 +13,10 @@ speciesUI = function(id) {
 speciesServer = function(input, output, session) {
     speciesTable = reactive({
         conn = poolCheckout(pool)
+        on.exit(poolReturn(conn))
+
         rs = dbSendQuery(conn, "SELECT * FROM species")
-        ret = dbFetch(rs)
-        poolReturn(conn)
-        ret
+        dbFetch(rs)
     })
     output$table = DT::renderDataTable(speciesTable())
     output$downloadData <- downloadHandler(

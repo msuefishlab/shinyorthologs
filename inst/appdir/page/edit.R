@@ -23,23 +23,23 @@ editServer = function(input, output, session) {
         input$deleterow
         input$submit
         conn = poolCheckout(pool)
+        on.exit(poolReturn(conn))
+
         rs = dbSendQuery(
             conn,
             "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false"
         )
-        res = dbFetch(rs)
-        poolReturn(conn)
-        res
+        dbFetch(rs)
     }, selection = 'single')
     
     observeEvent(input$table_rows_selected, {
         conn = poolCheckout(pool)
+        on.exit(poolReturn(conn))
         rs = dbSendQuery(
             conn,
             "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false"
         )
         data = dbFetch(rs)
-        poolReturn(conn)
         ret = data[input$table_rows_selected, ]
         updateTextInput(session, "name", value = as.character(ret[1]))
         updateTextInput(session, "symbol", value = as.character(ret[2]))
@@ -47,18 +47,17 @@ editServer = function(input, output, session) {
     })
     observeEvent(input$deleterow, {
         conn = poolCheckout(pool)
+        on.exit(poolReturn(conn))
         rs = dbSendQuery(
             conn,
             "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false"
         )
         data = dbFetch(rs)
-        poolReturn(conn)
         ret = data[input$table_rows_selected, ]
         name = as.character(ret[1])
         updateTextInput(session, "name", value = '')
         updateTextInput(session, "symbol", value = '')
         updateTextInput(session, "evidence", value = '')
-        conn = poolCheckout(pool)
         query = "UPDATE orthologs SET removed=true WHERE gene_id=?name"
         q = sqlInterpolate(conn, query, name = name)
         rs = dbExecute(conn, q)
@@ -66,28 +65,25 @@ editServer = function(input, output, session) {
         updateTextInput(session, "name", value = '')
         updateTextInput(session, "symbol", value = '')
         updateTextInput(session, "evidence", value = '')
-        poolReturn(conn)
     }, priority = 1) #update data first
     observeEvent(input$submit, {
         conn = poolCheckout(pool)
+        on.exit(poolReturn(conn))
+
         rs = dbSendQuery(
             conn,
             "SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false"
         )
         data = dbFetch(rs)
-        poolReturn(conn)
         ret = data[input$table_rows_selected, ]
         
         name = input$name
         symbol = input$symbol
         evidence = input$evidence
         
-        conn = poolCheckout(pool)
         query = "UPDATE orthologs SET evidence=?evidence, edited=true WHERE gene_id=?name"
         q = sqlInterpolate(conn, query, evidence = evidence, name = name)
         rs = dbExecute(conn, q)
-        
-        poolReturn(conn)
     }, priority = 1) #update data first
     
     vals = reactiveValues(submit = 0)

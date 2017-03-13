@@ -40,7 +40,6 @@ comparisonsServer = function(input, output, session) {
         query = sprintf("SELECT * FROM orthologs o JOIN species s on o.species_id=s.species_id WHERE ortholog_id IN %s", mylist)
         rs = dbSendQuery(conn, query)
         ret = dbFetch(rs)
-        print(head(ret))
         dat = data.frame(ID = character(0),variable = character(0),value = numeric(0))
         for (i in 1:nrow(ret)) {
             row = ret[i, ]
@@ -48,7 +47,7 @@ comparisonsServer = function(input, output, session) {
                 expressionData = expressionFiles[[as.character(row[11])]]
                 geneExpressionData = expressionData[expressionData[, 1] == as.character(row[3]), ]
                 m = melt(geneExpressionData)
-                m[, 1] = as.character(row[3])
+                m[, 1] = as.character(row[1])
                 m[, 2] = paste(as.character(row[2]), m[, 2])
                 names(m) = c('ID', 'variable', 'value')
                 dat = rbind(dat, m)
