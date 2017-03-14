@@ -4,6 +4,7 @@ searchUI = function(id) {
         textInput(ns('searchbox'), 'Search'),
         fluidRow(
             p("Example"),
+            checkboxInput(ns('exact'), "Exact", TRUE),
             actionButton(ns('example1'), 'sodium'),
             actionButton(ns('example2'), 'scn4aa')
         ),       
@@ -20,7 +21,8 @@ searchServer = function(input, output, session) {
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
         query = "SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(od.description) || to_tsvector(o.ortholog_id) || to_tsvector(od.symbol) || to_tsvector(o.gene_id) || to_tsvector(db.database_gene_id)) @@ to_tsquery(?search)"
-        q = sqlInterpolate(conn, query, search = paste0(input$searchbox,':*'))
+        match = ifelse(input$exact, input$searchbox, paste0(input$searchbox, ':*'))
+        q = sqlInterpolate(conn, query, search = match)
         print(q)
         rs = dbSendQuery(conn, q)
         dbFetch(rs)
