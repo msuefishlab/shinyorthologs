@@ -2,14 +2,15 @@ searchUI = function(id) {
     ns = NS(id)
     tagList(
         textInput(ns('searchbox'), 'Search'),
+        checkboxInput(ns('exact'), "Exact", TRUE),
         fluidRow(
             p("Example"),
-            checkboxInput(ns('exact'), "Exact", TRUE),
             actionButton(ns('example1'), 'sodium'),
             actionButton(ns('example2'), 'scn4aa')
         ),       
         fluidRow(
-            DT::dataTableOutput(ns('results'))
+            DT::dataTableOutput(ns('results')),
+            style = "margin: 20px"
         )
     )
 }
