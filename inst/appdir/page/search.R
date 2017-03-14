@@ -19,7 +19,7 @@ searchServer = function(input, output, session) {
         }
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
-        query = "SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN dbxrefs db on o.gene_id = db.gene_id WHERE to_tsvector(od.description || ' ' || o.ortholog_id || ' ' || od.symbol || ' ' || o.gene_id || ' ' || db.database_gene_id) @@ plainto_tsquery(?search)"
+        query = "SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN dbxrefs db on o.gene_id = db.gene_id WHERE to_tsvector(od.description) || to_tsvector(o.ortholog_id) || ' ' || to_tsvector(od.symbol) || ' ' || to_tsvector(o.gene_id) || ' ' || to_tsvector(db.database_gene_id) @@ plainto_tsquery(?search)"
         q = sqlInterpolate(conn, query, search = input$searchbox)
         rs = dbSendQuery(conn, q)
         dbFetch(rs)

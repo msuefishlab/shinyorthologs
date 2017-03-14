@@ -75,7 +75,8 @@ server = function(input, output, session) {
             "table_removed_rows_selected",
             "table_removed_rows_all",
             "table_removed_state",
-            "table_removed_row_last_clicked"
+            "table_removed_row_last_clicked",
+            "genepage-fasta"
         )
     )
 
