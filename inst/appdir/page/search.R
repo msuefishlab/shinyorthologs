@@ -42,6 +42,9 @@ searchServer = function(input, output, session) {
     observeEvent(input$example2, {
         updateTextInput(session, 'searchbox', value = 'scn4aa')
     })
+    observeEvent(input$searchbox, {
+        session$doBookmark()
+    })
     
     createLink <- function(val) {
         sprintf(
