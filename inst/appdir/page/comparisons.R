@@ -1,6 +1,7 @@
 library(pheatmap)
 library(reshape2)
 
+
 comparisonsUI = function(id) {
     ns = NS(id)
     tagList(
@@ -28,7 +29,7 @@ comparisonsServer = function(input, output, session) {
         x = strsplit(input$genes, "\n")
         print(x)
         formatted_ids = sapply(x, function(e) {
-            paste0("'", e, "'")
+            paste0("'", trimws(e), "'")
         })
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ","))
         mylist = paste0('(', formatted_list, ')')
