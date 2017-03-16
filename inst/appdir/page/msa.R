@@ -42,7 +42,7 @@ msaServer = function(input, output, session, box) {
         progress$inc(1/4, detail = paste("Loading FASTA"))
 
         sequences = apply(ret, 1, function(row) {
-            file = file.path(basedir, row[4])
+            file = row[4]
             fa = open(FaFile(file))
             idx = fastaIndexes[[row[4]]]
             as.character(getSeq(fa, idx[seqnames(idx) == row[3]]))

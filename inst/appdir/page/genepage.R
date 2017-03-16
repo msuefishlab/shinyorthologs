@@ -26,7 +26,7 @@ genepageServer = function(input, output, session, box) {
         ret = dataTable()
         row = ret[input$table_rows_selected,]
 
-        file = file.path(basedir, row[[1]])
+        file = as.character(row[[1]])
         transcript_id = row[[8]]
         fa = open(Rsamtools::FaFile(file))
         idx = fastaIndexes[[row[[1]]]]

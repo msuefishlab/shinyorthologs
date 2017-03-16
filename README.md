@@ -36,11 +36,11 @@ Load the data into the database with `psql -d shinyorthologs < create.sql` or si
 The library is intended to be installed via bioconductor or a similar package manager, so starting the server involves including the library and calling the `shinyorthologs()` function
 
     library(shinyorthologs)
-    shinyorthologs(dbname="shinyorthologs", basedir="~/testdata")
+    shinyorthologs(dbname="shinyorthologs")
 
 ## Notes
 
 In development, you can run
 
     devtools::load_all()
-    shinyorthologs(dbname="shinyorthologs", basedir="~/testdata", dev=T)
+    shinyorthologs(dbname="shinyorthologs", dev=T)

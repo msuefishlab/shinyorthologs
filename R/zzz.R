@@ -19,7 +19,6 @@ utils::globalVariables(
         "runShinyOrthologs",
         "runShinyOrthologsDev",
         "dbargs",
-        "basedir",
         "expressionFiles",
         "fastaIndexes"
     )

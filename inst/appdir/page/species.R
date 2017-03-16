@@ -16,13 +16,21 @@ speciesServer = function(input, output, session) {
         on.exit(poolReturn(conn))
 
         rs = dbSendQuery(conn, "SELECT * FROM species")
-        dbFetch(rs)
+        ret = dbFetch(rs)
+        ret$jbrowse = createJBrowseLink(ret$jbrowse)
+        ret
     })
-    output$table = DT::renderDataTable(speciesTable())
+    output$table = DT::renderDataTable(speciesTable(), escape = F)
     output$downloadData <- downloadHandler(
         filename = 'species.csv',
         content = function(file) {
             write.csv(speciesTable(), file)
         }
     )
+    createJBrowseLink <- function(val) {
+        ifelse(!is.na(val),
+            sprintf("<a href='%s'>JBrowse</a>", val),
+            val
+        )
+    }
 }

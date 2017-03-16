@@ -3,26 +3,26 @@ library(pool)
 library(shiny)
 library(RPostgreSQL)
 
-init = function(pool, basedir) {
+init = function(pool) {
     fastaIndexes = list()
     conn <- poolCheckout(pool)
     query = dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
     ret = dbFetch(query)
+    fastas = ret$transcriptome_fasta[!is.na(ret$transcriptome_fasta)]
+    print(fastas)
     fastaIndexes <<-
-        lapply(ret$transcriptome_fasta, function(fasta) {
-            file = file.path(basedir, fasta)
-            print(file)
+        lapply(fastas, function(file) {
             fa = open(Rsamtools::FaFile(file))
             Rsamtools::scanFaIndex(fa)
         })
-    names(fastaIndexes) <<- ret$transcriptome_fasta
+    names(fastaIndexes) <<- fastas
 
     expressionFiles = list()
     query = dbSendQuery(conn, 'SELECT expression_file from species')
     ret = dbFetch(query)
     files = ret$expression_file[!is.na(ret$expression_file)]
     expressionFiles <<- lapply(files, function(expr) {
-        utils::read.csv(file.path(basedir, expr))
+        utils::read.csv(expr)
     })
     names(expressionFiles) <<- files
     poolReturn(conn)
@@ -33,7 +33,7 @@ init = function(pool, basedir) {
 #' the user's default web browser.
 #' @examples
 #' \dontrun{
-#' shinyorthologs(basedir='/data/dir', dbname = 'shinyorthologs')
+#' shinyorthologs(dbname = 'shinyorthologs')
 #' }
 #' @export
 #' @param host Database host
@@ -41,14 +41,12 @@ init = function(pool, basedir) {
 #' @param dbname Database name. Default: shinyorthologs
 #' @param user Database user
 #' @param password Database password
-#' @param basedir Root directory for fasta/expression files
 #' @param dev Boolean if using dev environment, loads from local directories
 shinyorthologs = function(user = NULL,
                           host = NULL,
                           port = NULL,
                           password = NULL,
                           dbname = 'shinyorthologs',
-                          basedir = NULL,
                           dev = F) {
     dbargs = c(
         RPostgreSQL::PostgreSQL(),
@@ -60,11 +58,9 @@ shinyorthologs = function(user = NULL,
     )
     pool = do.call(dbPool, dbargs)
 
-    init(pool, basedir)
+    init(pool)
     assign("pool", pool, envir = .GlobalEnv)
-    assign("basedir", basedir, envir = .GlobalEnv)
     on.exit(rm(pool, envir = .GlobalEnv))
-    on.exit(rm(basedir, envir = .GlobalEnv))
     if (!dev) {
         runApp(base::system.file("appdir", package = "shinyorthologs"))
     } else {

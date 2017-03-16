@@ -21,7 +21,8 @@ CREATE TABLE species (
     SPECIES_NAME varchar(255),
     EXPRESSION_FILE varchar(255),
     TAXONOMY_ID int,
-    COMMON_NAME varchar(255)
+    COMMON_NAME varchar(255),
+    JBROWSE varchar(255)
 );
 CREATE TABLE genes (
     GENE_ID varchar(255) PRIMARY KEY,

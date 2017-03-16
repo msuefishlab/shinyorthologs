@@ -21,6 +21,8 @@ searchServer = function(input, output, session) {
         }
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
+
+        # aggregate database gene id
         query = "SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(od.description) || to_tsvector(o.ortholog_id) || to_tsvector(od.symbol) || to_tsvector(o.gene_id) || to_tsvector(db.database_gene_id)) @@ to_tsquery(?search)"
         match = ifelse(input$exact, input$searchbox, paste0(input$searchbox, ':*'))
         q = sqlInterpolate(conn, query, search = match)
@@ -35,6 +37,7 @@ searchServer = function(input, output, session) {
         }
         dat = searchTable()
         dat$ortholog_id <- createLink(dat$ortholog_id)
+        dat$database_gene_id <- createZfinLink(dat$database_gene_id)
         dat
     }, selection = 'single', escape = F)
     observeEvent(input$example1, {
@@ -46,7 +49,13 @@ searchServer = function(input, output, session) {
     observeEvent(input$searchbox, {
         session$doBookmark()
     })
-    
+
+    createZfinLink = function(val) {
+        ifelse(!is.na(stringr::str_match(val, "ZDB")),
+            sprintf("<a href='http://zfin.org/%s'>%s</a>", val, val),
+            val
+        )
+    }
     createLink <- function(val) {
         sprintf(
             "<a href='?_inputs_&inTabset=\"Gene%%20page\"&genepage-ortholog=\"%s\"'>%s</a> (<a href='?_inputs_&inTabset=\"MSA\"&msa-ortholog=\"%s\"'>MSA</a>)",

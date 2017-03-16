@@ -5,7 +5,7 @@
 \title{Launch the shinyorthologs app}
 \usage{
 shinyorthologs(user = NULL, host = NULL, port = NULL, password = NULL,
-  dbname = "shinyorthologs", basedir = NULL, dev = F)
+  dbname = "shinyorthologs", dev = F)
 }
 \arguments{
 \item{user}{Database user}
@@ -18,8 +18,6 @@ shinyorthologs(user = NULL, host = NULL, port = NULL, password = NULL,
 
 \item{dbname}{Database name. Default: shinyorthologs}
 
-\item{basedir}{Root directory for fasta/expression files}
-
 \item{dev}{Boolean if using dev environment, loads from local directories}
 }
 \description{
@@ -28,6 +26,6 @@ the user's default web browser.
 }
 \examples{
 \dontrun{
-shinyorthologs(basedir='/data/dir', dbname = 'shinyorthologs')
+shinyorthologs(dbname = 'shinyorthologs')
 }
 }
