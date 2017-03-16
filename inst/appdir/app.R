@@ -39,7 +39,6 @@ server = function(input, output, session) {
             "search-table_rows_current",
             "search-table_cell_clicked",
             "search-table_search",
-            "search-table_rows_selected",
             "search-table_rows_all",
             "search-table_state",
             "species-table_rows_current",

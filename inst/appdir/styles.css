@@ -12,3 +12,23 @@ body {
     margin: 20px;
     background: #ccc;
 }
+
+.ortho-container {
+    margin: 20px;
+    background: #eee;
+}
+
+.section {
+    margin: 20px;
+    background: #ddd;
+}
+
+.section .label {
+    background: lightyellow;
+    color: black;
+}
+
+
+.section .orthovalue {
+    display: inline-block;
+}

@@ -27,7 +27,8 @@ CREATE TABLE species (
 CREATE TABLE genes (
     GENE_ID varchar(255) PRIMARY KEY,
     SPECIES_ID varchar(255) REFERENCES species,
-    SYMBOL varchar(255)
+    SYMBOL varchar(255),
+    DESCRIPTION varchar(255)
 );
 CREATE TABLE orthodescriptions (
     ORTHOLOG_ID varchar(255) PRIMARY KEY,
@@ -49,7 +50,7 @@ CREATE TABLE transcripts (
 );
 
 COPY species FROM '/Users/cdiesh/testdata/species.csv' CSV HEADER;
-COPY genes FROM '/Users/cdiesh/testdata/genes.csv' CSV HEADER;
+COPY genes FROM '/Users/cdiesh/testdata/genes.csv' CSV HEADER DELIMITER E'\t';
 COPY orthodescriptions FROM '/Users/cdiesh/testdata/ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
 COPY orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM '/Users/cdiesh/testdata/orthologs.csv' CSV HEADER;
 COPY transcripts FROM '/Users/cdiesh/testdata/transcripts.csv' CSV HEADER;
