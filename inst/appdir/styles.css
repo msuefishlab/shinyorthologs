@@ -32,3 +32,11 @@ body {
 .section .orthovalue {
     display: inline-block;
 }
+
+.fastabox {
+    overflow: auto;
+    width: 800px;
+    height: 200px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

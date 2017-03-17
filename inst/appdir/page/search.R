@@ -2,15 +2,15 @@ searchUI = function(id) {
     ns = NS(id)
     tagList(
         textInput(ns('searchbox'), 'Search'),
-        checkboxInput(ns('exact'), "Exact", TRUE),
+        checkboxInput(ns('exact'), 'Exact', TRUE),
         fluidRow(
-            p("Example"),
+            p('Example'),
             actionButton(ns('example1'), 'sodium'),
             actionButton(ns('example2'), 'scn4aa')
         ),       
         fluidRow(
             DT::dataTableOutput(ns('results')),
-            style = "margin: 20px"
+            style = 'margin: 20px'
         ),
         fluidRow(
             uiOutput(ns('res'))
@@ -27,7 +27,7 @@ searchServer = function(input, output, session) {
         on.exit(poolReturn(conn))
 
         # aggregate database gene id
-        query = "SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(od.description) || to_tsvector(o.ortholog_id) || to_tsvector(od.symbol) || to_tsvector(o.gene_id) || to_tsvector(db.database_gene_id)) @@ to_tsquery(?search)"
+        query = 'SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(od.description) || to_tsvector(o.ortholog_id) || to_tsvector(od.symbol) || to_tsvector(o.gene_id) || to_tsvector(db.database_gene_id)) @@ to_tsquery(?search)'
         match = ifelse(input$exact, input$searchbox, paste0(input$searchbox, ':*'))
         q = sqlInterpolate(conn, query, search = match)
         rs = dbSendQuery(conn, q)
@@ -55,7 +55,7 @@ searchServer = function(input, output, session) {
         on.exit(poolReturn(conn))
 
         # aggregate database gene id
-        query = "SELECT o.ortholog_id, g.gene_id, db.database_gene_id FROM orthologs o JOIN genes g on o.gene_id = g.gene_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id WHERE o.ortholog_id = ?ortho"
+        query = 'SELECT o.ortholog_id, g.gene_id, db.database_gene_id FROM orthologs o JOIN genes g on o.gene_id = g.gene_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id WHERE o.ortholog_id = ?ortho'
         q = sqlInterpolate(conn, query, ortho = as.character(row[1]))
         rs = dbSendQuery(conn, q)
         ret = dbFetch(rs)
@@ -87,7 +87,7 @@ searchServer = function(input, output, session) {
     })
 
     createZfinLink = function(val) {
-        ifelse(!is.na(stringr::str_match(val, "ZDB")),
+        ifelse(!is.na(stringr::str_match(val, 'ZDB')),
             sprintf("<a href='http://zfin.org/%s'>%s</a>", val, val),
             val
         )

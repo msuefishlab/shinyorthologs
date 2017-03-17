@@ -1,11 +1,12 @@
 speciesUI = function(id) {
     ns = NS(id)
     tagList(
-        h1("Species listing"),
-        fluidRow(h2("Data table"),
-                 DT::dataTableOutput(ns("table"))),
-        p('Download as CSV'),
-        downloadButton(ns('downloadData'), 'Download')
+        h1('Species listing'),
+        fluidRow(
+            h2('Data table'),
+            DT::dataTableOutput(ns('table')),
+            downloadButton(ns('downloadData'), 'Download')
+        )
     )
 }
 
@@ -15,7 +16,7 @@ speciesServer = function(input, output, session) {
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
 
-        rs = dbSendQuery(conn, "SELECT * FROM species")
+        rs = dbSendQuery(conn, 'SELECT * FROM species')
         ret = dbFetch(rs)
         ret$jbrowse = createJBrowseLink(ret$jbrowse)
         ret
@@ -24,7 +25,7 @@ speciesServer = function(input, output, session) {
     output$downloadData <- downloadHandler(
         filename = 'species.csv',
         content = function(file) {
-            write.csv(speciesTable(), file)
+            write.table(speciesTable(), file, row.names = F, sep = '\t', quote = F)
         }
     )
     createJBrowseLink <- function(val) {
