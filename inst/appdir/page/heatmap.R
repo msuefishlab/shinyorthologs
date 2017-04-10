@@ -2,17 +2,14 @@ library(pheatmap)
 library(reshape2)
 
 
-comparisonsUI = function(id) {
+heatmapUI = function(id) {
     ns = NS(id)
     tagList(
-        fluidRow(
-            textAreaInput(
-                ns('genes'),
-                'Enter a list of orthoIDs',
-                rows = 10,
-                width = '600px'
-            )
-        ),
+        textAreaInput(ns('genes'), 'Enter a list of orthoIDs', height = '200px', width = '600px'),
+        p('Plot log10-scaled rpkm-quantified gene expressions values across species'),
+        p('Optionally normalize columns (individual samples)'),
+        
+        checkboxInput(ns('normalizeCols'), 'Normalize columns?'),
         actionButton(ns('example'), 'Example'),
         p('Download as CSV'),
         downloadButton(ns('downloadData'), 'Download'),
@@ -20,7 +17,7 @@ comparisonsUI = function(id) {
         plotOutput(ns('heatmap'), height = '700px', width = '1000px')
     )
 }
-comparisonsServer = function(input, output, session) {
+heatmapServer = function(input, output, session) {
 
     heatmapData = reactive({
         if (is.null(input$genes)) {
@@ -72,7 +69,11 @@ comparisonsServer = function(input, output, session) {
             return()
         }
         h = heatmapData()
-        pheatmap(log(h + 1))
+        d = log(h + 1)
+        if(input$normalizeCols) {
+            d = scale(d)
+        }
+        pheatmap(d)
     })
 
 

@@ -7,6 +7,7 @@ editUI = function(id) {
         ),
         fluidRow(
             textInput(ns('name'), 'Gene ID'),
+            textInput(ns('ortho'), 'Ortholog ID'),
             textInput(ns('symbol'), 'Symbol'),
             textInput(ns('evidence'), 'Evidence'),
             actionButton(ns('submit'), 'Submit edits'),
@@ -25,66 +26,48 @@ editServer = function(input, output, session) {
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
 
-        rs = dbSendQuery(
-            conn,
-            'SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false'
-        )
+        rs = dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
         dbFetch(rs)
     }, selection = 'single')
     
     observeEvent(input$table_rows_selected, {
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
-        rs = dbSendQuery(
-            conn,
-            'SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false'
-        )
+        rs = dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
         data = dbFetch(rs)
         ret = data[input$table_rows_selected, ]
-        updateTextInput(session, 'name', value = as.character(ret[1]))
-        updateTextInput(session, 'symbol', value = as.character(ret[2]))
-        updateTextInput(session, 'evidence', value = as.character(ret[4]))
+        updateTextInput(session, 'name', value = ret$gene_id)
+        updateTextInput(session, 'ortho', value = ret$ortholog_id)
+        updateTextInput(session, 'symbol', value = ret$symbol)
+        updateTextInput(session, 'evidence', value = ret$evidence)
     })
     observeEvent(input$deleterow, {
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
-        rs = dbSendQuery(
-            conn,
-            'SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false'
-        )
+        rs = dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
         data = dbFetch(rs)
         ret = data[input$table_rows_selected, ]
-        name = as.character(ret[1])
         updateTextInput(session, 'name', value = '')
+        updateTextInput(session, 'ortho', value = '')
         updateTextInput(session, 'symbol', value = '')
         updateTextInput(session, 'evidence', value = '')
-        query = 'UPDATE orthologs SET removed=true WHERE gene_id=?name'
-        q = sqlInterpolate(conn, query, name = name)
+        query = 'UPDATE orthologs SET removed=true WHERE gene_id=?name and ortholog_id=?ortho'
+        q = sqlInterpolate(conn, query, name = ret$gene_id, ortho = ret$ortholog_id)
         rs = dbExecute(conn, q)
-        
-        updateTextInput(session, 'name', value = '')
-        updateTextInput(session, 'symbol', value = '')
-        updateTextInput(session, 'evidence', value = '')
-    }, priority = 1) #update data first
+    }, priority = 1)
+
+
     observeEvent(input$submit, {
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
 
-        rs = dbSendQuery(
-            conn,
-            'SELECT g.gene_id, g.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false'
-        )
-        data = dbFetch(rs)
-        ret = data[input$table_rows_selected, ]
-        
-        name = input$name
-        symbol = input$symbol
-        evidence = input$evidence
-        
-        query = 'UPDATE orthologs SET evidence=?evidence, edited=true WHERE gene_id=?name'
-        q = sqlInterpolate(conn, query, evidence = evidence, name = name)
+        query = 'UPDATE orthologs SET evidence=?evidence, edited=true WHERE gene_id=?name and ortholog_id=?ortho'
+        q = sqlInterpolate(conn, query, evidence = input$evidence, name = input$name, ortho = input$ortho)
         rs = dbExecute(conn, q)
-    }, priority = 1) #update data first
+        query2 = 'UPDATE orthodescriptions SET symbol=?symbol WHERE ortholog_id=?ortho'
+        q2 = sqlInterpolate(conn, query2, symbol = input$symbol, ortho = input$ortho)
+        rs = dbExecute(conn, q2)
+    }, priority = 1)
     
     vals = reactiveValues(submit = 0)
     

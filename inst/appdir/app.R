@@ -1,6 +1,6 @@
 ui = function(request) {
     source('page/search.R', local = T)
-    source('page/comparisons.R', local = T)
+    source('page/heatmap.R', local = T)
     source('page/msa.R', local = T)
     source('page/genepage.R', local = T)
     source('page/help.R', local = T)
@@ -13,7 +13,7 @@ ui = function(request) {
         wellPanel(style = 'background-color: #ffffff;', 
             tabsetPanel(id = 'inTabset',
                 tabPanel(style = 'margin: 20px;', id = 'search', 'Home', searchUI('search')),
-                tabPanel(style = 'margin: 20px;', id = 'comparisons', 'Heatmap', comparisonsUI('comparisons')),
+                tabPanel(style = 'margin: 20px;', id = 'heatmap', 'Heatmap', heatmapUI('heatmap')),
                 tabPanel(style = 'margin: 20px;', id = 'species', 'Species table', speciesUI('species')),
                 tabPanel(style = 'margin: 20px;', id = 'msa', 'MSA', msaUI('msa')),
                 tabPanel(style = 'margin: 20px;', id = 'genepage', 'Gene page', genepageUI('genepage')),
@@ -27,7 +27,7 @@ ui = function(request) {
 
 server = function(input, output, session) {
     source('page/search.R', local = T)
-    source('page/comparisons.R', local = T)
+    source('page/heatmap.R', local = T)
     source('page/help.R', local = T)
     source('page/msa.R', local = T)
     source('page/genepage.R', local = T)
@@ -61,6 +61,9 @@ server = function(input, output, session) {
             'edits-table_rows_all',
             'edits-table_state',
             'edits-table_row_last_clicked',
+            'edits-deleterow',
+            'edits-evidence',
+            'edits-name',
             'table_edited_rows_current',
             'table_edited_cell_clicked',
             'table_edited_search',
@@ -75,13 +78,14 @@ server = function(input, output, session) {
             'table_removed_rows_all',
             'table_removed_state',
             'table_removed_row_last_clicked',
-            'genepage-fasta'
+            'genepage-fasta',
+            'search-example1'
         )
     )
 
     
     box = callModule(searchServer, 'search')
-    callModule(comparisonsServer, 'comparisons')
+    callModule(heatmapServer, 'heatmap')
     callModule(genepageServer, 'genepage', box)
     callModule(msaServer, 'msa', box)
     callModule(speciesServer, 'species')

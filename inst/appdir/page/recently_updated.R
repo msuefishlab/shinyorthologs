@@ -37,7 +37,7 @@ updatesServer = function(input, output, session, args) {
         on.exit(poolReturn(conn))
         rs = dbSendQuery(
             conn,
-            'SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description, o.removed, o.edited, o.lastUpdated from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id where o.edited = true'
+            'SELECT g.gene_id, s.species_name, o.ortholog_id, d.symbol, d.description, o.removed, o.edited, o.lastUpdated from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id where o.edited = true'
         )
         dbFetch(rs)
     })
@@ -46,7 +46,7 @@ updatesServer = function(input, output, session, args) {
         on.exit(poolReturn(conn))
         rs = dbSendQuery(
             conn,
-            'SELECT g.gene_id, s.species_name, o.ortholog_id, g.symbol, d.description, o.removed, o.edited, o.lastUpdated from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id where o.removed = true'
+            'SELECT g.gene_id, s.species_name, o.ortholog_id, d.symbol, d.description, o.removed, o.edited, o.lastUpdated from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id where o.removed = true'
         )
         dbFetch(rs)
     })

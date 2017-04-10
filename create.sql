@@ -49,12 +49,12 @@ CREATE TABLE transcripts (
 	GENE_ID varchar(255)
 );
 
-COPY species FROM '/Users/cdiesh/testdata/species.csv' CSV HEADER;
-COPY genes FROM '/Users/cdiesh/testdata/genes.csv' CSV HEADER DELIMITER E'\t';
-COPY orthodescriptions FROM '/Users/cdiesh/testdata/ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
-COPY orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM '/Users/cdiesh/testdata/orthologs.csv' CSV HEADER;
-COPY transcripts FROM '/Users/cdiesh/testdata/transcripts.csv' CSV HEADER;
-COPY dbxrefs FROM '/Users/cdiesh/testdata/dbxrefs.csv' CSV HEADER DELIMITER E'\t';
+COPY species FROM '/Users/cdiesh/data/shinyorthologs/species.csv' CSV HEADER;
+COPY genes FROM '/Users/cdiesh/data/shinyorthologs/genes.csv' CSV HEADER DELIMITER E'\t';
+COPY orthodescriptions FROM '/Users/cdiesh/data/shinyorthologs/ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
+COPY orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM '/Users/cdiesh/data/shinyorthologs/orthologs.csv' CSV HEADER;
+COPY transcripts FROM '/Users/cdiesh/data/shinyorthologs/transcripts.csv' CSV HEADER;
+COPY dbxrefs FROM '/Users/cdiesh/data/shinyorthologs/dbxrefs.csv' CSV HEADER DELIMITER E'\t';
 
 
 
