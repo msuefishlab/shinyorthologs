@@ -1,6 +1,6 @@
 library(pheatmap)
 library(reshape2)
-
+library(RColorBrewer)
 
 heatmapUI = function(id) {
     ns = NS(id)
@@ -10,6 +10,7 @@ heatmapUI = function(id) {
         p('Optionally normalize columns (individual samples)'),
         
         checkboxInput(ns('normalizeCols'), 'Normalize columns?'),
+        checkboxInput(ns('redGreen'), 'Red-black-green colors?'),
         actionButton(ns('example'), 'Example'),
         p('Download as CSV'),
         downloadButton(ns('downloadData'), 'Download'),
@@ -73,7 +74,11 @@ heatmapServer = function(input, output, session) {
         if(input$normalizeCols) {
             d = scale(d)
         }
-        pheatmap(d)
+        pal = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100)
+        if(input$redGreen) {
+            pal = colorRampPalette(c("green", "black", "red"))(100)
+        }
+        pheatmap(d, color=pal)
     })
 
 
