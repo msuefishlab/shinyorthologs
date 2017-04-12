@@ -7,8 +7,7 @@ END;
 $$ language 'plpgsql';
 
 
-
-CREATE EXTENSION tablefunc;
+CREATE EXTENSION pg_trgm;
 
 CREATE TABLE dbxrefs (
     GENE_ID varchar(255) PRIMARY KEY,
