@@ -1,3 +1,7 @@
+inline = function (x) {
+    tags$div(style="display:inline-block;", x)
+}
+
 editUI = function(id) {
     ns = NS(id)
     tagList(
@@ -5,14 +9,12 @@ editUI = function(id) {
             p('Select rows to edit or remove gene->ortholog relationships'),
             DT::dataTableOutput(ns('table'))
         ),
-        fluidRow(
-            textInput(ns('name'), 'Gene ID'),
-            textInput(ns('ortho'), 'Ortholog ID'),
-            textInput(ns('symbol'), 'Symbol'),
-            textInput(ns('evidence'), 'Evidence'),
-            actionButton(ns('submit'), 'Submit edits'),
-            actionButton(ns('deleterow'), 'Delete')
-        )
+        inline(textInput(ns('name'), 'Gene ID')),
+        inline(textInput(ns('ortho'), 'Ortholog ID')),
+        inline(textInput(ns('symbol'), 'Symbol')),
+        inline(textInput(ns('evidence'), 'Evidence')),
+        actionButton(ns('submit'), 'Submit edits'),
+        actionButton(ns('deleterow'), 'Delete')
     )
 }
 
@@ -26,7 +28,7 @@ editServer = function(input, output, session) {
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
 
-        rs = dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
+        rs = dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence, s.species_id from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
         dbFetch(rs)
     }, selection = 'single')
     
