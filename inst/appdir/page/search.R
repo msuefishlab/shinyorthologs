@@ -51,14 +51,14 @@ searchServer = function(input, output, session) {
         }
         s = searchTable()
         row = s[input$table_rows_selected, ]
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
 
         # aggregate database gene id
         query = 'SELECT o.ortholog_id, g.gene_id, db.database_gene_id FROM orthologs o JOIN genes g on o.gene_id = g.gene_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id WHERE o.ortholog_id = ?ortho'
-        q = sqlInterpolate(conn, query, ortho = as.character(row[1]))
-        rs = dbSendQuery(conn, q)
-        ret = dbFetch(rs)
+        q = DBI::sqlInterpolate(conn, query, ortho = as.character(row[1]))
+        rs = DBI::dbSendQuery(conn, q)
+        ret = DBI::dbFetch(rs)
 
         fluidRow(
             div(class = 'ortho-container',

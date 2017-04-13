@@ -24,8 +24,8 @@ msaServer = function(input, output, session, box) {
             return()
         }
         
-        conn <- poolCheckout(pool)
-        on.exit(poolReturn(conn))
+        conn <- pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
 
         progress <- Progress$new()
         on.exit(progress$close(), add=T)
@@ -33,11 +33,10 @@ msaServer = function(input, output, session, box) {
         progress$set(message = 'MSA', value = 0)
         progress$inc(1/4, detail = paste('Searching database'))
         query = 'SELECT g.gene_id, g.species_id, t.transcript_id, s.transcriptome_fasta from orthologs o join genes g on o.gene_id = g.gene_id join transcripts t on g.gene_id = t.gene_id join species s on g.species_id = s.species_id where o.ortholog_id = ?orthoid'
-        q = sqlInterpolate(conn, query, orthoid = input$ortholog)
-        rs = dbSendQuery(conn, q)
-        ret = dbFetch(rs)
+        q = DBI::sqlInterpolate(conn, query, orthoid = input$ortholog)
+        rs = DBI::dbSendQuery(conn, q)
+        ret = DBI::dbFetch(rs)
         print(ret)
-        
         
         progress$inc(1/4, detail = paste('Loading FASTA'))
 

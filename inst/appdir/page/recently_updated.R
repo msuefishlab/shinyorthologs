@@ -33,8 +33,8 @@ updatesServer = function(input, output, session, args) {
         args$submit
         
         
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
         rs = dbSendQuery(
             conn,
             'SELECT g.gene_id, s.species_name, o.ortholog_id, d.symbol, d.description, o.removed, o.edited, o.lastUpdated from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id where o.edited = true'
@@ -42,8 +42,8 @@ updatesServer = function(input, output, session, args) {
         dbFetch(rs)
     })
     removedTable = reactive({
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
         rs = dbSendQuery(
             conn,
             'SELECT g.gene_id, s.species_name, o.ortholog_id, d.symbol, d.description, o.removed, o.edited, o.lastUpdated from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id where o.removed = true'

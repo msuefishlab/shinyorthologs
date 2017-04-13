@@ -13,11 +13,11 @@ speciesUI = function(id) {
 
 speciesServer = function(input, output, session) {
     speciesTable = reactive({
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
 
-        rs = dbSendQuery(conn, 'SELECT * FROM species')
-        ret = dbFetch(rs)
+        rs = DBI::dbSendQuery(conn, 'SELECT * FROM species')
+        ret = DBI::dbFetch(rs)
         ret$jbrowse = createJBrowseLink(ret$jbrowse)
         ret
     })

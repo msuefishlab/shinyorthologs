@@ -25,18 +25,18 @@ editServer = function(input, output, session) {
     output$table = DT::renderDataTable({
         input$deleterow
         input$submit
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
 
-        rs = dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence, s.species_id from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
-        dbFetch(rs)
+        rs = DBI::dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence, s.species_id from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
+        DBI::dbFetch(rs)
     }, selection = 'single')
     
     observeEvent(input$table_rows_selected, {
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
-        rs = dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
-        data = dbFetch(rs)
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
+        rs = DBI::dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
+        data = DBI::dbFetch(rs)
         ret = data[input$table_rows_selected, ]
         updateTextInput(session, 'name', value = ret$gene_id)
         updateTextInput(session, 'ortho', value = ret$ortholog_id)
@@ -44,31 +44,31 @@ editServer = function(input, output, session) {
         updateTextInput(session, 'evidence', value = ret$evidence)
     })
     observeEvent(input$deleterow, {
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
-        rs = dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
-        data = dbFetch(rs)
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
+        rs = DBI::dbSendQuery(conn, 'SELECT g.gene_id, d.symbol, o.ortholog_id, o.evidence from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id and o.removed = false')
+        data = DBI::dbFetch(rs)
         ret = data[input$table_rows_selected, ]
         updateTextInput(session, 'name', value = '')
         updateTextInput(session, 'ortho', value = '')
         updateTextInput(session, 'symbol', value = '')
         updateTextInput(session, 'evidence', value = '')
         query = 'UPDATE orthologs SET removed=true WHERE gene_id=?name and ortholog_id=?ortho'
-        q = sqlInterpolate(conn, query, name = ret$gene_id, ortho = ret$ortholog_id)
-        rs = dbExecute(conn, q)
+        q = DBI::sqlInterpolate(conn, query, name = ret$gene_id, ortho = ret$ortholog_id)
+        rs = DBI::dbExecute(conn, q)
     }, priority = 1)
 
 
     observeEvent(input$submit, {
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
 
         query = 'UPDATE orthologs SET evidence=?evidence, edited=true WHERE gene_id=?name and ortholog_id=?ortho'
-        q = sqlInterpolate(conn, query, evidence = input$evidence, name = input$name, ortho = input$ortho)
-        rs = dbExecute(conn, q)
+        q = DBI::sqlInterpolate(conn, query, evidence = input$evidence, name = input$name, ortho = input$ortho)
+        rs = DBI::dbExecute(conn, q)
         query2 = 'UPDATE orthodescriptions SET symbol=?symbol WHERE ortholog_id=?ortho'
-        q2 = sqlInterpolate(conn, query2, symbol = input$symbol, ortho = input$ortho)
-        rs = dbExecute(conn, q2)
+        q2 = DBI::sqlInterpolate(conn, query2, symbol = input$symbol, ortho = input$ortho)
+        rs = DBI::dbExecute(conn, q2)
     }, priority = 1)
     
     vals = reactiveValues(submit = 0)

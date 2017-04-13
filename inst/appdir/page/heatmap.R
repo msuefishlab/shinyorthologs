@@ -1,7 +1,3 @@
-library(pheatmap)
-library(reshape2)
-library(RColorBrewer)
-
 heatmapUI = function(id) {
     ns = NS(id)
     tagList(
@@ -34,13 +30,13 @@ heatmapServer = function(input, output, session) {
         formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ','))
         mylist = paste0('(', formatted_list, ')')
         
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
 
 
         query = sprintf('SELECT o.ortholog_id, o.species_id, od.symbol, o.gene_id, s.expression_file FROM orthologs o JOIN species s on o.species_id=s.species_id JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id WHERE o.ortholog_id IN %s', mylist)
-        rs = dbSendQuery(conn, query)
-        ret = dbFetch(rs)
+        rs = DBI::dbSendQuery(conn, query)
+        ret = DBI::dbFetch(rs)
         dat = data.frame(ID = character(0), variable = character(0), value = numeric(0))
         for (i in 1:nrow(ret)) {
             row = ret[i, ]
@@ -48,14 +44,14 @@ heatmapServer = function(input, output, session) {
                 expressionData = expressionFiles[[row$expression_file]]
                 colnames(expressionData)[1] <- "gene_id"
                 geneExpressionData = subset(expressionData, gene_id == row$gene_id)
-                m = melt(geneExpressionData, id.vars = "gene_id")
+                m = reshape2::melt(geneExpressionData, id.vars = "gene_id")
                 m[, 1] = paste(row$ortholog_id, ifelse(is.na(row$symbol),'',row$symbol))
                 m[, 2] = paste(row$species_id, m$variable)
                 names(m) = c('ID', 'variable', 'value')
                 dat = rbind(dat, m)
             }
         }
-        h = acast(dat, ID ~ variable)
+        h = reshape2::acast(dat, ID ~ variable)
         h[is.na(h)] = 0
         h
     })
@@ -73,11 +69,11 @@ heatmapServer = function(input, output, session) {
         if(input$normalizeCols) {
             d = scale(d)[1:nrow(d),1:ncol(d)]
         }
-        pal = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(200)
+        pal = colorRampPalette(rev(RColorBrewer::brewer.pal(n = 7, name = "RdYlBu")))(200)
         if(input$redGreen) {
             pal = colorRampPalette(c("green", "black", "red"))(200)
         }
-        pheatmap(d, color=pal)
+        pheatmap::pheatmap(d, color=pal)
     })
 
 
