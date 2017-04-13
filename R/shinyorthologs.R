@@ -2,16 +2,17 @@ library(DBI)
 library(pool)
 library(shiny)
 library(RPostgreSQL)
+library(data.table)
 
 init = function(pool) {
     fastaIndexes = list()
     conn <- poolCheckout(pool)
     query = dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
     ret = dbFetch(query)
-    fastas = ret$transcriptome_fasta[!is.na(ret$transcriptome_fasta)]
-    print(fastas)
+    fastas = ret$transcriptome_fasta[!is.null(ret$transcriptome_fasta)]
     fastaIndexes <<-
         lapply(fastas, function(file) {
+            print(file)
             fa = open(Rsamtools::FaFile(file))
             Rsamtools::scanFaIndex(fa)
         })
@@ -20,9 +21,10 @@ init = function(pool) {
     expressionFiles = list()
     query = dbSendQuery(conn, 'SELECT expression_file from species')
     ret = dbFetch(query)
-    files = ret$expression_file[!is.na(ret$expression_file)]
+    files = ret$expression_file[!is.null(ret$expression_file)]
     expressionFiles <<- lapply(files, function(expr) {
-        utils::read.csv(expr)
+        print(expr)
+        fread(expr)
     })
     names(expressionFiles) <<- files
     poolReturn(conn)

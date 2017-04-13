@@ -47,11 +47,21 @@ heatmapServer = function(input, output, session) {
         for (i in 1:nrow(ret)) {
             row = ret[i, ]
             if (!is.na(row$expression_file)) {
-                expressionData = expressionFiles[[as.character(row$expression_file)]]
+                expressionData = expressionFiles[[row$expression_file]]
+                print('g0')
+                print(head(expressionData))
+                print('g-1')
+                print(row$gene_id)
                 geneExpressionData = expressionData[expressionData[, 1] == as.character(row$gene_id), ]
+                print('g1')
+                print(head(geneExpressionData))
+                print('g2')
                 m = melt(geneExpressionData)
-                m[, 1] = paste(as.character(row$ortholog_id), as.character(row$symbol))
-                m[, 2] = paste(as.character(row$species_id), m[, 2])
+                print(m)
+                print(row)
+                print(paste(row$ortholog_id, ifelse(is.na(row$symbol),'',row$symbol)))
+                m[, 1] = paste(row$ortholog_id, ifelse(is.na(row$symbol),'',row$symbol))
+                m[, 2] = paste(row$species_id, m[, 2])
                 names(m) = c('ID', 'variable', 'value')
                 dat = rbind(dat, m)
             }

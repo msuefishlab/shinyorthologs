@@ -9,7 +9,7 @@ searchUI = function(id) {
             actionButton(ns('example2'), 'scn4aa')
         ),       
         fluidRow(
-            DT::dataTableOutput(ns('results')),
+            DT::dataTableOutput(ns('table')),
             style = 'margin: 20px'
         ),
         fluidRow(
@@ -27,14 +27,14 @@ searchServer = function(input, output, session) {
         on.exit(poolReturn(conn))
 
         # aggregate database gene id
-        query = 'SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(od.description) || to_tsvector(o.ortholog_id) || to_tsvector(od.symbol) || to_tsvector(o.gene_id) || to_tsvector(db.database_gene_id)) @@ to_tsquery(?search)'
+        query = "SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(coalesce(od.description,'') || ' ' || o.ortholog_id ||  ' ' || coalesce(od.symbol,'') || ' ' || coalesce(o.gene_id,'') || ' ' || coalesce(db.database_gene_id,''))) @@ to_tsquery(?search)"
         match = ifelse(input$exact, input$searchbox, paste0(input$searchbox, ':*'))
         q = sqlInterpolate(conn, query, search = match)
         rs = dbSendQuery(conn, q)
         dbFetch(rs)
     })
     
-    output$results = DT::renderDataTable({
+    output$table = DT::renderDataTable({
         if(is.null(input$searchbox) || input$searchbox == '') {
             return()
         }
@@ -46,11 +46,11 @@ searchServer = function(input, output, session) {
 
 
     output$res = renderUI({
-        if(is.null(input$results_rows_selected)) {
+        if(is.null(input$table_rows_selected)) {
             return()
         }
         s = searchTable()
-        row = s[input$results_rows_selected, ]
+        row = s[input$table_rows_selected, ]
         conn = poolCheckout(pool)
         on.exit(poolReturn(conn))
 
