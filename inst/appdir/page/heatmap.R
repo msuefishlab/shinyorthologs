@@ -72,7 +72,6 @@ heatmapServer = function(input, output, session) {
         d = log(h + 1)
         if(input$normalizeCols) {
             d = scale(d)[1:nrow(d),1:ncol(d)]
-            d[is.na(d)] <- 0
         }
         pal = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(200)
         if(input$redGreen) {
