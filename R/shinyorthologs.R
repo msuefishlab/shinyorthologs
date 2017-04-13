@@ -1,15 +1,8 @@
-library(DBI)
-library(pool)
-library(shiny)
-library(RPostgreSQL)
-library(data.table)
-library(jsonlite)
-
 init = function(pool) {
     fastaIndexes = list()
-    conn <- poolCheckout(pool)
-    query = dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
-    ret = dbFetch(query)
+    conn <- pool::poolCheckout(pool)
+    query = DBI::dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
+    ret = DBI::dbFetch(query)
     fastas = ret$transcriptome_fasta[!is.na(ret$transcriptome_fasta)]
     fastaIndexes <<-
         lapply(fastas, function(file) {
@@ -20,15 +13,15 @@ init = function(pool) {
     names(fastaIndexes) <<- fastas
 
     expressionFiles = list()
-    query = dbSendQuery(conn, 'SELECT expression_file from species')
-    ret = dbFetch(query)
+    query = DBI::dbSendQuery(conn, 'SELECT expression_file from species')
+    ret = DBI::dbFetch(query)
     files = ret$expression_file[!is.na(ret$expression_file)]
     expressionFiles <<- lapply(files, function(expr) {
         print(expr)
-        fread(expr)
+        data.table::fread(expr)
     })
     names(expressionFiles) <<- files
-    poolReturn(conn)
+    pool::poolReturn(conn)
 }
 #' Launch the shinyorthologs app
 #'
@@ -61,23 +54,20 @@ shinyorthologs = function(user = NULL,
         list(password = password)[!is.null(password)],
         list(port = port)[!is.null(port)]
     )
-    pool = do.call(dbPool, dbargs)
+    pool = do.call(pool::dbPool, dbargs)
 
 
     init(pool)
-    config <- fromJSON("config.json")
+    config <- jsonlite::fromJSON(file = config)
 
-
-    print(config)
     assign("pool", pool, envir = .GlobalEnv)
     assign("config", config, envir = .GlobalEnv)
-
-
     on.exit(rm(pool, envir = .GlobalEnv))
     on.exit(rm(config, envir = .GlobalEnv))
+
     if (!dev) {
-        runApp(base::system.file("appdir", package = "shinyorthologs"))
+        shiny::runApp(base::system.file("appdir", package = "shinyorthologs"))
     } else {
-        runApp('inst/appdir')
+        shiny::runApp('inst/appdir')
     }
 }
