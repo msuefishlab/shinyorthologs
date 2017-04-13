@@ -59,7 +59,6 @@ searchServer = function(input, output, session) {
         q = sqlInterpolate(conn, query, ortho = as.character(row[1]))
         rs = dbSendQuery(conn, q)
         ret = dbFetch(rs)
-        print(ret)
 
         fluidRow(
             div(class = 'ortho-container',

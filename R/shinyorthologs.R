@@ -9,7 +9,7 @@ init = function(pool) {
     conn <- poolCheckout(pool)
     query = dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
     ret = dbFetch(query)
-    fastas = ret$transcriptome_fasta[!is.null(ret$transcriptome_fasta)]
+    fastas = ret$transcriptome_fasta[!is.na(ret$transcriptome_fasta)]
     fastaIndexes <<-
         lapply(fastas, function(file) {
             print(file)
@@ -21,7 +21,7 @@ init = function(pool) {
     expressionFiles = list()
     query = dbSendQuery(conn, 'SELECT expression_file from species')
     ret = dbFetch(query)
-    files = ret$expression_file[!is.null(ret$expression_file)]
+    files = ret$expression_file[!is.na(ret$expression_file)]
     expressionFiles <<- lapply(files, function(expr) {
         print(expr)
         fread(expr)

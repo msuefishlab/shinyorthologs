@@ -79,7 +79,8 @@ server = function(input, output, session) {
             'table_removed_state',
             'table_removed_row_last_clicked',
             'genepage-fasta',
-            'search-example1'
+            'search-example1',
+            'heatmap-example'
         )
     )
 

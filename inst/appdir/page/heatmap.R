@@ -28,7 +28,6 @@ heatmapServer = function(input, output, session) {
             return()
         }
         x = strsplit(input$genes, '\n')
-        print(x)
         formatted_ids = sapply(x, function(e) {
             paste0("'", trimws(e), "'")
         })
@@ -42,26 +41,16 @@ heatmapServer = function(input, output, session) {
         query = sprintf('SELECT o.ortholog_id, o.species_id, od.symbol, o.gene_id, s.expression_file FROM orthologs o JOIN species s on o.species_id=s.species_id JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id WHERE o.ortholog_id IN %s', mylist)
         rs = dbSendQuery(conn, query)
         ret = dbFetch(rs)
-        print(head(ret))
-        dat = data.frame(ID = character(0),variable = character(0),value = numeric(0))
+        dat = data.frame(ID = character(0), variable = character(0), value = numeric(0))
         for (i in 1:nrow(ret)) {
             row = ret[i, ]
-            if (!is.na(row$expression_file)) {
+            if (!is.null(row$expression_file)&!is.na(row$expression_file)) {
                 expressionData = expressionFiles[[row$expression_file]]
-                print('g0')
-                print(head(expressionData))
-                print('g-1')
-                print(row$gene_id)
-                geneExpressionData = expressionData[expressionData[, 1] == as.character(row$gene_id), ]
-                print('g1')
-                print(head(geneExpressionData))
-                print('g2')
-                m = melt(geneExpressionData)
-                print(m)
-                print(row)
-                print(paste(row$ortholog_id, ifelse(is.na(row$symbol),'',row$symbol)))
+                colnames(expressionData)[1] <- "gene_id"
+                geneExpressionData = subset(expressionData, gene_id == row$gene_id)
+                m = melt(geneExpressionData, id.vars = "gene_id")
                 m[, 1] = paste(row$ortholog_id, ifelse(is.na(row$symbol),'',row$symbol))
-                m[, 2] = paste(row$species_id, m[, 2])
+                m[, 2] = paste(row$species_id, m$variable)
                 names(m) = c('ID', 'variable', 'value')
                 dat = rbind(dat, m)
             }
@@ -82,11 +71,12 @@ heatmapServer = function(input, output, session) {
         h = heatmapData()
         d = log(h + 1)
         if(input$normalizeCols) {
-            d = scale(d)
+            d = scale(d)[1:nrow(d),1:ncol(d)]
+            d[is.na(d)] <- 0
         }
-        pal = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100)
+        pal = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(200)
         if(input$redGreen) {
-            pal = colorRampPalette(c("green", "black", "red"))(100)
+            pal = colorRampPalette(c("green", "black", "red"))(200)
         }
         pheatmap(d, color=pal)
     })
