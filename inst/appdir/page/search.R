@@ -23,15 +23,15 @@ searchServer = function(input, output, session) {
             return()
         }
         session$doBookmark()
-        conn = poolCheckout(pool)
-        on.exit(poolReturn(conn))
+        conn = pool::poolCheckout(pool)
+        on.exit(pool::poolReturn(conn))
 
         # aggregate database gene id
         query = "SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(coalesce(od.description,'') || ' ' || o.ortholog_id ||  ' ' || coalesce(od.symbol,'') || ' ' || coalesce(o.gene_id,'') || ' ' || coalesce(db.database_gene_id,''))) @@ to_tsquery(?search)"
         match = ifelse(input$exact, input$searchbox, paste0(input$searchbox, ':*'))
-        q = sqlInterpolate(conn, query, search = match)
-        rs = dbSendQuery(conn, q)
-        dbFetch(rs)
+        q = DBI::sqlInterpolate(conn, query, search = match)
+        rs = DBI::dbSendQuery(conn, q)
+        DBI::dbFetch(rs)
     })
     
     output$table = DT::renderDataTable({
@@ -76,10 +76,10 @@ searchServer = function(input, output, session) {
     })
 
     observeEvent(input$example1, {
-        updateTextInput(session, 'searchbox', value = 'sodium')
+        updateTextInput(session, 'searchbox', value = config$sample_search1)
     })
     observeEvent(input$example2, {
-        updateTextInput(session, 'searchbox', value = 'scn4aa')
+        updateTextInput(session, 'searchbox', value = config$sample_search2)
     })
     observeEvent(input$searchbox, {
         session$doBookmark()

@@ -58,7 +58,7 @@ shinyorthologs = function(user = NULL,
 
 
     init(pool)
-    config <- jsonlite::fromJSON(file = config)
+    config <- jsonlite::fromJSON(config)
 
     assign("pool", pool, envir = .GlobalEnv)
     assign("config", config, envir = .GlobalEnv)
