@@ -3,6 +3,7 @@ library(pool)
 library(shiny)
 library(RPostgreSQL)
 library(data.table)
+library(jsonlite)
 
 init = function(pool) {
     fastaIndexes = list()
@@ -44,12 +45,14 @@ init = function(pool) {
 #' @param user Database user
 #' @param password Database password
 #' @param dev Boolean if using dev environment, loads from local directories
+#' @param config Path to a json file containing some basic config items
 shinyorthologs = function(user = NULL,
                           host = NULL,
                           port = NULL,
                           password = NULL,
                           dbname = 'shinyorthologs',
-                          dev = F) {
+                          dev = F,
+                          config = 'config.json') {
     dbargs = c(
         RPostgreSQL::PostgreSQL(),
         list(dbname = dbname)[!is.null(dbname)],
@@ -60,9 +63,18 @@ shinyorthologs = function(user = NULL,
     )
     pool = do.call(dbPool, dbargs)
 
+
     init(pool)
+    config <- fromJSON("config.json")
+
+
+    print(config)
     assign("pool", pool, envir = .GlobalEnv)
+    assign("config", config, envir = .GlobalEnv)
+
+
     on.exit(rm(pool, envir = .GlobalEnv))
+    on.exit(rm(config, envir = .GlobalEnv))
     if (!dev) {
         runApp(base::system.file("appdir", package = "shinyorthologs"))
     } else {

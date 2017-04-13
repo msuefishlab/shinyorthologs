@@ -5,7 +5,7 @@
 \title{Launch the shinyorthologs app}
 \usage{
 shinyorthologs(user = NULL, host = NULL, port = NULL, password = NULL,
-  dbname = "shinyorthologs", dev = F)
+  dbname = "shinyorthologs", dev = F, config = "config.json")
 }
 \arguments{
 \item{user}{Database user}
@@ -19,6 +19,8 @@ shinyorthologs(user = NULL, host = NULL, port = NULL, password = NULL,
 \item{dbname}{Database name. Default: shinyorthologs}
 
 \item{dev}{Boolean if using dev environment, loads from local directories}
+
+\item{config}{Path to a json file containing some basic config items}
 }
 \description{
 Executing this function will launch the shinyorthologs application in

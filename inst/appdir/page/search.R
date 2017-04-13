@@ -5,8 +5,8 @@ searchUI = function(id) {
         checkboxInput(ns('exact'), 'Exact', TRUE),
         fluidRow(
             p('Example'),
-            actionButton(ns('example1'), 'sodium'),
-            actionButton(ns('example2'), 'scn4aa')
+            actionButton(ns('example1'), config$sample_search1),
+            actionButton(ns('example2'), config$sample_search2)
         ),       
         fluidRow(
             DT::dataTableOutput(ns('table')),

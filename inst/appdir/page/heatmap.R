@@ -6,7 +6,7 @@ heatmapUI = function(id) {
     ns = NS(id)
     tagList(
         textAreaInput(ns('genes'), 'Enter a list of orthoIDs', height = '200px', width = '600px'),
-        p('Plot log10-scaled rpkm-quantified gene expressions values across species'),
+        p('Plot log10-scaled gene expressions values across species'),
         p('Optionally normalize columns (individual samples)'),
         
         checkboxInput(ns('normalizeCols'), 'Normalize columns?'),
@@ -88,6 +88,6 @@ heatmapServer = function(input, output, session) {
         }
     )
     observeEvent(input$example, {
-        updateTextAreaInput(session, 'genes', value = 'ORTHO:00000006\nORTHO:00000008\nORTHO:00000010\nORTHO:00000014\nORTHO:00000015\nORTHO:00000016\nORTHO:00000018\nORTHO:00000019\nORTHO:00000011\nORTHO:00000012\nORTHO:00000013')
+        updateTextAreaInput(session, 'genes', value = config$sample_heatmap)
     })
 }
