@@ -45,10 +45,12 @@ heatmapServer = function(input, output, session) {
                 colnames(expressionData)[1] <- "gene_id"
                 geneExpressionData = subset(expressionData, gene_id == row$gene_id)
                 m = reshape2::melt(geneExpressionData, id.vars = "gene_id")
-                m[, 1] = paste(row$ortholog_id, ifelse(is.na(row$symbol),'',row$symbol))
-                m[, 2] = paste(row$species_id, m$variable)
-                names(m) = c('ID', 'variable', 'value')
-                dat = rbind(dat, m)
+                if(nrow(m)>0) {
+                    m[, 1] = paste(row$ortholog_id, ifelse(is.na(row$symbol),'',row$symbol))
+                    m[, 2] = paste(row$species_id, m$variable)
+                    names(m) = c('ID', 'variable', 'value')
+                    dat = rbind(dat, m)
+                }
             }
         }
         h = reshape2::acast(dat, ID ~ variable)
