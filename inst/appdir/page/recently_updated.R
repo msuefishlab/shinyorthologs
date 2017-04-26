@@ -35,20 +35,20 @@ updatesServer = function(input, output, session, args) {
         
         conn = pool::poolCheckout(pool)
         on.exit(pool::poolReturn(conn))
-        rs = dbSendQuery(
+        rs = DBI::dbSendQuery(
             conn,
             'SELECT g.gene_id, s.species_name, o.ortholog_id, d.symbol, d.description, o.removed, o.edited, o.lastUpdated from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id where o.edited = true'
         )
-        dbFetch(rs)
+        DBI::dbFetch(rs)
     })
     removedTable = reactive({
         conn = pool::poolCheckout(pool)
         on.exit(pool::poolReturn(conn))
-        rs = dbSendQuery(
+        rs = DBI::dbSendQuery(
             conn,
             'SELECT g.gene_id, s.species_name, o.ortholog_id, d.symbol, d.description, o.removed, o.edited, o.lastUpdated from genes g join species s on g.species_id = s.species_id join orthologs o on g.gene_id = o.gene_id join orthodescriptions d on o.ortholog_id = d.ortholog_id where o.removed = true'
         )
-        dbFetch(rs)
+        DBI::dbFetch(rs)
     })
 
     output$table_edited = DT::renderDataTable({
