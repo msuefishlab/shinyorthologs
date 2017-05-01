@@ -13,7 +13,8 @@ msaUI = function(id) {
 
         fluidRow(
             h2('MSA'),
-            textInput(ns('ortholog'), 'Ortholog'),
+            textInput(ns('ortholog'), 'Ortholog', width=500),
+            selectInput(ns('method'), 'Alignment method', c('ClustalW','ClustalOmega','Muscle'), width=500),
             msaROutput(ns('msaoutput'))
         )
     )
@@ -49,7 +50,7 @@ msaServer = function(input, output, session, box) {
         sequences = DNAStringSet(sequences)
         names(sequences) = paste(ret[, 3], ret[, 2])
         progress$inc(1/4, detail = paste('Aligning sequences'))
-        alignment = msaClustalW(sequences)
+        alignment = msa(sequences, input$method)
         progress$inc(1/4, detail = paste('Creating plot'))
         msaR(DNAStringSet(as.character(alignment)))
     })

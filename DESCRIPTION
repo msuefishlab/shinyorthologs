@@ -13,7 +13,7 @@ Imports:
     tools (>= 3.2.3),
     data.table (>= 1.10.4),
     jsonlite (>= 1.4),
-    DT (>= 0.2.12),
+    DT (>= 0.2),
     shiny (>= 1.0.3),
     Rsamtools (>= 1.28.0),
     RPostgreSQL (>= 0.4),
@@ -21,7 +21,7 @@ Imports:
     msaR (>= 0.2.0),
     reshape2 (>= 1.4.2),
     DBI (>= 0.6),
-    pool (>= 0.1.0)
+    pool (>= 0.1.0),
     pheatmap (>= 1.0.8)
 Suggests:
     testthat

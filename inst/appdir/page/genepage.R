@@ -1,7 +1,7 @@
 genepageUI = function(id) {
     ns = NS(id)
     tagList(
-        textInput(ns('ortholog'), 'Ortholog'),
+        textInput(ns('ortholog'), 'Ortholog', width=500),
         h3('Genes'),
         DT::dataTableOutput(ns('genes')),
         h3('Transcripts'),

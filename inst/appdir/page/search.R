@@ -1,7 +1,7 @@
 searchUI = function(id) {
     ns = NS(id)
     tagList(
-        textInput(ns('searchbox'), 'Search'),
+        textInput(ns('searchbox'), 'Search', width = 500),
         checkboxInput(ns('exact'), 'Exact', TRUE),
         fluidRow(
             p('Example'),
