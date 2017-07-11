@@ -1,7 +1,7 @@
 Package: shinyorthologs
 Type: Package
 Title: Compare orthologs across species as a RShiny app
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: c(
     person("Colin", "Diesh", email = "dieshcol@msu.edu", role = c("cre", "aut")))
 Maintainer: Colin Diesh <dieshcol@msu.edu>
@@ -17,8 +17,6 @@ Imports:
     shiny (>= 1.0.3),
     Rsamtools (>= 1.28.0),
     RPostgreSQL (>= 0.4),
-    msa (>=	1.8.0),
-    msaR (>= 0.2.0),
     reshape2 (>= 1.4.2),
     DBI (>= 0.6),
     pool (>= 0.1.0),

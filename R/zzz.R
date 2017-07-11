@@ -12,8 +12,6 @@ utils::globalVariables(
         "speciesServer",
         "comparisonsUI",
         "comparisonsServer",
-        "msaUI",
-        "msaServer",
         "genepageUI",
         "genepageServer",
         "runShinyOrthologs",

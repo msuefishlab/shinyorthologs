@@ -1,7 +1,6 @@
 ui = function(request) {
     source('page/search.R', local = T)
     source('page/heatmap.R', local = T)
-    source('page/msa.R', local = T)
     source('page/genepage.R', local = T)
     source('page/help.R', local = T)
     source('page/edit.R', local = T)
@@ -15,7 +14,6 @@ ui = function(request) {
                 tabPanel(style = 'margin: 20px;', id = 'search', 'Home', searchUI('search')),
                 tabPanel(style = 'margin: 20px;', id = 'heatmap', 'Heatmap', heatmapUI('heatmap')),
                 tabPanel(style = 'margin: 20px;', id = 'species', 'Species table', speciesUI('species')),
-                tabPanel(style = 'margin: 20px;', id = 'msa', 'MSA', msaUI('msa')),
                 tabPanel(style = 'margin: 20px;', id = 'genepage', 'Gene page', genepageUI('genepage')),
                 tabPanel(style = 'margin: 20px;', id = 'edit', 'Edit', editUI('edits')),
                 tabPanel(style = 'margin: 20px;', id = 'updated', 'Recent updates', updatesUI('updates')),
@@ -29,7 +27,6 @@ server = function(input, output, session) {
     source('page/search.R', local = T)
     source('page/heatmap.R', local = T)
     source('page/help.R', local = T)
-    source('page/msa.R', local = T)
     source('page/genepage.R', local = T)
     source('page/edit.R', local = T)
     source('page/species.R', local = T)
@@ -88,7 +85,6 @@ server = function(input, output, session) {
     box = callModule(searchServer, 'search')
     callModule(heatmapServer, 'heatmap')
     callModule(genepageServer, 'genepage', box)
-    callModule(msaServer, 'msa', box)
     callModule(speciesServer, 'species')
     deps = callModule(editServer, 'edits')
     callModule(updatesServer, 'updates', deps)
