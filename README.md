@@ -18,11 +18,8 @@ Example installing for Ubuntu 16
 
 Use devtools and bioconductor to install shinyorthologs
 
-    install.packages('devtools')
-    source('https://bioconductor.org/biocLite.R')
-    biocLite()
-    biocLite('msuefishlab/shinyorthologs')
-
+    install.packages('packrat')
+    packrat::init()
 
 ## Load data
 

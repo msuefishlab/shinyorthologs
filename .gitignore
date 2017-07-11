@@ -4,3 +4,5 @@ shinyorthologs*.tar.gz
 *.Rcheck
 .Rproj.user
 .RData
+packrat/lib*/
+packrat/src*/
