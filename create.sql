@@ -45,7 +45,7 @@ CREATE TABLE orthologs (
 );
 CREATE TABLE transcripts (
     TRANSCRIPT_ID varchar(255),
-	GENE_ID varchar(255)
+    GENE_ID varchar(255)
 );
 
 COPY species FROM '/Users/cdiesh/data/shinyorthologs/species.csv' CSV HEADER;
