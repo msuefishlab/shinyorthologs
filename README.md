@@ -11,7 +11,7 @@ Shiny interface to an ortholog database
 
 Example installing for Ubuntu 16
 
-    sudo apt install r-base-core postgresql libpq-dev
+    sudo apt install r-base-core postgresql libpq-dev postgresql-contrib
 
 R dependencies, see install.sh
 
