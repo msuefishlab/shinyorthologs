@@ -5,7 +5,9 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database shinyorthologs;' -U postgres
+  - cd test/data/
   - psql -d shinyorthologs < create.sql
+  - cd -
 install:
   - ./install.sh
 test:
