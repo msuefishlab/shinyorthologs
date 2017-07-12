@@ -1,28 +1,19 @@
 # shinyorthologs
 
-[![Build Status](https://travis-ci.org/msuefishlab/shinyorthologs.svg?branch=master)](https://travis-ci.org/msuefishlab/shinyorthologs)<Paste>
+[![Build Status](https://travis-ci.org/msuefishlab/shinyorthologs.svg?branch=master)](https://travis-ci.org/msuefishlab/shinyorthologs)
 
 Shiny interface to an ortholog database
 
 ## Prerequisites
 
-- PostgreSQL
-- R
-
-Example installing for Ubuntu 16
+To get system dependencies, for example on Ubuntu 16, use
 
     sudo apt install r-base-core postgresql libpq-dev postgresql-contrib
 
-R dependencies, see install.sh
+Install R dependencies, use install.sh
 
     ./install.sh
 
-## Install
-
-Use devtools and bioconductor to install shinyorthologs
-
-    install.packages('packrat')
-    packrat::init()
 
 ## Load data
 
@@ -35,12 +26,8 @@ Load the data into the database with `psql -d shinyorthologs < create.sql` or si
 
 The library is intended to be installed via bioconductor or a similar package manager, so starting the server involves including the library and calling the `shinyorthologs()` function
 
-    library(shinyorthologs)
-    shinyorthologs(dbname="shinyorthologs")
+shiny::runApp()
 
-## Notes
+or simply put the app directory in a directory serving other shiny apps for the conventional shiny server installation
 
-In development, you can run
 
-    devtools::load_all()
-    shinyorthologs(dbname="shinyorthologs", dev=T)
