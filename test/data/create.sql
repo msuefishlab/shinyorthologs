@@ -48,12 +48,12 @@ CREATE TABLE transcripts (
     GENE_ID varchar(255)
 );
 
-COPY species FROM 'species.csv' CSV HEADER DELIMITER E'\t';
-COPY genes FROM 'genes.csv' CSV HEADER DELIMITER E'\t';
-COPY orthodescriptions FROM 'ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
-COPY orthologs FROM 'orthologs.csv' CSV HEADER DELIMITER E'\t';
-COPY transcripts FROM 'transcripts.csv' CSV HEADER DELIMITER E'\t';
-COPY dbxrefs FROM 'dbxrefs.csv' CSV HEADER DELIMITER E'\t';
+\copy species FROM 'species.csv' CSV HEADER DELIMITER E'\t';
+\copy genes FROM 'genes.csv' CSV HEADER DELIMITER E'\t';
+\copy orthodescriptions FROM 'ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
+\copy orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM 'orthologs.csv' CSV HEADER DELIMITER E'\t';
+\copy transcripts FROM 'transcripts.csv' CSV HEADER DELIMITER E'\t';
+\copy dbxrefs FROM 'dbxrefs.csv' CSV HEADER DELIMITER E'\t';
 
 
 

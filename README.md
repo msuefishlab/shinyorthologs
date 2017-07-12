@@ -17,7 +17,7 @@ Install R dependencies, use install.sh
 
 ## Load data
 
-Then configure data locations in [create.sql](https://github.com/msuefishlab/shinyorthologs/tree/master/create.sql)
+Then configure data locations in [create.sql](https://github.com/msuefishlab/shinyorthologs/blob/master/test/data/create.sql)
 
 Load the data into the database with `psql -d shinyorthologs < create.sql` or similar
 
