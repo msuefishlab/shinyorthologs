@@ -1,4 +1,6 @@
 library(shiny)
+
+config <<- fromJSON('config.json')
 shinyUI(function(request) {
     source('page/search.R', local = T)
     source('page/heatmap.R', local = T)

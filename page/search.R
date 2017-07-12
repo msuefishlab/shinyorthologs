@@ -93,8 +93,7 @@ searchServer = function(input, output, session) {
     }
     createLink <- function(val) {
         sprintf(
-            "<a href='?_inputs_&inTabset=\"Gene%%20page\"&genepage-ortholog=\"%s\"'>%s</a>)",
-            val,
+            "<a href='?_inputs_&inTabset=\"Gene%%20page\"&genepage-ortholog=\"%s\"'>%s</a>",
             val,
             val
         )
