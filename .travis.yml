@@ -1,11 +1,11 @@
 sudo: false
 language: r
-cache: packages
 bioc_required: true
-cache: packages
 services:
   - postgresql
 before_script:
   - psql -c 'create database shinyorthologs;' -U postgres
+install:
+  - ./install.sh
 test:
-  - Rscript -e 'shinyorthologs::shinyorthologs(db_name="shinyorthologs")'
+  - Rscript -e 'shiny::runApp()'
