@@ -1,4 +1,12 @@
-config = jsonlite::fromJSON('config.json')
+library(jsonlite)
+library(shiny)
+library(pool)
+library(DBI)
+library(RPostgreSQL)
+library(Rsamtools)
+library(data.table)
+
+config = fromJSON('config.json')
 dbname = config$dbname
 basedir = config$basedir
 user = config$user
@@ -7,28 +15,28 @@ port = config$port
 host = config$host
 
 dbargs = c(
-    RPostgreSQL::PostgreSQL(),
+    PostgreSQL(),
     list(dbname = dbname)[!is.null(dbname)],
     list(host = host)[!is.null(host)],
     list(user = user)[!is.null(user)],
     list(password = password)[!is.null(password)],
     list(port = port)[!is.null(port)]
 )
-pool = do.call(pool::dbPool, dbargs)
+pool = do.call(dbPool, dbargs)
 
 
 ## load fasta files for transcriptomes
 fastaIndexes = list()
-conn = pool::poolCheckout(pool)
-query = DBI::dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
-ret = DBI::dbFetch(query)
+conn = poolCheckout(pool)
+query = dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
+ret = dbFetch(query)
 fastas = ret$transcriptome_fasta[!is.na(ret$transcriptome_fasta)]
 print(fastas)
 fastaIndexes = lapply(fastas, function(file) {
     print(file)
     file = paste0(basedir, file)
-    fa = open(Rsamtools::FaFile(file))
-    Rsamtools::scanFaIndex(fa)
+    fa = open(FaFile(file))
+    scanFaIndex(fa)
 })
 names(fastaIndexes) = fastas
 
@@ -36,16 +44,16 @@ names(fastaIndexes) = fastas
 
 ## load expression data
 expressionFiles = list()
-query = DBI::dbSendQuery(conn, 'SELECT expression_file from species')
-ret = DBI::dbFetch(query)
+query = dbSendQuery(conn, 'SELECT expression_file from species')
+ret = dbFetch(query)
 files = ret$expression_file[!is.na(ret$expression_file)]
 expressionFiles = lapply(files, function(expr) {
     print(expr)
     expr = paste0(basedir, expr)
-    data.table::fread(expr)
+    fread(expr)
 })
 names(expressionFiles) = files
-pool::poolReturn(conn)
+poolReturn(conn)
 
 
 shinyServer(function(input, output, session) {
@@ -106,14 +114,14 @@ shinyServer(function(input, output, session) {
         )
     )
 
-    
+
     box = callModule(searchServer, 'search')
     callModule(heatmapServer, 'heatmap')
     callModule(genepageServer, 'genepage', box)
     callModule(speciesServer, 'species')
     deps = callModule(editServer, 'edits')
     callModule(updatesServer, 'updates', deps)
-    
+
     observeEvent(input$inTabset, {
         session$doBookmark()
     })

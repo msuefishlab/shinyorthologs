@@ -10,7 +10,7 @@ shinyUI(function(request) {
     fluidPage(
         includeCSS('styles.css'),
         headerPanel('ShinyOrthologs'),
-        wellPanel(style = 'background-color: #ffffff;', 
+        wellPanel(style = 'background-color: #ffffff;',
             tabsetPanel(id = 'inTabset',
                 tabPanel(style = 'margin: 20px;', id = 'search', 'Home', searchUI('search')),
                 tabPanel(style = 'margin: 20px;', id = 'heatmap', 'Heatmap', heatmapUI('heatmap')),
