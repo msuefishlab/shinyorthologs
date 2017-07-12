@@ -1,0 +1,7 @@
+ortholog_ID	species_ID	gene_ID	evidence
+ORTHO:00000001	testA	ENSDARG00000076045	gallant_pipeline
+ORTHO:00000001	testB	ENSDBRG00000076045	gallant_pipeline
+ORTHO:00000001	testC	ENSDCRG00000076045	gallant_pipeline
+ORTHO:00000002	testA	ENSDARG00000076046	gallant_pipeline
+ORTHO:00000002	testB	ENSDBRG00000076046	gallant_pipeline
+ORTHO:00000002	testC	ENSDCRG00000076046	gallant_pipeline

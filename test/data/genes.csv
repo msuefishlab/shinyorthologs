@@ -1,0 +1,7 @@
+gene_id	species_id	symbol	description
+ENSDARG00000076045	testA	wow	gene that wows you
+ENSDBRG00000076045	testB	wow	gene that wows you
+ENSDCRG00000076045	testC	wow	gene that wows you
+ENSDARG00000076046	testA	amz	gene that amazes you
+ENSDBRG00000076046	testB	amz	gene that amazes you
+ENSDCRG00000076046	testC	amz	gene that amazes you
