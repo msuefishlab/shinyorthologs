@@ -1,4 +1,5 @@
 library(shiny)
+library(jsonlite)
 
 config <<- fromJSON('config.json')
 shinyUI(function(request) {
