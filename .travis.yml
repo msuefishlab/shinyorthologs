@@ -6,10 +6,11 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database shinyorthologs;' -U postgres
-  - cd test/data/
+  - cd tests/data/
   - psql -d shinyorthologs < create.sql
   - cd -
 install:
   - ./install.sh
-test:
+script:
   - Rscript -e 'shiny::runApp()'
+  - Rscript -e 'devtools::test()'
