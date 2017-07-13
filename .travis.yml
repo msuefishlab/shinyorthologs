@@ -9,6 +9,7 @@ before_script:
   - cd tests/data/
   - psql -d shinyorthologs < create.sql
   - cd -
+  - mv sample_config.json config.json
 install:
   - ./install.sh
 script:
