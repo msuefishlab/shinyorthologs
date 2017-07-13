@@ -11,6 +11,7 @@ shinyUI(function(request) {
     source('page/species.R', local = T)
     source('page/recently_updated.R', local = T)
     fluidPage(
+        tags$head(includeScript("ga.js")),
         includeCSS('styles.css'),
         headerPanel('ShinyOrthologs'),
         wellPanel(style = 'background-color: #ffffff;',
