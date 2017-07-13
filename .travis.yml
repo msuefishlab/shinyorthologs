@@ -13,5 +13,4 @@ before_script:
 install:
   - ./install.sh
 script:
-  - Rscript -e 'shiny::runApp()'
   - Rscript -e 'devtools::test()'
