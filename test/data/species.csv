@@ -1,4 +1,4 @@
 species_id	transcriptome_fasta	species_name	expression_file	taxonomy_id	common_name	jbrowse
 testA	fasta/testA.fa	Bison bison	expression/testA.csv	1	bision	
 testB	fasta/testB.fa	Rattus rattus	expression/testB.csv	2	rat	
-testC	fasta/testC.fasta	Gorilla gorilla	expression/testC.csv	3	gorilla	
+testC	fasta/testC.fa	Gorilla gorilla	expression/testC.csv	3	gorilla	
