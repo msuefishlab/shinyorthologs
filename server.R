@@ -6,7 +6,7 @@ library(RPostgreSQL)
 library(Rsamtools)
 library(data.table)
 
-print(getwd())
+
 config <<- fromJSON('config.json')
 dbname = config$dbname
 basedir = config$basedir

@@ -27,11 +27,15 @@ searchServer = function(input, output, session) {
         on.exit(pool::poolReturn(conn))
 
         # aggregate database gene id
-        query = "SELECT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(coalesce(od.description,'') || ' ' || o.ortholog_id ||  ' ' || coalesce(od.symbol,'') || ' ' || coalesce(o.gene_id,'') || ' ' || coalesce(db.database_gene_id,''))) @@ to_tsquery(?search)"
+        start.time <- Sys.time()
+        query = "SELECT DISTINCT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(coalesce(od.description,'') || ' ' || o.ortholog_id ||  ' ' || coalesce(od.symbol,'') || ' ' || coalesce(o.gene_id,'') || ' ' || coalesce(db.database_gene_id,''))) @@ to_tsquery(?search)"
         match = ifelse(input$exact, input$searchbox, paste0(input$searchbox, ':*'))
         q = DBI::sqlInterpolate(conn, query, search = match)
         rs = DBI::dbSendQuery(conn, q)
-        DBI::dbFetch(rs)
+        res = DBI::dbFetch(rs)
+        end.time <- Sys.time()
+        cat(file=stderr(),end.time-start.time, "\n")
+        res
     })
     
     output$table = DT::renderDataTable({
@@ -39,6 +43,7 @@ searchServer = function(input, output, session) {
             return()
         }
         dat = searchTable()
+        print(dat)
         dat$ortholog_id <- createLink(dat$ortholog_id)
         dat$database_gene_id <- createZfinLink(dat$database_gene_id)
         dat
