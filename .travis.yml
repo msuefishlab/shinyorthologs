@@ -1,6 +1,8 @@
 sudo: false
 language: r
 bioc_required: true
+r_packages:
+  - testthat
 services:
   - postgresql
 before_script:
