@@ -12,6 +12,7 @@ biocLite(c(
     'reshape2',
     'DBI',
     'testthat',
+    'roxygen2',
     'pheatmap')
 )
 biocLite('Rsamtools')
