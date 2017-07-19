@@ -6,9 +6,9 @@ r_packages:
 services:
   - postgresql
 before_script:
+  - bin/cpanm -l extlib Bio::SeqIO --notest
   - psql -c 'create database shinyorthologs;' -U postgres
   - cd tests/data/
-  - bin/cpanm -l extlib Bio::SeqIO --notest
   - ./load.sh
   - cd -
   - mv sample_config.json config.json
