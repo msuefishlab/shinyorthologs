@@ -10,12 +10,14 @@ Description: shinyorthologs is a RStudio shiny application to compare orthologs 
 Depends:
     R (>= 3.2.3)
 Imports:
-    tools (>= 3.2.3),
+    magrittr (>= 1.5),
+    logging (>= 0.7-103),
+    shinyjs (>= 0.9.1),
+>>>>>>> 21d461f... Update DESCRIPTION
     data.table (>= 1.10.4),
     jsonlite (>= 1.4),
     DT (>= 0.2),
     shiny (>= 1.0.3),
-    Rsamtools (>= 1.28.0),
     RPostgreSQL (>= 0.4),
     reshape2 (>= 1.4.2),
     DBI (>= 0.6),
@@ -24,8 +26,7 @@ Imports:
 Suggests:
     testthat
 Remotes:
-    rstudio/pool,
-    rstudio/shiny
+    rstudio/pool
 License: MIT
 Encoding: UTF-8
 RoxygenNote: 6.0.1.9000

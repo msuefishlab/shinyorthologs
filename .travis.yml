@@ -1,8 +1,5 @@
 sudo: false
 language: r
-bioc_required: true
-r_packages:
-  - testthat
 services:
   - postgresql
 before_script:
@@ -12,7 +9,3 @@ before_script:
   - ./load.sh shinyorthologs
   - cd -
   - mv sample_config.json config.json
-install:
-  - ./install.sh
-script:
-  - Rscript -e 'devtools::test()'
