@@ -9,3 +9,6 @@ before_script:
   - ./load.sh shinyorthologs
   - cd -
   - mv sample_config.json config.json
+test:
+  Rscript -e 'devtools::test()'
+
