@@ -8,7 +8,7 @@ services:
 before_script:
   - psql -c 'create database shinyorthologs;' -U postgres
   - cd tests/data/
-  - cpanm -l extlib Bio::SeqIO --notest
+  - bin/cpanm -l extlib Bio::SeqIO --notest
   - ./load.sh
   - cd -
   - mv sample_config.json config.json
