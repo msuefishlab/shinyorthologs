@@ -10,24 +10,28 @@ To get system dependencies, for example on Ubuntu 16, use
 
     sudo apt install r-base-core postgresql libpq-dev postgresql-contrib
 
-Install R dependencies, use install.sh
+Install R dependencies, use devtools
 
-    ./install.sh
-
+    devtools::install_deps()
 
 ## Load data
 
-Then configure data locations in [create.sql](https://github.com/msuefishlab/shinyorthologs/blob/master/test/data/create.sql)
+The tests/data directory contains an example dataset that can be loaded
 
-Load the data into the database with `psql -d shinyorthologs < create.sql` or similar
+If you data is in this format then you can use the create.sql, load_fasta.sh, load_expression.sh, and load.sh scripts, copy these into your own data directory, then run
+
+    ./load.sh yourdbname
+    
+Then copy sample_config.json to config.json and enter the parameters appropriately
+
 
 
 ## Usage
 
-The library is intended to be installed via bioconductor or a similar package manager, so starting the server involves including the library and calling the `shinyorthologs()` function
+After loading the data, run
 
-shiny::runApp()
+    shiny::runApp()
 
-or simply put the app directory in a directory serving other shiny apps for the conventional shiny server installation
+or simply put the shinyorthologs application directory in the shiny-server webapps directory.
 
 
