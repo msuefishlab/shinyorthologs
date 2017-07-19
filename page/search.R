@@ -28,7 +28,7 @@ searchServer = function(input, output, session) {
 
         # aggregate database gene id
         start.time <- Sys.time()
-        query = "SELECT DISTINCT o.ortholog_id, o.evidence, od.symbol, od.description, db.database, db.database_gene_id FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id WHERE (to_tsvector(coalesce(od.description,'') || ' ' || o.ortholog_id ||  ' ' || coalesce(od.symbol,'') || ' ' || coalesce(o.gene_id,'') || ' ' || coalesce(db.database_gene_id,''))) @@ to_tsquery(?search)"
+        query = "SELECT DISTINCT o.ortholog_id, o.evidence, od.symbol, od.description FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id WHERE to_tsvector(coalesce(od.description,'') || ' ' || o.ortholog_id ||  ' ' || coalesce(od.symbol,'') || ' ' || coalesce(o.gene_id,'')) @@ to_tsquery(?search)"
         match = ifelse(input$exact, input$searchbox, paste0(input$searchbox, ':*'))
         q = DBI::sqlInterpolate(conn, query, search = match)
         rs = DBI::dbSendQuery(conn, q)
