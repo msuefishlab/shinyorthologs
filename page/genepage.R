@@ -43,7 +43,7 @@ genepageServer = function(input, output, session, box) {
     }, selection = 'single')
 
     formatRow = function(row) {
-        sprintf('>%s [species=%s, gene_id=%s, gene_symbol=%s]\n%s', transcript_id, row$species_id, row$gene_id, row$symbol, row$sequence)
+        sprintf('>%s [species=%s, gene_id=%s, gene_symbol=%s]\n%s', row$transcript_id, row$species_id, row$gene_id, row$symbol,  gsub('(.{1,80})', '\\1\n', row$sequence))
     }
 
     output$fasta = renderUI({
@@ -58,12 +58,11 @@ genepageServer = function(input, output, session, box) {
         filename = sprintf('%s.fa', input$ortholog),
         content = function(outfile) {
             tab = dataTable()
-            o = file(outfile, 'w')
+            out = file(outfile, 'w')
             for(i in 1:nrow(tab)) {
-                row = tab[i, ]
-                writeLines(formatRow(row), con = o)
+                writeLines(formatRow(tab[i,]), con = out)
             }
-            close(o)
+            close(out)
         }
     )
 }
