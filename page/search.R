@@ -20,7 +20,7 @@ searchUI = function(id) {
 searchServer = function(input, output, session) {
     searchTable = reactive({
         if(is.null(input$searchbox) || input$searchbox == '') {
-            return()
+            return(NULL)
         }
         session$doBookmark()
         conn = pool::poolCheckout(pool)
@@ -40,7 +40,7 @@ searchServer = function(input, output, session) {
     
     output$table = DT::renderDataTable({
         if(is.null(input$searchbox) || input$searchbox == '') {
-            return()
+            return(NULL)
         }
         dat = searchTable()
         print(dat)
