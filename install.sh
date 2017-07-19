@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 
-source("https://bioconductor.org/biocLite.R")
-biocLite(c(
+install.packages(c(
     'devtools',
     'tools',
     'data.table',
@@ -15,5 +14,4 @@ biocLite(c(
     'roxygen2',
     'pheatmap')
 )
-biocLite('Rsamtools')
-biocLite('rstudio/pool')
+devtools::install_github('rstudio/pool')
