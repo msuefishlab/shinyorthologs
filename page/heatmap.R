@@ -34,25 +34,11 @@ heatmapServer = function(input, output, session) {
         on.exit(pool::poolReturn(conn))
 
 
-        query = sprintf('SELECT o.ortholog_id, o.species_id, od.symbol, o.gene_id, s.expression_file FROM orthologs o JOIN species s on o.species_id=s.species_id JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id WHERE o.ortholog_id IN %s', mylist)
+        query = sprintf('SELECT o.ortholog_id, o.species_id, od.symbol, o.gene_id, e.value FROM orthologs o JOIN species s on o.species_id=s.species_id JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN expression e on e.gene_id = o.gene_id WHERE o.ortholog_id IN %s', mylist)
         rs = DBI::dbSendQuery(conn, query)
         ret = DBI::dbFetch(rs)
-        dat = data.frame(ID = character(0), variable = character(0), value = numeric(0))
-        for (i in 1:nrow(ret)) {
-            row = ret[i, ]
-            if (!is.null(row$expression_file)&!is.na(row$expression_file)) {
-                expressionData = expressionFiles[[row$expression_file]]
-                colnames(expressionData)[1] <- "gene_id"
-                geneExpressionData = subset(expressionData, gene_id == row$gene_id)
-                m = reshape2::melt(geneExpressionData, id.vars = "gene_id")
-                if(nrow(m)>0) {
-                    m[, 1] = paste(row$ortholog_id, ifelse(is.na(row$symbol),'',row$symbol))
-                    m[, 2] = paste(row$species_id, m$variable)
-                    names(m) = c('ID', 'variable', 'value')
-                    dat = rbind(dat, m)
-                }
-            }
-        }
+        print(ret)
+        
         h = reshape2::acast(dat, ID ~ variable)
         h[is.na(h)] = 0
         h

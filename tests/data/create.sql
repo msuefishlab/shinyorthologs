@@ -44,9 +44,21 @@ CREATE TABLE orthologs (
     lastUpdated TIMESTAMP NOT NULL DEFAULT (now() at time zone 'utc')
 );
 CREATE TABLE transcripts (
-    TRANSCRIPT_ID varchar(255),
+    TRANSCRIPT_ID varchar(255) PRIMARY KEY,
     GENE_ID varchar(255)
 );
+
+CREATE TABLE fasta (
+    TRANSCRIPT_ID varchar(255) REFERENCES transcripts,
+    SEQUENCE varchar(200000)
+);
+
+CREATE TABLE expression (
+    GENE_ID varchar(255) REFERENCES genes,
+    TISSUE varchar(255),
+    VALUE double precision
+);
+
 
 \copy species FROM 'species.csv' CSV HEADER DELIMITER E'\t';
 \copy genes FROM 'genes.csv' CSV HEADER DELIMITER E'\t';
@@ -54,6 +66,8 @@ CREATE TABLE transcripts (
 \copy orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM 'orthologs.csv' CSV HEADER DELIMITER E'\t';
 \copy transcripts FROM 'transcripts.csv' CSV HEADER DELIMITER E'\t';
 \copy dbxrefs FROM 'dbxrefs.csv' CSV HEADER DELIMITER E'\t';
+\copy fasta FROM 'fasta.csv' CSV HEADER DELIMITER E'\t';
+\copy expression FROM 'expression.csv' CSV HEADER DELIMITER E'\t';
 
 
 

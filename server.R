@@ -26,37 +26,6 @@ dbargs = c(
 pool = do.call(dbPool, dbargs)
 
 
-## load fasta files for transcriptomes
-fastaIndexes = list()
-conn = poolCheckout(pool)
-query = dbSendQuery(conn, 'SELECT transcriptome_fasta from species')
-ret = dbFetch(query)
-fastas = ret$transcriptome_fasta[!is.na(ret$transcriptome_fasta)]
-print(fastas)
-fastaIndexes = lapply(fastas, function(file) {
-    print(file)
-    file = paste0(basedir, file)
-    fa = open(FaFile(file))
-    scanFaIndex(fa)
-})
-names(fastaIndexes) = fastas
-
-
-
-## load expression data
-expressionFiles = list()
-query = dbSendQuery(conn, 'SELECT expression_file from species')
-ret = dbFetch(query)
-files = ret$expression_file[!is.na(ret$expression_file)]
-expressionFiles = lapply(files, function(expr) {
-    print(expr)
-    expr = paste0(basedir, expr)
-    fread(expr)
-})
-names(expressionFiles) = files
-poolReturn(conn)
-
-
 shinyServer(function(input, output, session) {
     source('page/search.R', local = T)
     source('page/heatmap.R', local = T)

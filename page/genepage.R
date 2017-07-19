@@ -20,7 +20,7 @@ genepageServer = function(input, output, session, box) {
         }
         conn <- poolCheckout(pool)
         on.exit(poolReturn(conn))
-        query = 'SELECT s.transcriptome_fasta, s.species_id, o.ortholog_id, o.evidence, g.gene_id, g.symbol, od.description, t.transcript_id FROM orthologs o join genes g on g.gene_id = o.gene_id left join species s on s.species_id = o.species_id left join orthodescriptions od on o.ortholog_id = od.ortholog_id left join dbxrefs db on g.gene_id = db.gene_id join transcripts t on t.gene_id = g.gene_id where o.ortholog_id = ?orthoid'
+        query = 'SELECT s.species_id, o.ortholog_id, o.evidence, g.gene_id, g.symbol, od.description, t.transcript_id, f.sequence FROM orthologs o join genes g on g.gene_id = o.gene_id left join species s on s.species_id = o.species_id left join orthodescriptions od on o.ortholog_id = od.ortholog_id left join dbxrefs db on g.gene_id = db.gene_id join transcripts t on t.gene_id = g.gene_id join fasta f on t.transcript_id = f.transcript_id where o.ortholog_id = ?orthoid'
         q = sqlInterpolate(conn, query, orthoid = input$ortholog)
         rs = dbSendQuery(conn, q)
         dbFetch(rs)
@@ -43,12 +43,7 @@ genepageServer = function(input, output, session, box) {
     }, selection = 'single')
 
     formatRow = function(row) {
-        file = row$transcriptome_fasta
-        transcript_id = row$transcript_id
-        fa = open(Rsamtools::FaFile(file))
-        idx = fastaIndexes[[file]]
-        text = Rsamtools::getSeq(fa, idx[GenomicRanges::seqnames(idx) == transcript_id])
-        sprintf('>%s [species=%s, gene_id=%s, gene_symbol=%s]\n%s', transcript_id, row$species_id, row$gene_id, row$symbol, text)
+        sprintf('>%s [species=%s, gene_id=%s, gene_symbol=%s]\n%s', transcript_id, row$species_id, row$gene_id, row$symbol, row$sequence)
     }
 
     output$fasta = renderUI({
