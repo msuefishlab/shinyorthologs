@@ -9,10 +9,6 @@ searchUI = function(id) {
             actionButton(ns('example2'), config$sample_search2)
         ),       
         fluidRow(
-            DT::dataTableOutput(ns('table')),
-            style = 'margin: 20px'
-        ),
-        fluidRow(
             uiOutput(ns('res'))
         )
     )
@@ -28,7 +24,7 @@ searchServer = function(input, output, session) {
 
         # aggregate database gene id
         start.time <- Sys.time()
-        query = "SELECT DISTINCT o.ortholog_id, o.evidence, od.symbol, od.description FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id WHERE to_tsvector(coalesce(od.description,'') || ' ' || o.ortholog_id ||  ' ' || coalesce(od.symbol,'') || ' ' || coalesce(o.gene_id,'')) @@ to_tsquery(?search)"
+        query = "SELECT DISTINCT o.ortholog_id, o.evidence, od.symbol, od.description FROM orthologs o JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN genes g on o.gene_id = g.gene_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id  WHERE to_tsvector(coalesce(od.description,'') || ' ' || o.ortholog_id ||  ' ' || coalesce(od.symbol,'') || ' ' || coalesce(o.gene_id,'')) @@ to_tsquery(?search)"
         match = ifelse(input$exact, input$searchbox, paste0(input$searchbox, ':*'))
         q = DBI::sqlInterpolate(conn, query, search = match)
         rs = DBI::dbSendQuery(conn, q)
@@ -37,17 +33,6 @@ searchServer = function(input, output, session) {
         cat(file=stderr(),end.time-start.time, "\n")
         res
     })
-    
-    output$table = DT::renderDataTable({
-        if(is.null(input$searchbox) || input$searchbox == '') {
-            return(NULL)
-        }
-        dat = searchTable()
-        print(dat)
-        dat$ortholog_id <- createLink(dat$ortholog_id)
-        dat$database_gene_id <- createZfinLink(dat$database_gene_id)
-        dat
-    }, selection = 'single', escape = F)
 
 
     output$res = renderUI({
@@ -55,29 +40,25 @@ searchServer = function(input, output, session) {
             return()
         }
         s = searchTable()
-        row = s[input$table_rows_selected, ]
-        conn = pool::poolCheckout(pool)
-        on.exit(pool::poolReturn(conn))
-
-        # aggregate database gene id
-        query = 'SELECT o.ortholog_id, g.gene_id, db.database_gene_id FROM orthologs o JOIN genes g on o.gene_id = g.gene_id LEFT JOIN dbxrefs db on o.gene_id = db.gene_id WHERE o.ortholog_id = ?ortho'
-        q = DBI::sqlInterpolate(conn, query, ortho = as.character(row[1]))
-        rs = DBI::dbSendQuery(conn, q)
-        ret = DBI::dbFetch(rs)
-
-        fluidRow(
-            div(class = 'ortho-container',
-                apply(ret, 1, function(r) {
-                    div(
-                        h3(r[2]),
-                        div(class = 'section',
-                            div('DBXref', class='label'),
-                            div(r[3], class='orthovalue')
+        orthologs = unique(s$ortholog_id)
+        x=lapply(orthologs, 1, function(curr_ortho) {
+            ret = s[s$ortholog_id==curr_ortho,]
+            fluidRow(
+                div(id = 'ortho-container',  class="collapse",
+                    apply(ret, 1, function(r) {
+                        div(
+                            h3(r[2]),
+                            div(class = 'section',
+                                div('DBXref', class='label'),
+                                div(r[3], class='orthovalue')
+                            )
                         )
-                    )
-                })
+                    })
+                )
             )
-        )
+        })
+        cat(file=stderr(),x,"\n")
+        unlist(x)
     })
 
     observeEvent(input$example1, {
@@ -90,12 +71,7 @@ searchServer = function(input, output, session) {
         session$doBookmark()
     })
 
-    createZfinLink = function(val) {
-        ifelse(!is.na(stringr::str_match(val, 'ZDB')),
-            sprintf("<a href='http://zfin.org/%s'>%s</a>", val, val),
-            val
-        )
-    }
+    
     createLink <- function(val) {
         sprintf(
             "<a href='?_inputs_&inTabset=\"Gene%%20page\"&genepage-ortholog=\"%s\"'>%s</a>",
