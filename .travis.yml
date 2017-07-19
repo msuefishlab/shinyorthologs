@@ -3,12 +3,12 @@ language: r
 services:
   - postgresql
 before_script:
-  - bin/cpanm -l extlib Bio::SeqIO --notest
+  - bin/cpanm --notest Bio::SeqIO
   - psql -c 'create database shinyorthologs;' -U postgres
   - cd tests/data/
   - ./load.sh shinyorthologs
   - cd -
   - mv sample_config.json config.json
-test:
+script:
   Rscript -e 'devtools::test()'
 
