@@ -9,7 +9,7 @@ before_script:
   - bin/cpanm -l extlib Bio::SeqIO --notest
   - psql -c 'create database shinyorthologs;' -U postgres
   - cd tests/data/
-  - ./load.sh
+  - ./load.sh shinyorthologs
   - cd -
   - mv sample_config.json config.json
 install:
