@@ -1,7 +1,7 @@
 Package: shinyorthologs
 Type: Package
 Title: Compare orthologs across species as a RShiny app
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person("Colin", "Diesh", email = "dieshcol@msu.edu", role = c("cre", "aut")))
 Maintainer: Colin Diesh <dieshcol@msu.edu>
@@ -13,7 +13,6 @@ Imports:
     magrittr (>= 1.5),
     logging (>= 0.7-103),
     shinyjs (>= 0.9.1),
->>>>>>> 21d461f... Update DESCRIPTION
     data.table (>= 1.10.4),
     jsonlite (>= 1.4),
     DT (>= 0.2),

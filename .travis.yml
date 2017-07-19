@@ -10,5 +10,5 @@ before_script:
   - cd -
   - mv sample_config.json config.json
 script:
-  Rscript -e 'devtools::test()'
+  - Rscript -e 'devtools::test()'
 
