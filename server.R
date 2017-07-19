@@ -7,6 +7,9 @@ library(Rsamtools)
 library(data.table)
 
 
+options(shiny.error = function() { 
+        logging::logerror(sys.calls() %>% as.character %>% paste(collapse = ", ")) })
+
 config <<- fromJSON('config.json')
 dbname = config$dbname
 basedir = config$basedir
@@ -27,6 +30,12 @@ pool = do.call(dbPool, dbargs)
 
 
 shinyServer(function(input, output, session) {
+    printLogJs <- function(x, ...) {
+        logjs(x)
+        return(TRUE)
+    }
+
+    addHandler(printLogJs)
     source('page/search.R', local = T)
     source('page/heatmap.R', local = T)
     source('page/help.R', local = T)

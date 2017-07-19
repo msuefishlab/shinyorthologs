@@ -36,12 +36,12 @@ searchServer = function(input, output, session) {
 
 
     output$res = renderUI({
-        if(is.null(input$table_rows_selected)) {
-            return()
-        }
         s = searchTable()
+        if(is.null(s)) {
+            return(NULL)
+        }
         orthologs = unique(s$ortholog_id)
-        x=lapply(orthologs, 1, function(curr_ortho) {
+        x=lapply(orthologs, function(curr_ortho) {
             ret = s[s$ortholog_id==curr_ortho,]
             fluidRow(
                 div(id = 'ortho-container',  class="collapse",
@@ -57,8 +57,8 @@ searchServer = function(input, output, session) {
                 )
             )
         })
-        cat(file=stderr(),x,"\n")
-        unlist(x)
+        loginfo(x)
+        x
     })
 
     observeEvent(input$example1, {

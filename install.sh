@@ -4,6 +4,8 @@ options(repos = c(CRAN = "http://cran.rstudio.com"))
 
 install.packages(c(
     'devtools',
+    'logging',
+    'shinyjs',
     'tools',
     'data.table',
     'jsonlite',

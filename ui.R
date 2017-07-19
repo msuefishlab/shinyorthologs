@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 library(jsonlite)
 
 config <<- fromJSON('config.json')
@@ -11,6 +12,7 @@ shinyUI(function(request) {
     source('page/species.R', local = T)
     source('page/recently_updated.R', local = T)
     fluidPage(
+        useShinyjs(),
         tags$head(includeScript("ga.js")),
         includeCSS('styles.css'),
         headerPanel('ShinyOrthologs'),
