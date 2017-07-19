@@ -1,10 +1,11 @@
-# Version 0.1.1
+# Version 1.1.0
 
+- Convert fasta and expression into database tables
 - Remove multiple sequence alignment
 - Remove the "shiny app as an R package" setup, as it overcomplicates things
 - Change dependency installation to install.sh
 
-# Version 0.1.0
+# Version 1.0.0
 
 
 - Created postgres data loaders

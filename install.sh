@@ -5,6 +5,7 @@ options(repos = c(CRAN = "http://cran.rstudio.com"))
 install.packages(c(
     'devtools',
     'logging',
+    'magrittr',
     'shinyjs',
     'tools',
     'data.table',

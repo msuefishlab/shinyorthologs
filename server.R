@@ -1,10 +1,11 @@
 library(jsonlite)
+library(shinyjs)
+library(logging)
 library(shiny)
 library(pool)
 library(DBI)
 library(RPostgreSQL)
-library(Rsamtools)
-library(data.table)
+library(magrittr)
 
 
 options(shiny.error = function() { 

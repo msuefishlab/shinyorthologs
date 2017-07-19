@@ -5,7 +5,7 @@ genepageUI = function(id) {
         h3('Genes'),
         DT::dataTableOutput(ns('genes')),
         h3('Transcripts'),
-        HTML('<button data-toggle="collapse" data-target="#transcripts_container">></button>'),
+        HTML('<button data-toggle="collapse" data-target="#transcripts_container"></button>'),
         tags$div(id = 'transcripts_container',  class="collapse",
             DT::dataTableOutput(ns('table')),
             uiOutput(ns('fasta')),

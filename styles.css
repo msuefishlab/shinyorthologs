@@ -14,8 +14,8 @@ body {
 }
 
 .ortho-container {
-    margin: 20px;
-    background: #eee;
+    padding: 20px;
+    background: #ccc;
 }
 
 .section {
@@ -39,4 +39,9 @@ body {
     height: 200px;
     white-space: pre-wrap;
     word-wrap: break-word;
+}
+
+.search_results {
+    padding: 20px;
+    border: 1px solid black;
 }
