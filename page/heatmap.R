@@ -6,6 +6,7 @@ heatmapUI = function(id) {
         p('Optionally normalize columns (individual samples)'),
         
         checkboxInput(ns('normalizeCols'), 'Normalize columns?'),
+        checkboxInput(ns('normalizeRows'), 'Normalize rows?'),
         checkboxInput(ns('redGreen'), 'Red-black-green colors?'),
         actionButton(ns('example'), 'Example'),
         p('Download as CSV'),
@@ -39,7 +40,7 @@ heatmapServer = function(input, output, session) {
         ret = DBI::dbFetch(rs)
         print(ret)
         
-        h = reshape2::acast(ret, ortholog_id ~ tissue)
+        h = reshape2::acast(ret, ortholog_id ~ species_id + tissue)
         h[is.na(h)] = 0
         h
     })
@@ -56,6 +57,10 @@ heatmapServer = function(input, output, session) {
         d = log(h + 1)
         if(input$normalizeCols) {
             d = scale(d)[1:nrow(d),1:ncol(d)]
+        }
+        if(input$normalizeRows) {
+            e = t(d)
+            d = t(scale(e)[1:nrow(e),1:ncol(e)])
         }
         pal = colorRampPalette(rev(RColorBrewer::brewer.pal(n = 7, name = "RdYlBu")))(200)
         if(input$redGreen) {
