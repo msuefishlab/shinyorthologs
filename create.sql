@@ -72,8 +72,8 @@ CREATE MATERIALIZED VIEW search_index AS
 SELECT
     o.ortholog_id,
     o.evidence,
-    od.symbol,
-    to_tsvector(od.description) description,
+    to_tsvector(od.symbol) as symbol,
+    to_tsvector(od.description) as description,
     to_tsvector(coalesce(string_agg(g.gene_id, ' '))) as geneids
 FROM orthologs o
 JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id
