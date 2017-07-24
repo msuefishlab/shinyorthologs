@@ -39,6 +39,7 @@ shinyServer(function(input, output, session) {
     addHandler(printLogJs)
     source('page/search.R', local = T)
     source('page/heatmap.R', local = T)
+    source('page/list.R', local = T)
     source('page/help.R', local = T)
     source('page/genepage.R', local = T)
     source('page/edit.R', local = T)
@@ -97,6 +98,7 @@ shinyServer(function(input, output, session) {
 
     box = callModule(searchServer, 'search')
     callModule(heatmapServer, 'heatmap')
+    callModule(listServer, 'list')
     callModule(genepageServer, 'genepage', box)
     callModule(speciesServer, 'species')
     deps = callModule(editServer, 'edits')

@@ -6,6 +6,7 @@ config <<- fromJSON('config.json')
 shinyUI(function(request) {
     source('page/search.R', local = T)
     source('page/heatmap.R', local = T)
+    source('page/list.R', local = T)
     source('page/genepage.R', local = T)
     source('page/help.R', local = T)
     source('page/edit.R', local = T)
@@ -20,6 +21,7 @@ shinyUI(function(request) {
             tabsetPanel(id = 'inTabset',
                 tabPanel(style = 'margin: 20px;', id = 'search', 'Home', searchUI('search')),
                 tabPanel(style = 'margin: 20px;', id = 'heatmap', 'Heatmap', heatmapUI('heatmap')),
+                tabPanel(style = 'margin: 20px;', id = 'list', 'Lookup genes', listUI('list')),
                 tabPanel(style = 'margin: 20px;', id = 'species', 'Species table', speciesUI('species')),
                 tabPanel(style = 'margin: 20px;', id = 'genepage', 'Gene page', genepageUI('genepage')),
                 tabPanel(style = 'margin: 20px;', id = 'edit', 'Edit', editUI('edits')),
