@@ -14,12 +14,7 @@ searchUI = function(id) {
     )
 }
 searchServer = function(input, output, session) {
-    printLogJs <- function(x, ...) {
-        logjs(x)
-        return(TRUE)
-    }
-
-    addHandler(printLogJs)
+    
     searchTable = reactive({
         if(is.null(input$searchbox) || input$searchbox == '') {
             return(NULL)
