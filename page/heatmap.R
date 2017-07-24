@@ -36,7 +36,7 @@ heatmapServer = function(input, output, session) {
         rs = DBI::dbSendQuery(conn, query)
         ret = DBI::dbFetch(rs)
         
-        h = reshape2::acast(ret, ortholog_id ~ species_id + tissue)
+        h = reshape2::acast(ret, ortholog_id + symbol ~ species_id + tissue)
         h[is.na(h)] = 0
         h
     })
