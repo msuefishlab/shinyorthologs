@@ -14,8 +14,8 @@ shinyUI(function(request) {
     source('page/recently_updated.R', local = T)
     fluidPage(
         useShinyjs(),
-        tags$head(includeScript("ga.js")),
-        includeCSS('styles.css'),
+        tags$head(includeScript('js/ga.js')),
+        includeCSS('css/styles.css'),
         headerPanel('ShinyOrthologs'),
         wellPanel(style = 'background-color: #ffffff;',
             tabsetPanel(id = 'inTabset',
