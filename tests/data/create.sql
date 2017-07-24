@@ -7,7 +7,6 @@ END;
 $$ language 'plpgsql';
 
 
-CREATE EXTENSION pg_trgm;
 
 CREATE TABLE dbxrefs (
     GENE_ID varchar(255) PRIMARY KEY,
@@ -64,14 +63,27 @@ CREATE TABLE expression (
 \copy genes FROM 'genes.csv' CSV HEADER DELIMITER E'\t';
 \copy orthodescriptions FROM 'ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
 \copy orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM 'orthologs.csv' CSV HEADER DELIMITER E'\t';
-\copy transcripts FROM 'transcripts.csv' CSV HEADER DELIMITER E'\t';
+\copy transcripts (gene_id,transcript_id) FROM 'transcripts.csv' CSV HEADER DELIMITER E'\t';
 \copy dbxrefs FROM 'dbxrefs.csv' CSV HEADER DELIMITER E'\t';
 \copy fasta FROM 'fasta.csv' CSV HEADER DELIMITER E'\t';
-\copy expression FROM 'expression.csv' CSV HEADER DELIMITER E'\t';
+\copy expression FROM 'expression.csv' CSV HEADER DELIMITER E'\t' NULL 'NA';
 
+CREATE MATERIALIZED VIEW search_index AS 
+SELECT
+    o.ortholog_id,
+    o.evidence,
+    to_tsvector(od.symbol) as symbol,
+    to_tsvector(od.description) as description,
+    to_tsvector(coalesce(string_agg(g.gene_id, ' '))) as geneids
+FROM orthologs o
+JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id
+JOIN genes g on o.gene_id = g.gene_id 
+LEFT JOIN dbxrefs db on o.gene_id = db.gene_id
+GROUP BY o.ortholog_id,o.evidence,od.symbol,od.description;
 
+CREATE INDEX idx_fts_search ON search_index USING gin(geneids);
+CREATE INDEX idx_fts_description ON search_index USING gin(description);
 
-CREATE INDEX description_index ON orthodescriptions USING GIN (to_tsvector('english',description));
 
 CREATE TRIGGER update_ab_changetimestamp BEFORE UPDATE ON orthologs FOR EACH ROW EXECUTE PROCEDURE update_changetimestamp_column();
 
