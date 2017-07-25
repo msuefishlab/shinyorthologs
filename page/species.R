@@ -1,7 +1,7 @@
 speciesUI = function(id) {
     ns = NS(id)
     tagList(
-        h1('Species listing'),
+        h2('Species listing'),
         fluidRow(
             h2('Data table'),
             DT::dataTableOutput(ns('table')),
