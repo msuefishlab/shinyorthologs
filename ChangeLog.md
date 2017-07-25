@@ -4,6 +4,8 @@
 - Remove multiple sequence alignment
 - Remove the "shiny app as an R package" setup, as it overcomplicates things
 - Change dependency installation to install.sh
+- Improve the searching functionality
+- Add ability to save genes
 
 # Version 1.0.0
 
