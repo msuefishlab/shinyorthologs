@@ -25,7 +25,7 @@ searchServer = function(input, output, session) {
 
         # aggregate database gene id
         start.time <- Sys.time()
-        query = "SELECT o.ortholog_id, g.gene_id, g.species_id, g.description, g.symbol FROM search_index s JOIN orthologs o on o.ortholog_id = s.ortholog_id JOIN genes g on o.gene_id = g.gene_id WHERE s.description @@ to_tsquery('english', ?search) or s.symbol @@ to_tsquery('english', ?search) or s.geneids @@ to_tsquery('english', ?search)";
+        query = "SELECT o.ortholog_id, g.gene_id, g.species_id, g.description, g.symbol FROM search_index s JOIN orthologs o on o.ortholog_id = s.ortholog_id JOIN genes g on o.gene_id = g.gene_id WHERE s.description @@ to_tsquery('english', ?search) or s.symbol @@ to_tsquery('english', ?search) or s.geneids @@ to_tsquery('english', ?search) LIMIT 50";
         q = DBI::sqlInterpolate(conn, query, search = paste0(input$searchbox, ifelse(input$exact, '', ':*')))
         rs = DBI::dbSendQuery(conn, q)
         res = DBI::dbFetch(rs)
