@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+shopt -s nullglob
 # convert fasta to tab
 rm -f fasta.csv;
 for i in fasta/*.fa fasta/*.fasta; do
