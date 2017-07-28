@@ -47,11 +47,8 @@ shinyServer(function(input, output, session) {
     source('page/recently_updated.R', local = T)
     setBookmarkExclude(
         c(
-            'search-table_rows_current',
-            'search-table_cell_clicked',
-            'search-table_search',
-            'search-table_rows_all',
-            'search-table_state',
+            'search-example1',
+            'search-example2',
             'species-table_rows_current',
             'species-table_cell_clicked',
             'species-table_species',
@@ -90,7 +87,6 @@ shinyServer(function(input, output, session) {
             'table_removed_state',
             'table_removed_row_last_clicked',
             'genepage-fasta',
-            'search-example1',
             'heatmap-example'
         )
     )
