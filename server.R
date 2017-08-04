@@ -93,8 +93,8 @@ shinyServer(function(input, output, session) {
 
 
     box = callModule(searchServer, 'search')
-    callModule(heatmapServer, 'heatmap')
-    callModule(listServer, 'list')
+    heatmap = callModule(heatmapServer, 'heatmap')
+    callModule(listServer, 'list', session, heatmap)
     callModule(genepageServer, 'genepage', box)
     callModule(speciesServer, 'species')
     deps = callModule(editServer, 'edits')

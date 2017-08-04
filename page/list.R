@@ -2,10 +2,11 @@ listUI = function(id) {
     ns = NS(id)
     tagList(
         textAreaInput(ns('genes'), 'Enter a list of genes and lookup connected ortholog IDs', height = '200px', width = '600px'),
-        DT::dataTableOutput(ns('table'))
+        DT::dataTableOutput(ns('table')),
+        actionButton(ns('sendToHeatmap'), 'Send ortholog groups to heatmap')
     )
 }
-listServer = function(input, output, session, box) {
+listServer = function(input, output, session, parent, heatmap) {
     dataTable = reactive({
         if (is.null(input$genes) | input$genes == '') {
             return()
@@ -30,4 +31,14 @@ listServer = function(input, output, session, box) {
         dataTable()
     }, selection = 'single')
 
+    observeEvent(input$genes, {
+        session$doBookmark()
+    })
+
+    observeEvent(input$sendToHeatmap, {
+        if(!is.null(dataTable())) {
+            updateTextAreaInput(parent, 'heatmap-genes', value=paste0(dataTable()[,2], collapse='\n', sep=''))
+            updateTabsetPanel(parent, "inTabset", selected = "heatmap")
+        }
+    })
 }

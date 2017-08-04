@@ -20,7 +20,7 @@ shinyUI(function(request) {
         wellPanel(style = 'background-color: #ffffff;',
             tabsetPanel(id = 'inTabset',
                 tabPanel(style = 'margin: 20px;', id = 'search', 'Home', searchUI('search')),
-                tabPanel(style = 'margin: 20px;', id = 'heatmap', 'Heatmap', heatmapUI('heatmap')),
+                tabPanel(style = 'margin: 20px;', id = 'heatmap', 'Heatmap', heatmapUI('heatmap'), value = 'heatmap'),
                 tabPanel(style = 'margin: 20px;', id = 'list', 'Lookup genes', listUI('list')),
                 tabPanel(style = 'margin: 20px;', id = 'species', 'Species table', speciesUI('species')),
                 tabPanel(style = 'margin: 20px;', id = 'genepage', 'Gene page', genepageUI('genepage')),
