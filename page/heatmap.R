@@ -9,6 +9,7 @@ heatmapUI = function(id) {
         checkboxInput(ns('normalizeRows'), 'Normalize rows?'),
         checkboxInput(ns('redGreen'), 'Red-black-green colors?'),
         actionButton(ns('example'), 'Example'),
+        selectInput(ns('species'), 'Species', multiple = T, choices = c(), width = '600px'),
         p('Download as CSV'),
         downloadButton(ns('downloadData'), 'Download'),
         h2('Heatmaps'),
@@ -36,14 +37,27 @@ heatmapServer = function(input, output, session) {
         rs = DBI::dbSendQuery(conn, query)
         ret = DBI::dbFetch(rs)
         
+        v = unique(ret$species_id)
+        updateSelectInput(session, "species", choices=v, selected=v)
+        ret
+    })
+
+    matrixData = reactive({
+        ret = heatmapData()
+        if (is.null(input$genes) | input$genes == '') {
+            return()
+        }
+        ret = subset(ret, species_id %in% input$species)
+
         h = reshape2::acast(ret, ortholog_id + symbol ~ species_id + tissue)
         h[is.na(h)] = 0
+
         h
     })
 
 
     output$heatmap = renderPlot({
-        h = heatmapData()
+        h = matrixData()
         if(is.null(h)) {
             return()
         }
@@ -66,7 +80,7 @@ heatmapServer = function(input, output, session) {
     output$downloadData <- downloadHandler(
         filename = 'heatmap.csv',
         content = function(file) {
-            write.table(heatmapData(), file, quote = F, sep = '\t')
+            write.table(matrixData(), file, quote = F, sep = '\t')
         }
     )
     observeEvent(input$example, {
