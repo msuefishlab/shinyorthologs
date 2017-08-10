@@ -13,7 +13,6 @@ options(shiny.error = function() {
 
 config <<- fromJSON('config.json')
 dbname = config$dbname
-basedir = config$basedir
 user = config$user
 password = config$password
 port = config$port
