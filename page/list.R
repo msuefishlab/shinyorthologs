@@ -43,6 +43,6 @@ listServer = function(input, output, session, parent, heatmap) {
         }
     })
     observeEvent(input$example, {
-        updateTextAreaInput(session, 'genes', value = config$sample_heatmap)
+        updateTextAreaInput(session, 'genes', value = config$sample_genelist)
     })
 }
