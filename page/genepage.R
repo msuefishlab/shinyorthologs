@@ -29,7 +29,7 @@ genepageServer = function(input, output, session, box) {
         }
         conn <- poolCheckout(pool)
         on.exit(poolReturn(conn))
-        query = 'SELECT o.ortholog_id, o.evidence, od.symbol, od.description FROM orthologs o left join orthodescriptions od on o.ortholog_id = od.ortholog_id where o.ortholog_id = ?orthoid'
+        query = 'SELECT o.ortholog_id, o.evidence, od.symbol, od.description, e.link, e.title FROM orthologs o left join orthodescriptions od on o.ortholog_id = od.ortholog_id join evidence e on o.evidence = e.evidence_id where o.ortholog_id = ?orthoid'
         q = sqlInterpolate(conn, query, orthoid = input$ortholog)
         rs = dbSendQuery(conn, q)
         res = dbFetch(rs)
@@ -38,7 +38,7 @@ genepageServer = function(input, output, session, box) {
                 h4('Ortholog information'),
                 p(em('ID:'), res$ortholog_id),
                 p(em('Descrition: '), res$description),
-                p(em('Evidence: '), res$evidence),
+                p(em('Evidence: '), a(href=res$link, e.title)),
                 p(em('Symbol: '), res$symbol)
             )
         )
