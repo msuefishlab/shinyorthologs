@@ -15,6 +15,7 @@ shinyUI(function(request) {
     fluidPage(
         useShinyjs(),
         tags$head(includeScript('js/ga.js')),
+        tags$head(includeScript('js/append.js')),
         includeCSS('css/styles.css'),
         headerPanel('ShinyOrthologs'),
         wellPanel(style = 'background-color: #ffffff;',
