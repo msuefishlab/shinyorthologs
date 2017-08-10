@@ -30,7 +30,7 @@ speciesServer = function(input, output, session) {
     )
     createJBrowseLink <- function(val) {
         ifelse(!is.na(val),
-            sprintf("<a href='%s'>JBrowse</a>", val),
+            sprintf("<a href='%s'>Genome Browser</a>", val),
             val
         )
     }
