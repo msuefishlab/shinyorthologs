@@ -47,6 +47,9 @@ heatmapServer = function(input, output, session) {
         if (is.null(input$genes) | input$genes == '') {
             return()
         }
+        if (is.null(input$species)) {
+            return()
+        }
         ret = subset(ret, species_id %in% input$species)
 
         h = reshape2::acast(ret, ortholog_id + symbol ~ species_id + tissue)
@@ -85,5 +88,11 @@ heatmapServer = function(input, output, session) {
     )
     observeEvent(input$example, {
         updateTextAreaInput(session, 'genes', value = config$sample_heatmap)
+    })
+    observeEvent(input$normalizeRows, {
+        session$doBookmark()
+    })
+    observeEvent(input$normalizeCols, {
+        session$doBookmark()
     })
 }
