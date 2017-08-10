@@ -15,7 +15,7 @@ searchUI = function(id) {
         actionButton(ns('sendToHeatmap'), 'Send ortholog groups to heatmap')
     )
 }
-searchServer = function(input, output, session, parent) {
+searchServer = function(input, output, session) {
 
     searchTable = reactive({
         if(is.null(input$searchbox) || input$searchbox == '') {
@@ -73,9 +73,6 @@ searchServer = function(input, output, session, parent) {
     })
     observeEvent(input$searchbox, {
         session$doBookmark()
-    })
-    observeEvent(input$test, {
-        loginfo(input$test)
     })
 
 
