@@ -38,7 +38,7 @@ genepageServer = function(input, output, session, box) {
                 h4('Ortholog information'),
                 p(em('ID:'), res$ortholog_id),
                 p(em('Descrition: '), res$description),
-                p(em('Evidence: '), a(href=res$link, e.title)),
+                p(em('Evidence: '), a(href=res$link, res$title)),
                 p(em('Symbol: '), res$symbol)
             )
         )
@@ -86,6 +86,6 @@ genepageServer = function(input, output, session, box) {
         }
     )
     observeEvent(input$example, {
-        updateTextAreaInput(session, 'genes', value = config$sample_ortholog_lookup)
+        updateTextAreaInput(session, 'ortholog', value = config$sample_ortholog_lookup)
     })
 }
