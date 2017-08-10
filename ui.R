@@ -23,7 +23,7 @@ shinyUI(function(request) {
                 tabPanel(style = 'margin: 20px;', id = 'heatmap', 'Heatmap', heatmapUI('heatmap'), value = 'heatmap'),
                 tabPanel(style = 'margin: 20px;', id = 'list', 'Lookup genes', listUI('list')),
                 tabPanel(style = 'margin: 20px;', id = 'species', 'Species table', speciesUI('species')),
-                tabPanel(style = 'margin: 20px;', id = 'genepage', 'Gene page', genepageUI('genepage')),
+                tabPanel(style = 'margin: 20px;', id = 'genepage', 'Ortholog lookup', genepageUI('genepage')),
                 tabPanel(style = 'margin: 20px;', id = 'edit', 'Edit', editUI('edits')),
                 tabPanel(style = 'margin: 20px;', id = 'updated', 'Recent updates', updatesUI('updates')),
                 tabPanel(style = 'margin: 20px;', id = 'help', 'Help', helpUI('help'))

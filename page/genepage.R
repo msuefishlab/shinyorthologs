@@ -2,12 +2,12 @@ genepageUI = function(id) {
     ns = NS(id)
     tagList(
         textInput(ns('ortholog'), 'Ortholog', width=500),
-        h3('Genes'),
+        actionButton(ns('example'), 'Example'),
+        uiOutput(ns('stats')),
+        h3('Genes in orthogroup'),
         DT::dataTableOutput(ns('genes')),
-        h3('Transcripts'),
-        DT::dataTableOutput(ns('table')),
         uiOutput(ns('fasta')),
-        downloadButton(ns('downloadData'), 'Download all FASTA')
+        downloadButton(ns('downloadData'), 'Download FASTA')
     )
 }
 genepageServer = function(input, output, session, box) {
@@ -23,20 +23,43 @@ genepageServer = function(input, output, session, box) {
         dbFetch(rs)
     })
 
+    output$stats = renderUI({
+        if(is.null(input$ortholog) || input$ortholog == '') {
+            return()
+        }
+        conn <- poolCheckout(pool)
+        on.exit(poolReturn(conn))
+        query = 'SELECT o.ortholog_id, o.evidence, od.symbol, od.description FROM orthologs o left join orthodescriptions od on o.ortholog_id = od.ortholog_id where o.ortholog_id = ?orthoid'
+        q = sqlInterpolate(conn, query, orthoid = input$ortholog)
+        rs = dbSendQuery(conn, q)
+        res = dbFetch(rs)
+        tagList(
+            div(class='search_results',
+                h4('Ortholog information'),
+                p(em('ID:'), res$ortholog_id),
+                p(em('Descrition: '), res$description),
+                p(em('Evidence: '), res$evidence),
+                p(em('Symbol: '), res$symbol)
+            )
+        )
+    })
+
     output$genes = DT::renderDataTable({
         if(is.null(input$ortholog) || input$ortholog == '') {
             return()
         }
         conn <- poolCheckout(pool)
         on.exit(poolReturn(conn))
-        query = 'SELECT s.species_id, o.ortholog_id, o.evidence, g.gene_id, od.symbol, od.description FROM orthologs o join genes g on g.gene_id = o.gene_id left join species s on s.species_id = o.species_id left join orthodescriptions od on o.ortholog_id = od.ortholog_id left join dbxrefs db on g.gene_id = db.gene_id where o.ortholog_id = ?orthoid'
+        query = 'SELECT s.species_id, g.gene_id, g.symbol, od.description FROM orthologs o join genes g on g.gene_id = o.gene_id left join species s on s.species_id = o.species_id left join orthodescriptions od on o.ortholog_id = od.ortholog_id left join dbxrefs db on g.gene_id = db.gene_id where o.ortholog_id = ?orthoid'
         q = sqlInterpolate(conn, query, orthoid = input$ortholog)
         rs = dbSendQuery(conn, q)
         dbFetch(rs)
     }, selection = 'single')
 
     output$table = DT::renderDataTable({
-        dataTable()[,c(2,3,4,5,6,7,8)]
+        d = dataTable()
+        loginfo(colnames(d))
+        d[,c('gene_id','transcript_id','sequence')]
     }, selection = 'single')
 
     formatRow = function(row) {
@@ -62,4 +85,7 @@ genepageServer = function(input, output, session, box) {
             close(out)
         }
     )
+    observeEvent(input$example, {
+        updateTextAreaInput(session, 'genes', value = config$sample_ortholog_lookup)
+    })
 }
