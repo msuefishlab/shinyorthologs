@@ -47,7 +47,7 @@ searchServer = function(input, output, session) {
                 lapply(orthologs, function(curr_ortho) {
                     ret = s[s$ortholog_id==curr_ortho,]
                     fluidRow(
-                        h2(a(href=sprintf('?_inputs_&inTabset=\"Gene%%20page\"&genepage-ortholog=\"%s\"', curr_ortho), curr_ortho), ret[1,5], ret[1,4]),
+                        h2(a(href=sprintf('?_inputs_&inTabset=\"Ortholog%%20lookup\"&genepage-ortholog=\"%s\"', curr_ortho), curr_ortho), ret[1,5], ret[1,4]),
                         div(class='ortho-container', fluidRow(
                             apply(ret, 1, function(row) {
                                 div(class = 'section',
