@@ -5,12 +5,9 @@ genepageUI = function(id) {
         h3('Genes'),
         DT::dataTableOutput(ns('genes')),
         h3('Transcripts'),
-        HTML('<button data-toggle="collapse" data-target="#transcripts_container">Expand</button>'),
-        tags$div(id = 'transcripts_container',  class='collapse',
-            DT::dataTableOutput(ns('table')),
-            uiOutput(ns('fasta')),
-            downloadButton(ns('downloadData'), 'Download all FASTA')
-        )
+        DT::dataTableOutput(ns('table')),
+        uiOutput(ns('fasta')),
+        downloadButton(ns('downloadData'), 'Download all FASTA')
     )
 }
 genepageServer = function(input, output, session, box) {

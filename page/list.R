@@ -2,6 +2,7 @@ listUI = function(id) {
     ns = NS(id)
     tagList(
         textAreaInput(ns('genes'), 'Enter a list of genes and lookup connected ortholog IDs', height = '200px', width = '600px'),
+        actionButton(ns('example'), 'Example'),
         DT::dataTableOutput(ns('table')),
         actionButton(ns('sendToHeatmap'), 'Send ortholog groups to heatmap')
     )
@@ -40,5 +41,8 @@ listServer = function(input, output, session, parent, heatmap) {
             updateTextAreaInput(parent, 'heatmap-genes', value=paste0(dataTable()[,2], collapse='\n', sep=''))
             updateTabsetPanel(parent, "inTabset", selected = "heatmap")
         }
+    })
+    observeEvent(input$example, {
+        updateTextAreaInput(session, 'genes', value = config$sample_heatmap)
     })
 }
