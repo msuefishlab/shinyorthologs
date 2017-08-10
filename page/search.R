@@ -15,7 +15,7 @@ searchUI = function(id) {
         actionButton(ns('sendToHeatmap'), 'Send ortholog groups to heatmap')
     )
 }
-searchServer = function(input, output, session) {
+searchServer = function(input, output, session, parent) {
 
     searchTable = reactive({
         if(is.null(input$searchbox) || input$searchbox == '') {
@@ -50,7 +50,7 @@ searchServer = function(input, output, session) {
                     ret = s[s$ortholog_id==curr_ortho,]
                     fluidRow(
                         h2(a(href=sprintf('?_inputs_&inTabset=\"Ortholog%%20lookup\"&genepage-ortholog=\"%s\"', curr_ortho), curr_ortho), ret[1,5], ret[1,4]),
-                        a(class='listitem', onclick=paste0('$("#search-ortholist").append("',curr_ortho,'\\n")'), href='#', curr_ortho),
+                        a(class='listitem', href='#', curr_ortho),
                         div(class='ortho-container', fluidRow(
                             apply(ret, 1, function(row) {
                                 div(class = 'section',

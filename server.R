@@ -48,6 +48,7 @@ shinyServer(function(input, output, session) {
         c(
             'search-example1',
             'search-example2',
+            'search-sendToHeatmap',
             'species-table_rows_current',
             'species-table_cell_clicked',
             'species-table_species',
@@ -91,7 +92,7 @@ shinyServer(function(input, output, session) {
     )
 
 
-    box = callModule(searchServer, 'search')
+    box = callModule(searchServer, 'search', session)
     heatmap = callModule(heatmapServer, 'heatmap')
     callModule(listServer, 'list', session, heatmap)
     callModule(genepageServer, 'genepage', box)
