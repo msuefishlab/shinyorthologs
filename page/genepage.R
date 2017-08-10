@@ -88,4 +88,7 @@ genepageServer = function(input, output, session, box) {
     observeEvent(input$example, {
         updateTextAreaInput(session, 'ortholog', value = config$sample_ortholog_lookup)
     })
+    observeEvent(input$ortholog, {
+        session$doBookmark()
+    })
 }
