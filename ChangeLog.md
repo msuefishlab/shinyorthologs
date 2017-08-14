@@ -1,18 +1,20 @@
 # Version 1.1.0
 
-- Rename "gene page" to "ortholog lookup"
+## Features
+
 - Add better display of data on the "ortholog lookup" page
-- Change dependency installation to install.sh
 - Improve the searching functionality with postgres full text search
-- Add bookmarking on heatmap
 - Add fasta and expression data into database tables
 - Add ability to lookup multiple genes to ortholog IDs at once
 - Add ability to save genes to a list from the search page
+- Add ranking to searches
 
-Removed
+Fixes
 
+- Rename "gene page" to "ortholog lookup"
 - Remove the "shiny app as an R package" setup, as it overcomplicates things
 - Remove multiple sequence alignment
+- Fix URL bookmarking on heatmap
 
 # Version 1.0.0
 
