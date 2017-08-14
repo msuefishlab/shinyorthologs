@@ -4,7 +4,7 @@ listUI = function(id) {
         textAreaInput(ns('genes'), 'Enter a list of genes and lookup connected ortholog IDs', height = '200px', width = '600px'),
         actionButton(ns('example'), 'Example'),
         DT::dataTableOutput(ns('table')),
-        actionButton(ns('sendToHeatmap'), 'Send ortholog groups to heatmap')
+        uiOutput(ns('sendToHeatmap'))
     )
 }
 listServer = function(input, output, session, parent, heatmap) {
@@ -36,7 +36,7 @@ listServer = function(input, output, session, parent, heatmap) {
         session$doBookmark()
     })
 
-    observeEvent(input$sendToHeatmap, {
+    observeEvent(input$heatmapSend, {
         if(!is.null(dataTable())) {
             updateTextAreaInput(parent, 'heatmap-genes', value=paste0(dataTable()[,2], collapse='\n', sep=''))
             updateTabsetPanel(parent, "inTabset", selected = "heatmap")
@@ -44,5 +44,11 @@ listServer = function(input, output, session, parent, heatmap) {
     })
     observeEvent(input$example, {
         updateTextAreaInput(session, 'genes', value = config$sample_genelist)
+    })
+
+    output$sendToHeatmap = renderUI({
+        if(!is.null(dataTable())) {
+            actionButton(session$ns('heatmapSend'), 'Send to heatmap')
+        }
     })
 }
