@@ -12,7 +12,7 @@ searchUI = function(id) {
         uiOutput(ns('res')),
         br(),
         textAreaInput(ns('ortholist'), 'Saved orthoIDs', height = '100px', width = '600px'),
-        actionButton(ns('sendToHeatmap'), 'Send ortholog groups to heatmap')
+        actionButton(ns('sendToHeatmap'), 'Send to heatmap'),
         actionButton(ns('clearList'), 'Clear')
     )
 }
@@ -90,8 +90,8 @@ searchServer = function(input, output, session, parent) {
         updateTabsetPanel(parent, "inTabset", selected = "heatmap")
     })
 
-    observeEvent(input$sendToHeatmap, {
-        updateTextAreaInput(parent, 'heatmap-genes', value='')
+    observeEvent(input$clearList, {
+        updateTextAreaInput(session, 'ortholist', value='')
     })
     return(searchTable)
 }

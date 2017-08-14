@@ -48,6 +48,7 @@ shinyServer(function(input, output, session) {
         c(
             'search-example1',
             'search-example2',
+            'search-clearList',
             'search-sendToHeatmap',
             'species-table_rows_current',
             'species-table_cell_clicked',
