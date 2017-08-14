@@ -72,4 +72,16 @@ updatesServer = function(input, output, session, args) {
             write.csv(tab[input$table_removed_rows_all, , drop = FALSE], file, row.names = F, quote = F)
         }
     )
+
+    setBookmarkExclude(
+        c(
+            'table_rows_current',
+            'table_cell_clicked',
+            'table_species',
+            'table_rows_selected',
+            'table_rows_all',
+            'table_state',
+            'table_row_last_clicked'
+        )
+    )
 }

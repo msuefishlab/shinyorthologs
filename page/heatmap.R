@@ -100,4 +100,13 @@ heatmapServer = function(input, output, session) {
     observeEvent(input$clear, {
         updateTextAreaInput(session, 'genes', value='')
     })
+
+
+    setBookmarkExclude(
+        c(
+            'heatmap-example',
+            'heatmap-clear'
+        )
+    )
+
 }

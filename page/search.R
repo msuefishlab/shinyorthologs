@@ -94,5 +94,14 @@ searchServer = function(input, output, session, parent) {
     observeEvent(input$clear, {
         updateTextAreaInput(session, 'ortholist', value='')
     })
+
+    setBookmarkExclude(
+        c(
+            'example1',
+            'example2',
+            'clearList',
+            'sendToHeatmap'
+        )
+    )
     return(searchTable)
 }

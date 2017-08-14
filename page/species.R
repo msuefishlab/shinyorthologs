@@ -34,4 +34,15 @@ speciesServer = function(input, output, session) {
             val
         )
     }
+    setBookmarkExclude(
+        c(
+            'species-table_rows_current',
+            'species-table_cell_clicked',
+            'species-table_species',
+            'species-table_rows_selected',
+            'species-table_rows_all',
+            'species-table_state',
+            'species-table_row_last_clicked'
+        )
+    )
 }

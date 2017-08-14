@@ -56,4 +56,10 @@ listServer = function(input, output, session, parent, heatmap) {
     observeEvent(input$clear, {
         updateTextAreaInput(session, 'genes', value='')
     })
+
+    setBookmarkExclude(
+        c(
+            'clear'
+        )
+    )
 }
