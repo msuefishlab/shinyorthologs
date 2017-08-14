@@ -78,7 +78,7 @@ CREATE TABLE expression (
 CREATE MATERIALIZED VIEW search_index AS 
 SELECT
     o.ortholog_id,
-    setweight(to_tsvector(od.ortholog_id), 'A') ||
+    setweight(to_tsvector(o.ortholog_id), 'A') ||
     setweight(to_tsvector(od.symbol), 'A') ||
     setweight(to_tsvector(od.description), 'B') ||
     setweight(to_tsvector(coalesce(string_agg(g.gene_id, ' '))), 'C') as document
