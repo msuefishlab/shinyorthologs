@@ -27,9 +27,10 @@ searchServer = function(input, output, session, parent) {
         on.exit(pool::poolReturn(conn))
 
         # aggregate database gene id
+        search = paste0(input$searchbox, ifelse(input$exact, '', ':*'))
         start.time <- Sys.time()
-        query = "SELECT o.ortholog_id, g.gene_id, g.species_id, g.description, g.symbol FROM search_index s JOIN orthologs o on o.ortholog_id = s.ortholog_id JOIN genes g on o.gene_id = g.gene_id WHERE s.document @@ to_tsquery('english', ?search) ORDER BY ts_rank(p_search.document, to_tsquery('english', ?search) DESC, o.ortholog_id LIMIT 150";
-        q = DBI::sqlInterpolate(conn, query, search = paste0(input$searchbox, ifelse(input$exact, '', ':*')))
+        query = "SELECT o.ortholog_id, g.gene_id, g.species_id, g.description, g.symbol FROM search_index s JOIN orthologs o on o.ortholog_id = s.ortholog_id JOIN genes g on o.gene_id = g.gene_id WHERE s.document @@ to_tsquery('english', ?search) ORDER BY ts_rank(s.document, to_tsquery('english', ?search)) DESC, o.ortholog_id LIMIT 150";
+        q = DBI::sqlInterpolate(conn, query, search = search)
         rs = DBI::dbSendQuery(conn, q)
         res = DBI::dbFetch(rs)
         end.time <- Sys.time()
