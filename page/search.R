@@ -13,6 +13,7 @@ searchUI = function(id) {
         br(),
         textAreaInput(ns('ortholist'), 'Saved orthoIDs', height = '100px', width = '600px'),
         actionButton(ns('sendToHeatmap'), 'Send ortholog groups to heatmap')
+        actionButton(ns('clearList'), 'Clear')
     )
 }
 searchServer = function(input, output, session, parent) {
@@ -50,7 +51,7 @@ searchServer = function(input, output, session, parent) {
                     ret = s[s$ortholog_id==curr_ortho,]
                     fluidRow(
                         h2(a(href=sprintf('?_inputs_&inTabset=\"Ortholog%%20lookup\"&genepage-ortholog=\"%s\"', curr_ortho), curr_ortho), ret[1,5], ret[1,4]),
-                        a(class='listitem', href='#', curr_ortho),
+                        a(class='listitem', href='#', id=curr_ortho, 'Add to saved list'),
                         div(class='ortho-container', fluidRow(
                             apply(ret, 1, function(row) {
                                 div(class = 'section',
@@ -87,6 +88,10 @@ searchServer = function(input, output, session, parent) {
     observeEvent(input$sendToHeatmap, {
         updateTextAreaInput(parent, 'heatmap-genes', value=input$ortholist)
         updateTabsetPanel(parent, "inTabset", selected = "heatmap")
+    })
+
+    observeEvent(input$sendToHeatmap, {
+        updateTextAreaInput(parent, 'heatmap-genes', value='')
     })
     return(searchTable)
 }
