@@ -7,6 +7,11 @@ END;
 $$ language 'plpgsql';
 
 
+CREATE TABLE evidence (
+    EVIDENCE_ID varchar(255) PRIMARY KEY,
+    LINK varchar(1024),
+    TITLE varchar(1024)
+);
 
 CREATE TABLE dbxrefs (
     GENE_ID varchar(255) PRIMARY KEY,
@@ -37,7 +42,7 @@ CREATE TABLE orthologs (
     ORTHOLOG_ID varchar(255) REFERENCES orthodescriptions,
     SPECIES_ID varchar(255) REFERENCES species,
     GENE_ID varchar(255) REFERENCES genes,
-    EVIDENCE varchar(255),
+    EVIDENCE varchar(255) REFERENCES evidence,
     REMOVED BOOLEAN NOT NULL DEFAULT FALSE,
     EDITED BOOLEAN NOT NULL DEFAULT FALSE,
     lastUpdated TIMESTAMP NOT NULL DEFAULT (now() at time zone 'utc')
@@ -59,7 +64,9 @@ CREATE TABLE expression (
 );
 
 
+
 \copy species FROM 'species.csv' CSV HEADER DELIMITER E'\t';
+\copy evidence FROM 'evidence.csv' CSV HEADER DELIMITER E'\t';
 \copy genes FROM 'genes.csv' CSV HEADER DELIMITER E'\t';
 \copy orthodescriptions FROM 'ortho_descriptions.csv' CSV HEADER DELIMITER E'\t';
 \copy orthologs (ortholog_ID,species_ID,gene_ID,evidence) FROM 'orthologs.csv' CSV HEADER DELIMITER E'\t';
@@ -71,15 +78,15 @@ CREATE TABLE expression (
 CREATE MATERIALIZED VIEW search_index AS 
 SELECT
     o.ortholog_id,
-    o.evidence,
-    to_tsvector(od.symbol) as symbol,
-    to_tsvector(od.description) as description,
-    to_tsvector(coalesce(string_agg(g.gene_id, ' '))) as geneids
+    setweight(to_tsvector(od.ortholog_id), 'A') ||
+    setweight(to_tsvector(od.symbol), 'A') ||
+    setweight(to_tsvector(od.description), 'B') ||
+    setweight(to_tsvector(coalesce(string_agg(g.gene_id, ' '))), 'C') as document
 FROM orthologs o
 JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id
 JOIN genes g on o.gene_id = g.gene_id 
 LEFT JOIN dbxrefs db on o.gene_id = db.gene_id
-GROUP BY o.ortholog_id,o.evidence,od.symbol,od.description;
+GROUP BY o.ortholog_id;
 
 CREATE INDEX idx_fts_search ON search_index USING gin(geneids);
 CREATE INDEX idx_fts_description ON search_index USING gin(description);
