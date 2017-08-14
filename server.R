@@ -88,7 +88,9 @@ shinyServer(function(input, output, session) {
             'table_removed_state',
             'table_removed_row_last_clicked',
             'genepage-fasta',
-            'heatmap-example'
+            'heatmap-example',
+            'heatmap-clear',
+            'list-clear'
         )
     )
 

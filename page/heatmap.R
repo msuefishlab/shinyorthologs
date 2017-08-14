@@ -2,13 +2,14 @@ heatmapUI = function(id) {
     ns = NS(id)
     tagList(
         textAreaInput(ns('genes'), 'Enter a list of orthoIDs', height = '200px', width = '600px'),
+        actionButton(ns('example'), 'Example'),
+        actionButton(ns('clear'), 'Clear'),
         p('Plot log10-scaled gene expressions values across species'),
         p('Optionally normalize columns (individual samples)'),
         
         checkboxInput(ns('normalizeCols'), 'Normalize columns?'),
         checkboxInput(ns('normalizeRows'), 'Normalize rows?'),
         checkboxInput(ns('redGreen'), 'Red-black-green colors?'),
-        actionButton(ns('example'), 'Example'),
         selectInput(ns('species'), 'Species', multiple = T, choices = c(), width = '600px'),
         p('Download as CSV'),
         downloadButton(ns('downloadData'), 'Download'),
@@ -94,5 +95,9 @@ heatmapServer = function(input, output, session) {
     })
     observeEvent(input$normalizeCols, {
         session$doBookmark()
+    })
+
+    observeEvent(input$clear, {
+        updateTextAreaInput(session, 'genes', value='')
     })
 }

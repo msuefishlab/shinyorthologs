@@ -3,6 +3,7 @@ listUI = function(id) {
     tagList(
         textAreaInput(ns('genes'), 'Enter a list of genes and lookup connected ortholog IDs', height = '200px', width = '600px'),
         actionButton(ns('example'), 'Example'),
+        actionButton(ns('clear'), 'Clear'),
         DT::dataTableOutput(ns('table')),
         uiOutput(ns('sendToHeatmap'))
     )
@@ -50,5 +51,9 @@ listServer = function(input, output, session, parent, heatmap) {
         if(!is.null(dataTable())) {
             actionButton(session$ns('heatmapSend'), 'Send to heatmap')
         }
+    })
+
+    observeEvent(input$clear, {
+        updateTextAreaInput(session, 'genes', value='')
     })
 }
