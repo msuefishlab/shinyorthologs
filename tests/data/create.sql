@@ -86,11 +86,9 @@ FROM orthologs o
 JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id
 JOIN genes g on o.gene_id = g.gene_id 
 LEFT JOIN dbxrefs db on o.gene_id = db.gene_id
-GROUP BY o.ortholog_id;
+GROUP BY o.ortholog_id, od.symbol, od.description;
 
-CREATE INDEX idx_fts_search ON search_index USING gin(geneids);
-CREATE INDEX idx_fts_description ON search_index USING gin(description);
-
+CREATE INDEX idx_fts_search ON search_index USING gin(document);
 
 CREATE TRIGGER update_ab_changetimestamp BEFORE UPDATE ON orthologs FOR EACH ROW EXECUTE PROCEDURE update_changetimestamp_column();
 
