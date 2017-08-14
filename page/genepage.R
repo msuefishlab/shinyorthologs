@@ -91,4 +91,6 @@ genepageServer = function(input, output, session, box) {
     observeEvent(input$ortholog, {
         session$doBookmark()
     })
+
+    setBookmarkExclude(c('fasta'))
 }

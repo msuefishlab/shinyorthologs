@@ -95,13 +95,6 @@ searchServer = function(input, output, session, parent) {
         updateTextAreaInput(session, 'ortholist', value='')
     })
 
-    setBookmarkExclude(
-        c(
-            'example1',
-            'example2',
-            'clearList',
-            'sendToHeatmap'
-        )
-    )
+    setBookmarkExclude(c('example1','example2','clear','sendToHeatmap'))
     return(searchTable)
 }

@@ -74,15 +74,15 @@ editServer = function(input, output, session) {
     vals = reactiveValues(submit = 0)
     setBookmarkExclude(
         c(
-            'edits-table_rows_current',
-            'edits-table_cell_clicked',
-            'edits-table_species',
-            'edits-table_rows_all',
-            'edits-table_state',
-            'edits-table_row_last_clicked',
-            'edits-deleterow',
-            'edits-evidence',
-            'edits-name'
+            'table_rows_current',
+            'table_cell_clicked',
+            'table_species',
+            'table_rows_all',
+            'table_state',
+            'table_row_last_clicked',
+            'deleterow',
+            'evidence',
+            'name'
         )
     )
     return (input)

@@ -102,11 +102,5 @@ heatmapServer = function(input, output, session) {
     })
 
 
-    setBookmarkExclude(
-        c(
-            'heatmap-example',
-            'heatmap-clear'
-        )
-    )
-
+    setBookmarkExclude(c('example', 'clear'))
 }
