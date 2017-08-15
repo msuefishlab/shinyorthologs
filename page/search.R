@@ -52,7 +52,7 @@ searchServer = function(input, output, session, parent) {
                     ret = s[s$ortholog_id==curr_ortho,]
                     fluidRow(
                         h2(a(href=sprintf('?_inputs_&inTabset=\"Ortholog%%20lookup\"&genepage-ortholog=\"%s\"', curr_ortho), curr_ortho), ret[1,5], ret[1,4]),
-                        a(class='listitem', href='#', id=curr_ortho, 'Add to saved list'),
+                        a(class='listitem', href='#', id=curr_ortho, '[+] Add to saved list'),
                         div(class='ortho-container', fluidRow(
                             apply(ret, 1, function(row) {
                                 div(class = 'section',

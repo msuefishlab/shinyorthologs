@@ -17,7 +17,7 @@ shinyUI(function(request) {
         tags$head(includeScript('js/ga.js')),
         tags$head(includeScript('js/append.js')),
         includeCSS('css/styles.css'),
-        headerPanel('ShinyOrthologs'),
+        headerPanel('shinyorthologs'),
         wellPanel(style = 'background-color: #ffffff;',
             tabsetPanel(id = 'inTabset',
                 tabPanel(style = 'margin: 20px;', id = 'search', 'Home', searchUI('search')),

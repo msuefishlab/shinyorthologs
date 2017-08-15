@@ -1,16 +1,10 @@
-
-@import url("//fonts.googleapis.com/css?family=Lobster|Cabin:400,700");
-
 h1 {
-  font-family: 'Lobster', cursive;
-  font-weight: 500;
-  line-height: 1.1;
+  font-family: -apple-system,".SFNSText-Regular","San Francisco","Roboto","Segoe UI","Helvetica Neue","Lucida Grande",Arial,sans-serif;
   color: #ad1d28;
 }
 
 body {
     margin: 20px;
-    background: #ccc;
 }
 
 .ortho-container {
