@@ -78,15 +78,16 @@ CREATE TABLE expression (
 CREATE MATERIALIZED VIEW search_index AS 
 SELECT
     o.ortholog_id,
-    setweight(to_tsvector(o.ortholog_id), 'A') ||
-    setweight(to_tsvector(od.symbol), 'A') ||
-    setweight(to_tsvector(od.description), 'B') ||
+    setweight(to_tsvector(o.ortholog_id), 'C') ||
+    setweight(to_tsvector(coalesce(od.symbol,'')), 'A') ||
+    setweight(to_tsvector(coalesce(od.description,'')), 'A') ||
+    setweight(to_tsvector(coalesce(db.database_gene_id,'')), 'A') ||
     setweight(to_tsvector(coalesce(string_agg(g.gene_id, ' '))), 'C') as document
 FROM orthologs o
 JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id
 JOIN genes g on o.gene_id = g.gene_id 
 LEFT JOIN dbxrefs db on o.gene_id = db.gene_id
-GROUP BY o.ortholog_id, od.symbol, od.description;
+GROUP BY o.ortholog_id, o.gene_id, od.symbol, od.description, db.database_gene_id;
 
 CREATE INDEX idx_fts_search ON search_index USING gin(document);
 

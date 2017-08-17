@@ -15,6 +15,7 @@ Fixes
 - Remove the "shiny app as an R package" setup, as it overcomplicates things
 - Remove multiple sequence alignment
 - Fix URL bookmarking on heatmap
+- Fix bug with blank columns giving null search results
 
 # Version 1.0.0
 
