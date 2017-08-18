@@ -90,6 +90,10 @@ heatmapServer = function(input, output, session) {
     observeEvent(input$example, {
         updateTextAreaInput(session, 'genes', value = config$sample_heatmap)
     })
+    observe({
+        input$genes
+        session$doBookmark()
+    })
     observeEvent(input$normalizeRows, {
         session$doBookmark()
     })
