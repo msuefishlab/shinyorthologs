@@ -56,5 +56,5 @@ listServer = function(input, output, session, parent, heatmap) {
         updateTextAreaInput(session, 'genes', value='')
     })
 
-    setBookmarkExclude(c('clear', 'example'))
+    setBookmarkExclude(c('clear', 'example', 'genes'))
 }
