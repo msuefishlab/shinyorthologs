@@ -16,6 +16,7 @@ Fixes
 - Remove multiple sequence alignment
 - Fix URL bookmarking on heatmap
 - Fix bug with blank columns giving null search results
+- Fix searching with special chars
 
 # Version 1.0.0
 
