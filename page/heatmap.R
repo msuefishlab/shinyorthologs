@@ -23,17 +23,18 @@ heatmapServer = function(input, output, session) {
         if (is.null(input$genes) | input$genes == '') {
             return()
         }
-        x = strsplit(input$genes, '\n')
-        formatted_ids = sapply(x, function(e) {
-            paste0("'", trimws(e), "'")
-        })
-        formatted_list = do.call(paste, c(as.list(formatted_ids), sep = ','))
-        mylist = paste0('(', formatted_list, ')')
-        
+ 
         conn = pool::poolCheckout(pool)
         on.exit(pool::poolReturn(conn))
 
 
+        gen = strsplit(input$genes, '\n')
+        gen = sapply(gen, trimws)
+        gen = sapply(gen, function(elt) {
+            dbQuoteString(conn, elt)
+        })
+        mylist = paste0('(', do.call(paste, c(as.list(gen), sep = ',')), ')')
+       
         query = sprintf('SELECT o.ortholog_id, o.species_id, od.symbol, o.gene_id, e.value, e.tissue FROM orthologs o JOIN species s on o.species_id=s.species_id JOIN orthodescriptions od on o.ortholog_id = od.ortholog_id JOIN expression e on e.gene_id = o.gene_id WHERE o.ortholog_id IN %s', mylist)
         rs = DBI::dbSendQuery(conn, query)
         ret = DBI::dbFetch(rs)
