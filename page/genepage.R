@@ -37,7 +37,7 @@ genepageServer = function(input, output, session, box) {
             div(class='search_results',
                 h4('Ortholog information'),
                 p(em('ID:'), res$ortholog_id),
-                p(em('Descrition: '), res$description),
+                p(em('Description: '), res$description),
                 p(em('Evidence: '), a(href=res$link, res$title)),
                 p(em('Symbol: '), res$symbol)
             )
